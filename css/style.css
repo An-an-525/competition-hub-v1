@@ -1558,3 +1558,66 @@ h3 { font-weight: 700; }
   .stat-number { font-size: 20px; }
 }
 
+/* ============================================
+   Visual Effects: Dot Grid, Card Tilt, Particles
+   ============================================ */
+
+/* Dot Grid Canvas - positioned within hero section */
+#page-home {
+  position: relative;
+  overflow: hidden;
+}
+
+#dotGridCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Ensure hero content is above the canvas */
+#page-home .hero-deco,
+#page-home .home-welcome,
+#page-home .home-search,
+#page-home .stats-row,
+#page-home .daily-quote,
+#page-home .featured-competitions-section,
+#page-home .featured-row,
+#page-home .service-list,
+#page-home .footer-simple {
+  position: relative;
+  z-index: 1;
+}
+
+/* Card Tilt Shine Overlay */
+.card-tilt-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Particle System Container */
+#particleContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+#particleContainer canvas {
+  display: block;
+}
+

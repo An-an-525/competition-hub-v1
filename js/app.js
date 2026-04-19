@@ -120,9 +120,10 @@ function initRevealAnimations() {
 }
 
 /* ============================================
-   Claude Aesthetic: 3D Card Tilt (DISABLED for performance)
+   Claude Aesthetic: 3D Card Tilt
+   (Full implementation in js/effects.js)
    ============================================ */
-function initCardTilt() { return; }
+// initCardTilt is defined in effects.js and exposed globally
 
 /* ============================================
    Claude Aesthetic: Custom Cursor (DISABLED for performance)
@@ -1473,6 +1474,10 @@ document.addEventListener('DOMContentLoaded',function(){
   initRevealAnimations();
   // Render featured competitions on homepage
   renderFeaturedCompetitions();
+  // Visual effects (from js/effects.js)
+  if(typeof initDotGrid==='function') initDotGrid();
+  if(typeof initCardTilt==='function') initCardTilt();
+  if(typeof initParticleSystem==='function') initParticleSystem();
 });
 
 /* ========== 校历日历数据和功能 ========== */
