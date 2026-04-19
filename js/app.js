@@ -564,6 +564,10 @@ function renderCompAll(container){
     html+='</div>';
     html+='<div class="info-row"><div class="info-label">主办单位</div><div class="info-value" style="max-width:70%">'+esc(c.organizer)+'</div></div>';
     html+='<div class="info-row"><div class="info-label">比赛时间</div><div class="info-value">'+esc(c.competition_period)+'</div></div>';
+    // 截止日期高亮
+    if(c.registration_period){
+      html+='<div class="info-row"><div class="info-label">报名截止</div><div class="info-value" style="color:'+(c.registration_period.indexOf('待定')>=0?'var(--text-muted)':'#ef4444')+'">'+esc(c.registration_period)+'</div></div>';
+    }
     if(c.csust_status)html+='<div class="info-row"><div class="info-label">长理参赛</div><div class="info-value" style="color:var(--accent)">'+esc(c.csust_status)+'</div></div>';
     html+='<div style="margin-top:10px"><button class="btn-secondary btn-sm" onclick="showCompDetail('+idx+')">查看详情</button>';
     if(c.official_website)html+=' <a href="'+esc(c.official_website)+'" target="_blank" class="btn-secondary btn-sm" style="text-decoration:none;margin-left:6px">官网</a>';
@@ -620,8 +624,37 @@ function showCompDetail(idx){
   if(c.csust_status)html+='<div class="info-row"><div class="info-label">长理参赛</div><div class="info-value" style="color:var(--accent);max-width:70%">'+esc(c.csust_status)+'</div></div>';
   html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
   if(c.official_website)html+='<div style="margin-top:12px"><a href="'+esc(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
+    // 报名 CTA
+    var regDeadline = c.registration_period || '';
+    var hasDeadline = regDeadline.length > 0;
+    html += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">';
+    html += '<button class="btn-primary" style="width:100%;padding:14px;font-size:15px" onclick="handleCompRegister(\'' + idx + '\')">';
+    html += hasDeadline ? '立即报名（截止：' + esc(regDeadline) + '）' : '立即报名';
+    html += '</button>';
+    if (c.official_website) {
+      html += '<p style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">也可前往 <a href="' + esc(c.official_website) + '" target="_blank" style="color:var(--accent)">官方网站</a> 报名</p>';
+    }
+    html += '</div>';
   html+='</div>';
   showCompModal(html);
+}
+function handleCompRegister(idx) {
+  var c = CSUST_DATA.competitions[idx];
+  if (!c) return;
+  var user = getCurrentUser();
+  if (!user) {
+    showConfirm('报名需要先登录，是否前往登录？', function() {
+      navigate('auth');
+    });
+    return;
+  }
+  if (c.official_website) {
+    showConfirm('将跳转到 ' + esc(c.name) + ' 的官方网站进行报名，是否继续？', function() {
+      window.open(c.official_website, '_blank');
+    });
+  } else {
+    showCopyToast('该竞赛暂未开放在线报名，请关注官方通知', 'info');
+  }
 }
 function showCompModal(contentHtml){
   var overlay=document.createElement('div');
@@ -786,6 +819,11 @@ function getCurrentUser(){
 function setCurrentUser(u){if(u){localStorage.setItem('app_user',JSON.stringify(u))}else{localStorage.removeItem('app_user')}}
 function isLoggedIn(){return!!getCurrentUser()}
 function isAdmin(){var u=getCurrentUser();return u&&u.role==='admin'}
+function demoLogin(){
+  document.getElementById('authLoginStudentId').value='admin';
+  document.getElementById('authLoginPassword').value='admin123';
+  doLogin();
+}
 async function doLogin(){
   var sid=document.getElementById('authLoginStudentId').value.trim();
   var pwd=document.getElementById('authLoginPassword').value;
@@ -1000,7 +1038,7 @@ async function renderFeaturedCompetitions(){
       html+='<div class="featured-comp-body">';
       html+='<div class="featured-comp-level">'+esc(levelLabel)+'</div>';
       if(c.organizer)html+='<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">'+esc(c.organizer)+'</div>';
-      html+='<button class="featured-comp-btn">查看详情 &#8250;</button>';
+      html+='<button class="featured-comp-btn" onclick="event.stopPropagation();showHubCompDetail('+c.id+')">查看详情 &#8250;</button>';
       html+='</div></div>';
     });
     row.innerHTML=html;

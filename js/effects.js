@@ -456,6 +456,20 @@
       return;
     }
 
+    // 检测 WebGL 可用性
+    try {
+      var testCanvas = document.createElement('canvas');
+      var testGl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+      if (!testGl) {
+        console.warn('WebGL 不可用，粒子系统已禁用');
+        container.style.display = 'none';
+        return;
+      }
+    } catch(e) {
+      container.style.display = 'none';
+      return;
+    }
+
     // Check if Three.js is loaded
     if (typeof THREE === 'undefined') {
       console.warn('Three.js not loaded, particle system disabled.');
