@@ -192,11 +192,11 @@
 
         // Glow on wave peaks
         var radius = BASE_RADIUS + wavePeak * 1.2;
-        var alpha = (0.4 + wavePeak * 0.6) * dotAlpha;
+        var alpha = (0.15 + wavePeak * 0.25) * dotAlpha;
 
-        if (wavePeak > 0.4) {
-          ctx.shadowBlur = 8 + wavePeak * 12;
-          ctx.shadowColor = 'rgba(' + r + ',' + g + ',' + b + ',' + (alpha * 0.6) + ')';
+        if (wavePeak > 0.5) {
+          ctx.shadowBlur = 4 + wavePeak * 6;
+          ctx.shadowColor = 'rgba(' + r + ',' + g + ',' + b + ',' + (alpha * 0.3) + ')';
         } else {
           ctx.shadowBlur = 0;
         }
@@ -221,12 +221,12 @@
       ctx.lineWidth = 0.5;
       for (var i = 0; i < dots.length; i++) {
         var a = dots[i];
-        if (!a._dotAlpha || a._dotAlpha <= 0 || a._wavePeak < 0.35) continue;
+        if (!a._dotAlpha || a._dotAlpha <= 0 || a._wavePeak < 0.5) continue;
 
         // Only check right and bottom neighbors for efficiency
         for (var j = i + 1; j < dots.length; j++) {
           var b = dots[j];
-          if (!b._dotAlpha || b._dotAlpha <= 0 || b._wavePeak < 0.35) continue;
+          if (!b._dotAlpha || b._dotAlpha <= 0 || b._wavePeak < 0.5) continue;
 
           // Skip if not neighbors (for performance, only check adjacent)
           var colDiff = Math.abs(a.col - b.col);
@@ -238,7 +238,7 @@
           var ldist = Math.sqrt(ldx * ldx + ldy * ldy);
 
           if (ldist < SPACING * 1.5) {
-            var lineAlpha = (1 - ldist / (SPACING * 1.5)) * 0.3 * Math.min(a._dotAlpha, b._dotAlpha);
+            var lineAlpha = (1 - ldist / (SPACING * 1.5)) * 0.12 * Math.min(a._dotAlpha, b._dotAlpha);
             var avgR = Math.round((a._r + b._r) / 2);
             var avgG = Math.round((a._g + b._g) / 2);
             var avgB = Math.round((a._b + b._b) / 2);

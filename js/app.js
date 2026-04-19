@@ -83,7 +83,7 @@ function initGSAPAnimations() {
         span.textContent = char === ' ' ? '\u00A0' : char;
         heroTitle.appendChild(span);
       });
-      gsap.from('.hero-title .char', { y: 80, opacity: 0, duration: 0.6, stagger: 0.03, ease: 'power4.out', delay: 0.2 });
+      gsap.from('.hero-title .char', { y: 30, opacity: 0, duration: 0.5, stagger: 0.02, ease: 'power3.out', delay: 0.2 });
     }
 
     // Subtitle
