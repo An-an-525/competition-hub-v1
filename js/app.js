@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
   initGSAPAnimations();
   initScrollProgress();
   initRevealAnimations();
-  renderFeaturedCompetitions();
+  if (typeof renderFeaturedCompetitions === 'function') renderFeaturedCompetitions();
+  if (typeof initBackToTop === 'function') initBackToTop();
   if (typeof initDotGrid === 'function') initDotGrid();
   if (typeof initCardTilt === 'function') initCardTilt();
   if (typeof initParticleSystem === 'function') initParticleSystem();

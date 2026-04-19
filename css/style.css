@@ -1863,6 +1863,9 @@ button:disabled {
   .page-breadcrumb { display: none; }
 }
 
+/* 用户手动选择亮色主题时，即使在移动端也使用亮色变量 */
+html[data-user-theme="light"]{--page-bg:#F6F5F2;--panel-bg:#FFFFFF;--bg-primary:#F6F5F2;--bg-secondary:#EDECEA;--bg-tertiary:#E5E4E1;--bg-card:#FFFFFF;--bg-hover:rgba(17,17,17,0.04);--bg-card-solid:#FFFFFF;--text-primary:#111111;--text-secondary:rgba(17,17,17,0.72);--text-muted:rgba(17,17,17,0.56);--accent:#1F2328;--accent-light:#333840;--accent-dark:#111318;--border-subtle:rgba(17,17,17,0.10);--border-light:rgba(17,17,17,0.14);--border-accent:rgba(17,17,17,0.16);--surface-glass:rgba(246,245,242,0.92);--shadow-card:0 10px 30px rgba(17,17,17,0.08);--shadow-card-hover:0 14px 40px rgba(17,17,17,0.12)}
+
 /* Claude 风格：移动端可保持暗色 */
 @media(max-width:768px){
   :root {
