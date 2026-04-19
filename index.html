@@ -402,6 +402,103 @@
       .msg{max-width:85%}
       .profile-header{padding:24px 16px}
     }
+    /* ===== Competition Hub Registration System ===== */
+    .loading-spinner{display:inline-block;border:3px solid var(--border-subtle);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+    .loading-overlay{text-align:center;padding:48px 20px;color:var(--text-muted)}
+    .empty-state{text-align:center;padding:48px 20px;color:var(--text-muted)}
+    .empty-state-icon{font-size:48px;margin-bottom:12px}
+    .empty-state p{font-size:14px;margin-top:4px}
+    .status-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
+    .status-open{background:rgba(46,204,113,0.12);color:#2ecc71}
+    .status-upcoming{background:rgba(52,152,219,0.12);color:#3498db}
+    .status-ended{background:rgba(149,165,166,0.12);color:#95a5a6}
+    .status-closed{background:rgba(231,76,60,0.12);color:#e74c3c}
+    .status-pending{background:rgba(243,156,18,0.12);color:#f39c12}
+    .status-approved{background:rgba(46,204,113,0.12);color:#2ecc71}
+    .status-rejected{background:rgba(231,76,60,0.12);color:#e74c3c}
+    .status-cancelled{background:rgba(149,165,166,0.12);color:#95a5a6}
+    .status-forming{background:rgba(52,152,219,0.12);color:#3498db}
+    .status-submitted{background:rgba(243,156,18,0.12);color:#f39c12}
+    .comp-hub-card{border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:20px;background:var(--bg-card);box-shadow:var(--shadow-sm);transition:all .25s ease;cursor:pointer}
+    .comp-hub-card:hover{border-color:var(--border-accent);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .comp-hub-card h4{font-size:15px;color:var(--text-primary);margin-bottom:8px;line-height:1.5}
+    .comp-hub-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+    .comp-hub-info{font-size:13px;color:var(--text-secondary);line-height:1.6}
+    .comp-hub-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+    .reg-count{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+    .reg-count svg{width:14px;height:14px}
+    .team-card{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--bg-card);margin-bottom:10px;transition:border-color .25s ease}
+    .team-card:hover{border-color:var(--border-accent)}
+    .team-card h4{font-size:14px;color:var(--text-primary);margin-bottom:6px}
+    .team-card .team-meta{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+    .team-member-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-subtle)}
+    .team-member-item:last-child{border-bottom:none}
+    .team-member-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+    .team-member-info{flex:1;min-width:0}
+    .team-member-name{font-size:13px;color:var(--text-primary);font-weight:500}
+    .team-member-role{font-size:11px;color:var(--text-muted)}
+    .admin-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+    .admin-stat-card{text-align:center;padding:20px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--bg-card)}
+    .admin-stat-value{font-size:28px;font-weight:700;color:var(--accent)}
+    .admin-stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
+    .admin-filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+    .admin-filter-bar select,.admin-filter-bar input{padding:8px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none}
+    .admin-filter-bar select:focus,.admin-filter-bar input:focus{border-color:var(--accent)}
+    .admin-reg-item{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--bg-card);margin-bottom:10px}
+    .admin-reg-item .reg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .admin-reg-item .reg-comp{font-size:15px;font-weight:600;color:var(--text-primary)}
+    .admin-reg-item .reg-student{font-size:13px;color:var(--text-secondary);margin-bottom:4px}
+    .admin-reg-item .reg-detail{font-size:12px;color:var(--text-muted)}
+    .admin-reg-item .reg-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .btn-approve{padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;border:none;background:rgba(46,204,113,0.15);color:#2ecc71;cursor:pointer;transition:all .2s ease}
+    .btn-approve:hover{background:rgba(46,204,113,0.25)}
+    .btn-reject{padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;border:none;background:rgba(231,76,60,0.15);color:#e74c3c;cursor:pointer;transition:all .2s ease}
+    .btn-reject:hover{background:rgba(231,76,60,0.25)}
+    .reject-reason-input{width:100%;padding:10px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;margin-top:8px;resize:vertical;min-height:60px}
+    .reject-reason-input:focus{border-color:var(--accent)}
+    .notif-bell{position:relative;cursor:pointer;padding:6px;border:none;background:none;color:var(--text-secondary);display:flex;align-items:center;justify-content:center}
+    .notif-bell svg{width:20px;height:20px}
+    .notif-badge{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:999px;background:#e74c3c;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+    .notif-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;width:360px;max-height:480px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);z-index:200;overflow:hidden;flex-direction:column}
+    .notif-dropdown.show{display:flex}
+    .notif-dropdown-header{padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:14px;font-weight:600;color:var(--text-primary);display:flex;justify-content:space-between;align-items:center}
+    .notif-dropdown-header button{background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;font-family:inherit}
+    .notif-list{overflow-y:auto;flex:1}
+    .notif-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border-subtle);cursor:pointer;transition:background .15s ease}
+    .notif-item:hover{background:var(--bg-hover)}
+    .notif-item.unread{background:var(--surface-accent)}
+    .notif-item-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--surface-gold-subtle)}
+    .notif-item-content{flex:1;min-width:0}
+    .notif-item-title{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+    .notif-item-text{font-size:12px;color:var(--text-secondary);line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .notif-item-time{font-size:11px;color:var(--text-muted);margin-top:2px}
+    .notif-empty{text-align:center;padding:32px 16px;color:var(--text-muted);font-size:13px}
+    .auth-field{margin-bottom:14px}
+    .auth-field label{display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:500}
+    .auth-field input,.auth-field select,.auth-field textarea{width:100%;padding:10px 12px;border:1px solid var(--border-subtle);border-radius:8px;font-size:14px;background:var(--bg-card);color:var(--text-primary);font-family:inherit;outline:none;transition:border-color .25s ease}
+    .auth-field input:focus,.auth-field select:focus,.auth-field textarea:focus{border-color:var(--accent);box-shadow:var(--ring-offset)}
+    .auth-field input::placeholder,.auth-field textarea::placeholder{color:var(--text-muted)}
+    .auth-error{font-size:12px;color:#e74c3c;margin-top:6px;display:none}
+    .auth-error.show{display:block}
+    .nav-user-info{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:999px;transition:background .2s ease}
+    .nav-user-info:hover{background:var(--bg-hover)}
+    .nav-user-name{font-size:13px;font-weight:500;color:var(--text-primary);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:160px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:8px;z-index:200;box-shadow:var(--shadow-lg)}
+    .nav-user-dropdown.show{display:block;animation:dropIn .2s ease forwards}
+    .nav-user-dropdown .nav-link{display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;font-size:13px}
+    .my-reg-card{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--bg-card);margin-bottom:10px;transition:border-color .25s ease}
+    .my-reg-card:hover{border-color:var(--border-accent)}
+    .my-reg-card .reg-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+    .my-reg-card .reg-info{font-size:13px;color:var(--text-secondary);margin-bottom:4px}
+    .my-reg-card .reg-time{font-size:12px;color:var(--text-muted)}
+    .my-reg-card .reg-actions{margin-top:10px;display:flex;gap:8px;align-items:center}
+    @media(max-width:600px){
+      .admin-stat-grid{grid-template-columns:1fr}
+      .notif-dropdown{width:calc(100vw - 32px);right:-8px}
+      .toolbox-grid{grid-template-columns:repeat(2,1fr)}
+      .pomodoro-time{font-size:48px}
+      .schedule-grid{font-size:10px}
+    }
     .theme-toggle-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s ease;font-size:16px}
     .theme-toggle-btn:hover{background:var(--bg-hover);border-color:var(--border-accent)}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -562,7 +659,17 @@
       <button class="nav-link" data-page="profile" onclick="navigate('profile')">个人中心</button>
     </div>
     <div class="nav-right">
-      <button class="nav-login-btn" onclick="navigate('profile')">我的报名</button>
+      <div id="navAuthArea" style="display:flex;align-items:center;gap:8px"></div>
+      <div style="position:relative" id="notifBellWrap">
+        <button class="notif-bell" id="notifBellBtn" onclick="toggleNotifDropdown()" aria-label="通知" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+        </button>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-dropdown-header"><span>通知</span><button onclick="markAllNotifsRead()">全部已读</button></div>
+          <div class="notif-list" id="notifList"><div class="notif-empty">暂无通知</div></div>
+        </div>
+      </div>
       <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn" aria-label="切换主题">
         <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -609,6 +716,10 @@
     <button class="nav-link" data-page="toolbox" onclick="navigate('toolbox');closeMobileMenu()">工具箱</button>
     <div class="mobile-menu-label">个人</div>
     <button class="nav-link" data-page="profile" onclick="navigate('profile');closeMobileMenu()">个人中心</button>
+    <button class="nav-link" data-page="myregistrations" onclick="navigate('myregistrations');closeMobileMenu()" id="mobileMyRegsBtn" style="display:none">我的报名</button>
+    <button class="nav-link" data-page="admin" onclick="navigate('admin');closeMobileMenu()" id="mobileAdminBtn" style="display:none">管理面板</button>
+    <button class="nav-link" data-page="auth" onclick="navigate('auth');closeMobileMenu()" id="mobileAuthBtn">登录/注册</button>
+    <button class="nav-link" id="mobileLogoutBtn" style="display:none" onclick="doLogout();closeMobileMenu()">退出登录</button>
   </div>
   <main class="shell" id="main-content">
     <div id="page-home" class="page active">
@@ -804,6 +915,36 @@
       </div>
     </div>
     <div id="page-profile" class="page"><div id="profileContent"></div></div>
+    <div id="page-auth" class="page">
+      <div class="auth-container">
+        <div class="card auth-card">
+          <h2>竞赛报名系统</h2>
+          <p class="auth-sub">登录以管理你的竞赛报名</p>
+          <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchAuthTab('login')">登录</button>
+            <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
+          </div>
+          <div id="authLoginForm" class="auth-form active">
+            <div class="auth-field"><label>学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" /></div>
+            <div class="auth-field"><label>密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+            <div class="auth-error" id="authLoginError"></div>
+            <button class="btn-primary auth-submit" onclick="doLogin()" id="authLoginBtn">登录</button>
+          </div>
+          <div id="authRegisterForm" class="auth-form">
+            <div class="auth-field"><label>学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" /></div>
+            <div class="auth-field"><label>姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" /></div>
+            <div class="auth-field"><label>学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" /></div>
+            <div class="auth-field"><label>密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
+            <div class="auth-field"><label>确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /></div>
+            <div class="auth-agreement"><input type="checkbox" id="authAgree" /><span>我已阅读并同意 <a onclick="showLegalModal('terms')">用户协议</a> 和 <a onclick="showLegalModal('privacy')">隐私政策</a></span></div>
+            <div class="auth-error" id="authRegError"></div>
+            <button class="btn-primary auth-submit" onclick="doRegister()" id="authRegBtn">注册</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="page-admin" class="page"><div id="adminContent"></div></div>
+    <div id="page-myregistrations" class="page"><div id="myRegsContent"></div></div>
   </main>
   <div class="copy-toast" id="copyToast">已复制到剪贴板</div>
   <div class="contact-modal-overlay" id="contactModal" onclick="if(event.target===this)hideContactModal()">
@@ -1401,6 +1542,600 @@ function renderCompSecurity(container){
   html+='</div>';
   container.innerHTML=html;
 }
+
+/* ===== Competition Hub Registration System (New) ===== */
+var HUB_URL='https://fdbbcibmqaogsbasoqly.supabase.co';
+var HUB_KEY='sb_publishable_Vc1DwX3BjKjbeRq-tdvQqQ_m8Cm-6mZ';
+var HUB_HEADERS={'apikey':HUB_KEY,'Authorization':'Bearer '+HUB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+var _cachedCompetitions=null;
+var _cachedRegCounts={};
+var _notifPollTimer=null;
+
+/* --- Auth System --- */
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach(function(t,i){t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1))});
+  document.getElementById('authLoginForm').classList.toggle('active',tab==='login');
+  document.getElementById('authRegisterForm').classList.toggle('active',tab==='register');
+  document.getElementById('authLoginError').classList.remove('show');
+  document.getElementById('authRegError').classList.remove('show');
+}
+function checkPasswordStrength(pwd){
+  var s=0;if(pwd.length>=6)s++;if(pwd.length>=10)s++;if(/[A-Z]/.test(pwd)&&/[a-z]/.test(pwd))s++;if(/[0-9]/.test(pwd)&&/[^A-Za-z0-9]/.test(pwd))s++;
+  var labels=['','弱','一般','较强','强'];var cls=['','weak','medium','medium','strong'];
+  for(var i=1;i<=4;i++){var bar=document.getElementById('pwdBar'+i);if(bar){bar.className='password-strength-bar'+(i<=s?' '+cls[s]:'')}}
+  var txt=document.getElementById('pwdStrengthText');if(txt)txt.textContent=pwd.length>0?'密码强度：'+labels[s]:'';
+}
+async function hashPassword(pwd){
+  var encoder=new TextEncoder();var data=encoder.encode(pwd);
+  var hashBuffer=await crypto.subtle.digest('SHA-256',data);
+  var hashArray=Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+}
+function getCurrentUser(){
+  try{var u=localStorage.getItem('app_user');return u?JSON.parse(u):null}catch(e){return null}
+}
+function setCurrentUser(u){if(u){localStorage.setItem('app_user',JSON.stringify(u))}else{localStorage.removeItem('app_user')}}
+function isLoggedIn(){return!!getCurrentUser()}
+function isAdmin(){var u=getCurrentUser();return u&&u.role==='admin'}
+async function doLogin(){
+  var sid=document.getElementById('authLoginStudentId').value.trim();
+  var pwd=document.getElementById('authLoginPassword').value;
+  var errEl=document.getElementById('authLoginError');
+  var btn=document.getElementById('authLoginBtn');
+  errEl.classList.remove('show');
+  if(!sid||!pwd){errEl.textContent='请输入学号和密码';errEl.classList.add('show');return}
+  btn.disabled=true;btn.textContent='登录中...';
+  try{
+    var hash=await hashPassword(pwd);
+    var res=await fetch(HUB_URL+'/rest/v1/profiles?student_id=eq.'+encodeURIComponent(sid),{headers:HUB_HEADERS});
+    if(!res.ok){errEl.textContent='登录失败，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
+    var data=await res.json();
+    if(data.length===0){errEl.textContent='该学号未注册';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
+    var profile=data[0];
+    if(profile.password_hash!==hash){errEl.textContent='密码错误';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
+    setCurrentUser({id:profile.id,studentId:profile.student_id,name:profile.name,college:profile.college,role:profile.role});
+    showCopyToast('登录成功，欢迎 '+profile.name,'success');
+    updateNavAuth();
+    if(profile.role==='admin'){navigate('admin')}else{navigate('home')}
+  }catch(e){errEl.textContent='网络错误，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录'}
+}
+async function doRegister(){
+  var sid=document.getElementById('authRegStudentId').value.trim();
+  var name=document.getElementById('authRegName').value.trim();
+  var college=document.getElementById('authRegCollege').value.trim();
+  var pwd=document.getElementById('authRegPassword').value;
+  var pwd2=document.getElementById('authRegPassword2').value;
+  var agree=document.getElementById('authAgree').checked;
+  var errEl=document.getElementById('authRegError');
+  var btn=document.getElementById('authRegBtn');
+  errEl.classList.remove('show');
+  if(!sid||!name||!college||!pwd){errEl.textContent='请填写所有必填项';errEl.classList.add('show');return}
+  if(pwd.length<6){errEl.textContent='密码至少6位';errEl.classList.add('show');return}
+  if(pwd!==pwd2){errEl.textContent='两次密码不一致';errEl.classList.add('show');return}
+  if(!agree){errEl.textContent='请先同意用户协议和隐私政策';errEl.classList.add('show');return}
+  btn.disabled=true;btn.textContent='注册中...';
+  try{
+    var hash=await hashPassword(pwd);
+    var res=await fetch(HUB_URL+'/rest/v1/profiles',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({student_id:sid,name:name,college:college,password_hash:hash,role:'student'})});
+    if(!res.ok){var errData={};try{errData=await res.json()}catch(e){}if(errData.message&&errData.message.indexOf('duplicate')>=0){errEl.textContent='该学号已注册，请直接登录'}else{errEl.textContent='注册失败，请重试'}errEl.classList.add('show');btn.disabled=false;btn.textContent='注册';return}
+    var data=await res.json();
+    var profile=data[0];
+    setCurrentUser({id:profile.id,studentId:profile.student_id,name:profile.name,college:profile.college,role:profile.role||'student'});
+    showCopyToast('注册成功，欢迎 '+name,'success');
+    updateNavAuth();navigate('home');
+  }catch(e){errEl.textContent='网络错误，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='注册'}
+}
+function doLogout(){
+  showConfirm('确定要退出登录吗？',function(){
+    setCurrentUser(null);updateNavAuth();stopNotifPoll();
+    showCopyToast('已退出登录','success');navigate('home');
+  });
+}
+function updateNavAuth(){
+  var area=document.getElementById('navAuthArea');
+  var bellBtn=document.getElementById('notifBellBtn');
+  var mobileAuthBtn=document.getElementById('mobileAuthBtn');
+  var mobileLogoutBtn=document.getElementById('mobileLogoutBtn');
+  var mobileMyRegsBtn=document.getElementById('mobileMyRegsBtn');
+  var mobileAdminBtn=document.getElementById('mobileAdminBtn');
+  if(!area)return;
+  var user=getCurrentUser();
+  if(user){
+    var initial=user.name?user.name.charAt(0):'?';
+    area.innerHTML='<div style="position:relative"><div class="nav-user-info" onclick="toggleUserDropdown()"><div class="nav-avatar" style="width:30px;height:30px;font-size:12px">'+esc(initial)+'</div><span class="nav-user-name">'+esc(user.name)+'</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="nav-user-dropdown" id="userDropdown"><button class="nav-link" onclick="navigate(\'myregistrations\');closeUserDropdown()">我的报名</button>'+(user.role==='admin'?'<button class="nav-link" onclick="navigate(\'admin\');closeUserDropdown()">管理面板</button>':'')+'<button class="nav-link" onclick="navigate(\'profile\');closeUserDropdown()">个人设置</button><button class="nav-link" onclick="doLogout();closeUserDropdown()" style="color:#e74c3c">退出登录</button></div></div>';
+    if(bellBtn)bellBtn.style.display='flex';
+    if(mobileAuthBtn)mobileAuthBtn.style.display='none';
+    if(mobileLogoutBtn)mobileLogoutBtn.style.display='';
+    if(mobileMyRegsBtn)mobileMyRegsBtn.style.display='';
+    if(mobileAdminBtn)mobileAdminBtn.style.display=user.role==='admin'?'':'none';
+    startNotifPoll();
+  }else{
+    area.innerHTML='<button class="nav-login-btn" onclick="navigate(\'auth\')">登录/注册</button>';
+    if(bellBtn)bellBtn.style.display='none';
+    if(mobileAuthBtn)mobileAuthBtn.style.display='';
+    if(mobileLogoutBtn)mobileLogoutBtn.style.display='none';
+    if(mobileMyRegsBtn)mobileMyRegsBtn.style.display='none';
+    if(mobileAdminBtn)mobileAdminBtn.style.display='none';
+    stopNotifPoll();
+  }
+}
+function toggleUserDropdown(){
+  var dd=document.getElementById('userDropdown');if(dd)dd.classList.toggle('show');
+}
+function closeUserDropdown(){
+  var dd=document.getElementById('userDropdown');if(dd)dd.classList.remove('show');
+}
+document.addEventListener('click',function(e){if(!e.target.closest('.nav-user-info')&&!e.target.closest('#userDropdown'))closeUserDropdown();if(!e.target.closest('#notifBellWrap')){var nd=document.getElementById('notifDropdown');if(nd)nd.classList.remove('show')}});
+
+/* --- Notification System --- */
+function toggleNotifDropdown(){
+  var dd=document.getElementById('notifDropdown');if(dd){dd.classList.toggle('show');if(dd.classList.contains('show'))loadNotifications()}
+}
+async function loadNotifications(){
+  if(!isLoggedIn())return;
+  var user=getCurrentUser();
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/notifications?user_id=eq.'+user.id+'&order=created_at.desc&limit=20',{headers:HUB_HEADERS});
+    if(!res.ok)return;
+    var notifs=await res.json();
+    renderNotifList(notifs);
+    var unread=notifs.filter(function(n){return!n.is_read}).length;
+    var badge=document.getElementById('notifBadge');
+    if(badge){badge.textContent=unread>99?'99+':unread;badge.style.display=unread>0?'flex':'none'}
+  }catch(e){}
+}
+function renderNotifList(notifs){
+  var list=document.getElementById('notifList');if(!list)return;
+  if(notifs.length===0){list.innerHTML='<div class="notif-empty">暂无通知</div>';return}
+  var html='';
+  var icons={system:'&#9888;',registration:'&#128203;',team:'&#128101;',review:'&#9989;'};
+  notifs.forEach(function(n){
+    html+='<div class="notif-item'+(n.is_read?'':' unread')+'" onclick="markNotifRead('+n.id+')">';
+    html+='<div class="notif-item-icon">'+(icons[n.type]||'&#128276;')+'</div>';
+    html+='<div class="notif-item-content"><div class="notif-item-title">'+esc(n.title)+'</div>';
+    html+='<div class="notif-item-text">'+esc(n.content)+'</div>';
+    html+='<div class="notif-item-time">'+formatTimeAgo(n.created_at)+'</div></div></div>';
+  });
+  list.innerHTML=html;
+}
+async function markNotifRead(id){
+  try{
+    await fetch(HUB_URL+'/rest/v1/notifications?id=eq.'+id,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({is_read:true})});
+    loadNotifications();
+  }catch(e){}
+}
+async function markAllNotifsRead(){
+  if(!isLoggedIn())return;
+  var user=getCurrentUser();
+  try{
+    await fetch(HUB_URL+'/rest/v1/notifications?user_id=eq.'+user.id+'&is_read=eq.false',{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({is_read:true})});
+    loadNotifications();showCopyToast('已全部标为已读','success');
+  }catch(e){}
+}
+function startNotifPoll(){stopNotifPoll();if(!isLoggedIn())return;_notifPollTimer=setInterval(function(){loadNotifications()},30000)}
+function stopNotifPoll(){if(_notifPollTimer){clearInterval(_notifPollTimer);_notifPollTimer=null}}
+function formatTimeAgo(dateStr){
+  if(!dateStr)return'';var d=new Date(dateStr);var now=new Date();var diff=Math.floor((now-d)/1000);
+  if(diff<60)return'刚刚';if(diff<3600)return Math.floor(diff/60)+'分钟前';
+  if(diff<86400)return Math.floor(diff/3600)+'小时前';if(diff<604800)return Math.floor(diff/86400)+'天前';
+  return d.getFullYear()+'-'+(d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();
+}
+
+/* --- Competition Hub Data --- */
+async function fetchCompetitions(){
+  if(_cachedCompetitions)return _cachedCompetitions;
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/competitions?order=sort_order.desc,created_at.desc',{headers:HUB_HEADERS});
+    if(!res.ok)return[];
+    _cachedCompetitions=await res.json();return _cachedCompetitions;
+  }catch(e){console.error('获取竞赛数据失败:',e);return[]}
+}
+async function fetchRegCounts(){
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/registrations?select=competition_id,status',{headers:HUB_HEADERS});
+    if(!res.ok)return{};
+    var regs=await res.json();
+    var counts={};
+    regs.forEach(function(r){counts[r.competition_id]=(counts[r.competition_id]||0)+1});
+    _cachedRegCounts=counts;return counts;
+  }catch(e){return{}}
+}
+function getStatusBadge(status){
+  var map={open:['报名中','status-open'],upcoming:['即将开放','status-upcoming'],closed:['已关闭','status-closed'],ended:['已结束','status-ended']};
+  var s=map[status]||[status||'未知','status-ended'];
+  return'<span class="status-badge '+s[1]+'">'+esc(s[0])+'</span>';
+}
+function getRegStatusBadge(status){
+  var map={pending:['待审核','status-pending'],approved:['已通过','status-approved'],rejected:['已拒绝','status-rejected'],cancelled:['已取消','status-cancelled']};
+  var s=map[status]||[status||'未知','status-ended'];
+  return'<span class="status-badge '+s[1]+'">'+esc(s[0])+'</span>';
+}
+function getTeamStatusBadge(status){
+  var map={forming:['组队中','status-forming'],submitted:['已提交','status-submitted'],approved:['已通过','status-approved'],rejected:['已拒绝','status-rejected']};
+  var s=map[status]||[status||'未知','status-ended'];
+  return'<span class="status-badge '+s[1]+'">'+esc(s[0])+'</span>';
+}
+function formatDate(d){
+  if(!d)return'';var dt=new Date(d);return dt.getFullYear()+'-'+(dt.getMonth()+1<10?'0':'')+(dt.getMonth()+1)+'-'+(dt.getDate()<10?'0':'')+dt.getDate();
+}
+
+/* --- Competition Display (Hub) --- */
+async function renderCompHub(container){
+  container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:32px;height:32px"></div><p style="margin-top:12px">加载竞赛数据...</p></div>';
+  var comps=await fetchCompetitions();
+  var counts=await fetchRegCounts();
+  var categories=['全部'];comps.forEach(function(c){if(categories.indexOf(c.category)<0)categories.push(c.category)});
+  var statuses=['全部','open','upcoming','closed','ended'];
+  var statusLabels={'全部':'全部','open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
+  var html='<div style="margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="applyHubFilters()"/></div>';
+  html+='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">分类</div><div class="club-filter-bar" id="hubCatFilter">';
+  categories.forEach(function(c,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'cat\',\''+esc(c)+'\')">'+esc(c)+'</button>'});
+  html+='</div></div><div style="margin-bottom:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">状态</div><div class="club-filter-bar" id="hubStatusFilter">';
+  statuses.forEach(function(s,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'status\',\''+s+'\')">'+esc(statusLabels[s])+'</button>'});
+  html+='</div></div><div id="hubCompList" class="knowledge-list"><div id="hubCompCount" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">共 '+comps.length+' 项竞赛</div>';
+  comps.forEach(function(c){
+    var regCount=counts[c.id]||0;
+    html+='<div class="comp-hub-card hub-card" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" onclick="showHubCompDetail('+c.id+')">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h4 style="flex:1">'+esc(c.name)+'</h4>'+getStatusBadge(c.status)+'</div>';
+    html+='<div class="comp-hub-meta">';
+    if(c.level)html+='<span class="tag-pill">'+esc(c.level)+'</span>';
+    if(c.category)html+='<span class="tag-pill" style="background:var(--surface-gold-subtle);color:var(--gold)">'+esc(c.category)+'</span>';
+    html+='</div>';
+    if(c.description)html+='<div class="comp-hub-info" style="margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.description)+'</div>';
+    html+='<div class="comp-hub-info">';
+    if(c.organizer)html+='<div>主办：'+esc(c.organizer)+'</div>';
+    if(c.comp_date)html+='<div>比赛：'+esc(formatDate(c.comp_date))+'</div>';
+    if(c.reg_start)html+='<div>报名：'+esc(formatDate(c.reg_start))+' ~ '+(c.reg_end?esc(formatDate(c.reg_end)):'待定')+'</div>';
+    html+='</div>';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div class="reg-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'+regCount+'人已报名</div>';
+    if(c.status==='open')html+='<button class="btn-primary btn-sm" onclick="event.stopPropagation();showRegFormForComp('+c.id+')">立即报名</button>';
+    html+='</div></div>';
+  });
+  html+='</div>';
+  container.innerHTML=html;
+}
+function filterHubBy(type,val){
+  var filterId=type==='cat'?'hubCatFilter':'hubStatusFilter';
+  document.querySelectorAll('#'+filterId+' .club-filter-btn').forEach(function(b){b.classList.toggle('active',b.textContent===val)});
+  applyHubFilters();
+}
+function applyHubFilters(){
+  var activeCat=document.querySelector('#hubCatFilter .club-filter-btn.active');
+  var activeStatus=document.querySelector('#hubStatusFilter .club-filter-btn.active');
+  var cat=activeCat?activeCat.textContent:'全部';
+  var status=activeStatus?activeStatus.textContent:'全部';
+  var statusMap={'全部':'','报名中':'open','即将开放':'upcoming','已关闭':'closed','已结束':'ended'};
+  var statusVal=statusMap[status]||'';
+  var q=document.getElementById('hubSearchInput')?document.getElementById('hubSearchInput').value.toLowerCase():'';
+  var visibleCount=0;
+  document.querySelectorAll('.hub-card').forEach(function(card){
+    var name=card.getAttribute('data-name')||'';
+    var cardCat=card.getAttribute('data-category')||'';
+    var cardStatus=card.getAttribute('data-status')||'';
+    var matchCat=(cat==='全部'||cardCat===cat);
+    var matchStatus=(!statusVal||cardStatus===statusVal);
+    var matchQ=(!q||name.indexOf(q)>=0);
+    card.style.display=(matchCat&&matchStatus&&matchQ)?'':'none';
+    if(matchCat&&matchStatus&&matchQ)visibleCount++;
+  });
+  var countEl=document.getElementById('hubCompCount');
+  if(countEl)countEl.textContent='显示 '+visibleCount+' 项竞赛';
+}
+
+/* --- Competition Detail Modal --- */
+async function showHubCompDetail(compId){
+  var comps=await fetchCompetitions();var c=comps.find(function(x){return x.id===compId});if(!c)return;
+  var counts=await fetchRegCounts();var regCount=counts[compId]||0;
+  var user=getCurrentUser();
+  var html='<div style="max-height:70vh;overflow-y:auto;padding-right:8px">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px"><h3 style="font-size:18px;color:var(--text-primary);flex:1">'+esc(c.name)+'</h3>'+getStatusBadge(c.status)+'</div>';
+  html+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px">';
+  if(c.level)html+='<span class="tag-pill">'+esc(c.level)+'</span>';
+  if(c.category)html+='<span class="tag-pill" style="background:var(--surface-gold-subtle);color:var(--gold)">'+esc(c.category)+'</span>';
+  if(c.is_team)html+='<span class="tag-pill" style="background:rgba(52,152,219,0.12);color:#3498db">团队赛 ('+esc(c.team_min||'?')+'-'+esc(c.team_max||'?')+'人)</span>';
+  else html+='<span class="tag-pill" style="background:rgba(46,204,113,0.12);color:#2ecc71">个人赛</span>';
+  html+='</div>';
+  html+='<div class="info-row"><div class="info-label">主办单位</div><div class="info-value" style="max-width:70%">'+esc(c.organizer||'')+'</div></div>';
+  if(c.reg_start)html+='<div class="info-row"><div class="info-label">报名时间</div><div class="info-value">'+esc(formatDate(c.reg_start))+' ~ '+(c.reg_end?esc(formatDate(c.reg_end)):'待定')+'</div></div>';
+  if(c.comp_date)html+='<div class="info-row"><div class="info-label">比赛时间</div><div class="info-value">'+esc(formatDate(c.comp_date))+'</div></div>';
+  if(c.location)html+='<div class="info-row"><div class="info-label">比赛地点</div><div class="info-value">'+esc(c.location)+'</div></div>';
+  if(c.max_registrations)html+='<div class="info-row"><div class="info-label">名额限制</div><div class="info-value">'+esc(c.max_registrations)+'人</div></div>';
+  html+='<div class="info-row"><div class="info-label">已报名</div><div class="info-value" style="color:var(--accent)">'+regCount+'人</div></div>';
+  if(c.requirements)html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">参赛要求</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.requirements)+'</p></div>';
+  if(c.description)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
+  html+='<div style="margin-top:20px">';
+  if(c.status==='open'){
+    if(!user){html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();navigate(\'auth\')">登录后报名</button>'}
+    else{html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();showRegFormForComp('+c.id+')">立即报名</button>'}
+  }else{
+    html+='<button class="btn-primary" disabled>当前不可报名</button>';
+  }
+  html+='</div></div>';
+  showCompModal(html);
+}
+
+/* --- Registration System --- */
+async function showRegFormForComp(compId){
+  if(!isLoggedIn()){navigate('auth');return}
+  var user=getCurrentUser();
+  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});if(!comp)return;
+  var html='<div style="max-width:500px;margin:0 auto"><h3 style="margin-bottom:16px">报名：'+esc(comp.name)+'</h3>';
+  if(comp.is_team){
+    html+='<div style="margin-bottom:16px"><p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">这是一个团队赛（'+esc(comp.team_min||'?')+'-'+esc(comp.team_max||'?')+'人），请选择操作：</p>';
+    html+='<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-primary btn-sm" onclick="showCreateTeamForm('+compId+')">创建新队伍</button><button class="btn-secondary btn-sm" onclick="showJoinTeamList('+compId+')">加入已有队伍</button></div></div>';
+  }
+  html+='<div class="card" style="padding:20px;margin-top:12px"><h4 style="font-size:14px;margin-bottom:16px;color:var(--text-primary)">报名信息</h4>';
+  html+='<div class="auth-field"><label>姓名</label><input type="text" value="'+esc(user.name)+'" disabled style="opacity:0.7" /></div>';
+  html+='<div class="auth-field"><label>学号</label><input type="text" value="'+esc(user.studentId)+'" disabled style="opacity:0.7" /></div>';
+  html+='<div class="auth-field"><label>学院</label><input type="text" value="'+esc(user.college)+'" disabled style="opacity:0.7" /></div>';
+  html+='<div class="auth-field"><label>联系电话</label><input type="tel" id="regPhone" placeholder="选填" /></div>';
+  html+='<div class="auth-field"><label>邮箱</label><input type="email" id="regEmail" placeholder="选填" /></div>';
+  html+='<div class="auth-field"><label>指导老师</label><input type="text" id="regTeacher" placeholder="选填" /></div>';
+  html+='<div class="auth-field"><label>备注</label><textarea id="regNote" rows="3" placeholder="选填"></textarea></div>';
+  html+='<div class="auth-error" id="hubRegError"></div>';
+  html+='<button class="btn-primary" style="width:100%;margin-top:8px" onclick="submitHubRegistration('+compId+',null)" id="hubRegBtn">提交报名</button>';
+  html+='</div></div>';
+  showCompModal(html);
+}
+async function submitHubRegistration(compId,teamId){
+  var user=getCurrentUser();if(!user)return;
+  var phone=document.getElementById('regPhone')?document.getElementById('regPhone').value.trim():'';
+  var email=document.getElementById('regEmail')?document.getElementById('regEmail').value.trim():'';
+  var teacher=document.getElementById('regTeacher')?document.getElementById('regTeacher').value.trim():'';
+  var note=document.getElementById('regNote')?document.getElementById('regNote').value.trim():'';
+  var errEl=document.getElementById('hubRegError');
+  var btn=document.getElementById('hubRegBtn');
+  if(errEl)errEl.classList.remove('show');
+  btn.disabled=true;btn.textContent='提交中...';
+  try{
+    var payload={user_id:user.id,competition_id:compId,status:'pending',note:note};
+    if(teamId)payload.team_id=teamId;
+    var res=await fetch(HUB_URL+'/rest/v1/registrations',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify(payload)});
+    if(!res.ok){
+      var errData={};try{errData=await res.json()}catch(e){}
+      if(errData.message&&errData.message.indexOf('duplicate')>=0&&(errEl)){errEl.textContent='你已经报名过该竞赛';errEl.classList.add('show');btn.disabled=false;btn.textContent='提交报名';return}
+      if(errEl){errEl.textContent='报名失败，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='提交报名'}return;
+    }
+    showCopyToast('报名成功！','success');
+    document.body.style.overflow='';
+    var overlay=document.querySelector('.search-modal-overlay, div[style*="position:fixed"][style*="inset:0"]');
+    if(overlay)overlay.remove();
+    else{var modals=document.querySelectorAll('div[style*="position:fixed"]');modals.forEach(function(m){if(m.style.zIndex==='1000'||m.style.zIndex==='10000')m.remove()})}
+    _cachedCompetitions=null;navigate('myregistrations');
+  }catch(e){if(errEl){errEl.textContent='网络错误，请重试';errEl.classList.add('show')}btn.disabled=false;btn.textContent='提交报名'}
+}
+
+/* --- Team System --- */
+async function showCreateTeamForm(compId){
+  var user=getCurrentUser();if(!user)return;
+  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});
+  var html='<div style="max-width:400px"><h3 style="margin-bottom:16px">创建队伍</h3>';
+  if(comp)html+='<p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">竞赛：'+esc(comp.name)+'（'+esc(comp.team_min||'?')+'-'+esc(comp.team_max||'?')+'人）</p>';
+  html+='<div class="auth-field"><label>队伍名称 *</label><input type="text" id="teamNameInput" placeholder="请输入队伍名称" /></div>';
+  html+='<div class="auth-error" id="createTeamError"></div>';
+  html+='<button class="btn-primary" style="width:100%;margin-top:8px" onclick="doCreateTeam('+compId+')">创建并报名</button></div>';
+  showCompModal(html);
+}
+async function doCreateTeam(compId){
+  var user=getCurrentUser();if(!user)return;
+  var name=document.getElementById('teamNameInput').value.trim();
+  var errEl=document.getElementById('createTeamError');
+  if(!name){errEl.textContent='请输入队伍名称';errEl.classList.add('show');return}
+  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/teams',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({competition_id:compId,name:name,captain_id:user.id,max_members:comp?comp.team_max:5,status:'forming'})});
+    if(!res.ok){errEl.textContent='创建队伍失败';errEl.classList.add('show');return}
+    var teamData=await res.json();var team=teamData[0];
+    await fetch(HUB_URL+'/rest/v1/team_members',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({team_id:team.id,user_id:user.id,role:'captain',status:'approved'})});
+    showCopyToast('队伍创建成功！','success');
+    document.body.style.overflow='';
+    var modals=document.querySelectorAll('div[style*="position:fixed"]');modals.forEach(function(m){if(m.style.zIndex==='1000'||m.style.zIndex==='10000')m.remove()});
+    submitHubRegistration(compId,team.id);
+  }catch(e){errEl.textContent='网络错误';errEl.classList.add('show')}
+}
+async function showJoinTeamList(compId){
+  var user=getCurrentUser();if(!user)return;
+  var html='<div style="max-width:500px"><h3 style="margin-bottom:16px">加入队伍</h3><div id="joinTeamListContent" class="loading-overlay"><div class="loading-spinner" style="width:24px;height:24px"></div><p style="margin-top:8px">加载中...</p></div></div>';
+  showCompModal(html);
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/teams?competition_id=eq.'+compId+'&status=eq.forming&select=*,team_members(*)',{headers:HUB_HEADERS});
+    if(!res.ok){document.getElementById('joinTeamListContent').innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
+    var teams=await res.json();
+    var content=document.getElementById('joinTeamListContent');if(!content)return;
+    if(teams.length===0){content.innerHTML='<div class="empty-state"><div class="empty-state-icon">&#128101;</div><p>暂无可加入的队伍</p><p>你可以创建一个新队伍</p></div>';return}
+    var listHtml='';
+    teams.forEach(function(t){
+      var members=t.team_members||[];
+      var memberCount=members.length;
+      listHtml+='<div class="team-card"><h4>'+esc(t.name)+'</h4><div class="team-meta">'+memberCount+' / '+esc(t.max_members||'?')+' 人</div>';
+      listHtml+='<div style="display:flex;gap:8px;align-items:center"><button class="btn-primary btn-sm" onclick="requestJoinTeam('+t.id+','+compId+')">申请加入</button></div></div>';
+    });
+    content.innerHTML=listHtml;
+  }catch(e){var c2=document.getElementById('joinTeamListContent');if(c2)c2.innerHTML='<div class="empty-state"><p>加载失败</p></div>'}
+}
+async function requestJoinTeam(teamId,compId){
+  var user=getCurrentUser();if(!user)return;
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/team_members',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({team_id:teamId,user_id:user.id,role:'member',status:'pending'})});
+    if(!res.ok){showCopyToast('申请失败，可能已申请过','warning');return}
+    showCopyToast('已发送入队申请，请等待队长审核','success');
+    document.body.style.overflow='';
+    var modals=document.querySelectorAll('div[style*="position:fixed"]');modals.forEach(function(m){if(m.style.zIndex==='1000'||m.style.zIndex==='10000')m.remove()});
+  }catch(e){showCopyToast('网络错误','warning')}
+}
+
+/* --- My Registrations Page --- */
+async function renderMyRegistrations(){
+  var container=document.getElementById('myRegsContent');
+  if(!isLoggedIn()){container.innerHTML='<div class="login-required"><h3>请先登录</h3><p>登录后查看你的报名记录</p><button class="btn-primary" onclick="navigate(\'auth\')">去登录</button></div>';return}
+  var user=getCurrentUser();
+  container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:24px;height:24px"></div><p style="margin-top:8px">加载中...</p></div>';
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/registrations?user_id=eq.'+user.id+'&select=*,competitions(name,status,level,category,is_team)&order=created_at.desc',{headers:HUB_HEADERS});
+    if(!res.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
+    var regs=await res.json();
+    if(regs.length===0){
+      container.innerHTML='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div class="empty-state"><div class="empty-state-icon">&#128203;</div><p>暂无报名记录</p><p style="font-size:13px;margin-top:8px">前往学科竞赛页面报名</p><button class="btn-primary btn-sm" style="margin-top:16px" onclick="navigate(\'competition\')">浏览竞赛</button></div></div>';return;
+    }
+    var html='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">共 '+regs.length+' 条报名记录</div>';
+    regs.forEach(function(r){
+      var comp=r.competitions||{};
+      html+='<div class="my-reg-card">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="reg-title">'+esc(comp.name||'未知竞赛')+'</div>'+getRegStatusBadge(r.status)+'</div>';
+      html+='<div class="reg-info">'+esc(user.name)+' | '+esc(user.college)+'</div>';
+      if(r.reject_reason)html+='<div style="font-size:12px;color:#e74c3c;margin-top:4px">拒绝原因：'+esc(r.reject_reason)+'</div>';
+      html+='<div class="reg-time">报名时间：'+formatTimeAgo(r.created_at)+'</div>';
+      html+='<div class="reg-actions">';
+      if(r.status==='pending')html+='<button class="btn-reject" onclick="cancelMyReg('+r.id+')">取消报名</button>';
+      html+='</div></div>';
+    });
+    html+='</div>';
+    container.innerHTML=html;
+  }catch(e){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>'}
+}
+async function cancelMyReg(regId){
+  showConfirm('确定要取消该报名吗？',async function(){
+    try{
+      var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'cancelled'})});
+      if(res.ok){showCopyToast('已取消报名','success');renderMyRegistrations()}
+      else showCopyToast('操作失败','warning');
+    }catch(e){showCopyToast('网络错误','warning')}
+  });
+}
+
+/* --- Admin Panel --- */
+async function renderAdmin(){
+  var container=document.getElementById('adminContent');
+  if(!isAdmin()){container.innerHTML='<div class="login-required"><h3>无权限</h3><p>仅管理员可访问此页面</p><button class="btn-primary" onclick="navigate(\'home\')">返回首页</button></div>';return}
+  container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:32px;height:32px"></div><p style="margin-top:12px">加载管理数据...</p></div>';
+  try{
+    var regsRes=await fetch(HUB_URL+'/rest/v1/registrations?select=*,profiles(name,student_id,college),competitions(name,level,category)&order=created_at.desc',{headers:HUB_HEADERS});
+    var compsRes=await fetch(HUB_URL+'/rest/v1/competitions?select=id,name',{headers:HUB_HEADERS});
+    if(!regsRes.ok||!compsRes.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
+    var regs=await regsRes.json();
+    var comps=await compsRes.json();
+    var total=regs.length;
+    var pending=regs.filter(function(r){return r.status==='pending'}).length;
+    var approved=regs.filter(function(r){return r.status==='approved'}).length;
+    var colleges={};regs.forEach(function(r){var c=r.profiles?r.profiles.college:'未知';colleges[c]=(colleges[c]||0)+1});
+    var html='<div style="max-width:800px;margin:0 auto"><h2 class="content-page-title"><span class="gold">管理面板</span></h2>';
+    html+='<div class="admin-stat-grid"><div class="admin-stat-card"><div class="admin-stat-value">'+total+'</div><div class="admin-stat-label">总报名数</div></div><div class="admin-stat-card"><div class="admin-stat-value" style="color:#f39c12">'+pending+'</div><div class="admin-stat-label">待审核</div></div><div class="admin-stat-card"><div class="admin-stat-value" style="color:#2ecc71">'+approved+'</div><div class="admin-stat-label">已通过</div></div></div>';
+    html+='<div class="admin-filter-bar"><select id="adminFilterComp" onchange="applyAdminFilters()"><option value="">全部竞赛</option>';
+    comps.forEach(function(c){html+='<option value="'+c.id+'">'+esc(c.name)+'</option>'});
+    html+='</select><select id="adminFilterStatus" onchange="applyAdminFilters()"><option value="">全部状态</option><option value="pending">待审核</option><option value="approved">已通过</option><option value="rejected">已拒绝</option><option value="cancelled">已取消</option></select><input type="text" id="adminSearchInput" placeholder="搜索学号/姓名..." oninput="applyAdminFilters()" /></div>';
+    html+='<div id="adminRegList">';
+    if(regs.length===0){
+      html+='<div class="empty-state"><div class="empty-state-icon">&#128203;</div><p>暂无报名记录</p></div>';
+    }else{
+      regs.forEach(function(r){
+        var profile=r.profiles||{};var comp=r.competitions||{};
+        html+='<div class="admin-reg-item" data-comp-id="'+(r.competition_id||'')+'" data-status="'+(r.status||'')+'" data-search="'+esc((profile.student_id||'')+''+(profile.name||'')).toLowerCase()+'">';
+        html+='<div class="reg-header"><div class="reg-comp">'+esc(comp.name||'未知竞赛')+'</div>'+getRegStatusBadge(r.status)+'</div>';
+        html+='<div class="reg-student">'+esc(profile.name||'未知')+' | '+esc(profile.student_id||'')+' | '+esc(profile.college||'')+'</div>';
+        html+='<div class="reg-detail">报名时间：'+formatTimeAgo(r.created_at)+'</div>';
+        if(r.note)html+='<div class="reg-detail" style="margin-top:4px">备注：'+esc(r.note)+'</div>';
+        if(r.reject_reason)html+='<div class="reg-detail" style="margin-top:4px;color:#e74c3c">拒绝原因：'+esc(r.reject_reason)+'</div>';
+        if(r.status==='pending'){
+          html+='<div class="reg-actions"><button class="btn-approve" onclick="adminApprove('+r.id+')">通过</button><button class="btn-reject" onclick="toggleRejectForm('+r.id+')">拒绝</button></div>';
+          html+='<div id="rejectForm-'+r.id+'" style="display:none"><textarea class="reject-reason-input" id="rejectReason-'+r.id+'" placeholder="请输入拒绝原因..."></textarea><div style="margin-top:8px;display:flex;gap:8px"><button class="btn-reject" onclick="adminReject('+r.id+')">确认拒绝</button><button class="btn-secondary btn-sm" onclick="document.getElementById(\'rejectForm-'+r.id+'\').style.display=\'none\'">取消</button></div></div>';
+        }
+        html+='</div>';
+      });
+    }
+    html+='</div></div>';
+    container.innerHTML=html;
+  }catch(e){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>'}
+}
+function applyAdminFilters(){
+  var compId=document.getElementById('adminFilterComp')?document.getElementById('adminFilterComp').value:'';
+  var status=document.getElementById('adminFilterStatus')?document.getElementById('adminFilterStatus').value:'';
+  var q=document.getElementById('adminSearchInput')?document.getElementById('adminSearchInput').value.toLowerCase():'';
+  document.querySelectorAll('.admin-reg-item').forEach(function(item){
+    var itemComp=item.getAttribute('data-comp-id')||'';
+    var itemStatus=item.getAttribute('data-status')||'';
+    var itemSearch=item.getAttribute('data-search')||'';
+    var matchComp=(!compId||itemComp===compId);
+    var matchStatus=(!status||itemStatus===status);
+    var matchQ=(!q||itemSearch.indexOf(q)>=0);
+    item.style.display=(matchComp&&matchStatus&&matchQ)?'':'none';
+  });
+}
+function toggleRejectForm(regId){
+  var form=document.getElementById('rejectForm-'+regId);
+  if(form)form.style.display=form.style.display==='none'?'block':'none';
+}
+async function adminApprove(regId){
+  var user=getCurrentUser();if(!user)return;
+  try{
+    var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'approved',reviewed_by:user.id,reviewed_at:new Date().toISOString()})});
+    if(res.ok){showCopyToast('已通过','success');renderAdmin()}
+    else showCopyToast('操作失败','warning');
+  }catch(e){showCopyToast('网络错误','warning')}
+}
+async function adminReject(regId){
+  var user=getCurrentUser();if(!user)return;
+  var reasonEl=document.getElementById('rejectReason-'+regId);
+  var reason=reasonEl?reasonEl.value.trim():'';
+  try{
+    var payload={status:'rejected',reviewed_by:user.id,reviewed_at:new Date().toISOString()};
+    if(reason)payload.reject_reason=reason;
+    var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify(payload)});
+    if(res.ok){showCopyToast('已拒绝','success');renderAdmin()}
+    else showCopyToast('操作失败','warning');
+  }catch(e){showCopyToast('网络错误','warning')}
+}
+
+/* --- Override navigate to handle new pages --- */
+var _origNavigate=navigate;
+navigate=function(page,tab){
+  if(page==='auth'||page==='admin'||page==='myregistrations'){
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');p.classList.remove('fading-out')});
+    document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('active')});
+    var target=document.getElementById('page-'+page);
+    if(target)target.classList.add('active');
+    app.currentPage=page;window.scrollTo({top:0,behavior:'smooth'});
+    if(page==='auth'){}
+    if(page==='admin')renderAdmin();
+    if(page==='myregistrations')renderMyRegistrations();
+    return;
+  }
+  _origNavigate(page,tab);
+};
+
+/* --- Override renderCompAll to use Hub data --- */
+var _origRenderCompAll=renderCompAll;
+renderCompAll=function(container){
+  renderCompHub(container);
+};
+
+/* --- Override renderProfile to show login prompt or settings --- */
+var _origRenderProfile=renderProfile;
+renderProfile=function(){
+  var container=document.getElementById('profileContent');
+  if(!isLoggedIn()){
+    container.innerHTML='<div class="login-required"><h3>请先登录</h3><p>登录后管理你的竞赛报名和个人信息</p><button class="btn-primary" onclick="navigate(\'auth\')">去登录</button></div>';
+    return;
+  }
+  var user=getCurrentUser();
+  var chatCount=getLS('ai_messages',[]).length;
+  var html='<div style="max-width:600px;margin:0 auto">';
+  html+='<div class="profile-header"><div class="profile-avatar">'+esc(user.name.charAt(0))+'</div><div class="profile-name">'+esc(user.name)+'</div><div class="profile-meta">'+esc(user.studentId)+' | '+esc(user.college)+(user.role==='admin'?' | 管理员':'')+'</div></div>';
+  html+='<div class="settings-group"><div class="settings-item" onclick="navigate(\'myregistrations\')"><div class="si-icon" style="background:var(--surface-gold-subtle);color:var(--accent)">&#128203;</div><div class="si-label">我的报名</div><div class="si-arrow">&#8250;</div></div>';
+  if(user.role==='admin')html+='<div class="settings-item" onclick="navigate(\'admin\')"><div class="si-icon" style="background:rgba(46,204,113,0.1);color:#2ecc71">&#9881;</div><div class="si-label">管理面板</div><div class="si-arrow">&#8250;</div></div>';
+  html+='<div class="settings-item" onclick="navigate(\'ai\')"><div class="si-icon" style="background:rgba(52,152,219,0.1);color:#3498db">&#129302;</div><div class="si-label">AI问答</div><div class="si-arrow">&#8250;</div></div>';
+  html+='</div>';
+  html+='<div class="settings-group-title">数据管理</div><div class="settings-group"><div class="settings-item" onclick="exportAllData()"><div class="si-icon" style="background:rgba(46,204,113,0.1);color:#2ecc71">&#128190;</div><div class="si-label">导出数据</div><div class="si-arrow">&#8250;</div></div>';
+  html+='<div class="settings-item danger" onclick="clearAllData()"><div class="si-icon" style="background:rgba(231,76,60,0.1);color:#e74c3c">&#128465;</div><div class="si-label">清除本地数据</div><div class="si-arrow">&#8250;</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:24px"><button class="btn-secondary" style="width:100%" onclick="doLogout()">退出登录</button></div>';
+  html+='</div>';
+  container.innerHTML=html;
+};
+
+/* --- Init on DOMContentLoaded --- */
+document.addEventListener('DOMContentLoaded',function(){
+  updateNavAuth();
+});
 
 </script>
 
