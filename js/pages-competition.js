@@ -130,11 +130,15 @@ function showCompDetail(idx){
 function handleCompRegister(idx) {
   var c = CSUST_DATA.competitions[idx];
   if (!c) return;
+  // 优先使用 v2 报名系统（Supabase）
+  if (typeof startApplication === 'function') {
+    startApplication(c.id || String(1000 + idx));
+    return;
+  }
+  // fallback: 跳转官网
   var user = getCurrentUser();
   if (!user) {
-    showConfirm('报名需要先登录，是否前往登录？', function() {
-      navigate('auth');
-    });
+    showConfirm('报名需要先登录，是否前往登录？', function() { navigate('auth'); });
     return;
   }
   if (c.official_website) {

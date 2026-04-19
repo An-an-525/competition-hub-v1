@@ -149,7 +149,7 @@ async function renderCompHub(container){
     if(c.reg_start)html+='<div>报名：'+esc(formatDate(c.reg_start))+' ~ '+(c.reg_end?esc(formatDate(c.reg_end)):'待定')+'</div>';
     html+='</div>';
     html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div class="reg-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'+regCount+'人已报名</div>';
-    if(c.status==='open')html+='<button class="btn-primary btn-sm" onclick="event.stopPropagation();showRegFormForComp('+c.id+')">立即报名</button>';
+    if(c.status==='open')html+='<button class="btn-primary btn-sm" onclick="event.stopPropagation();startApplication('+c.id+')">立即报名</button>';
     html+='</div></div>';
   });
   html+='</div>';
@@ -208,7 +208,7 @@ async function showHubCompDetail(compId){
   html+='<div style="margin-top:20px">';
   if(c.status==='open'){
     if(!user){html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();navigate(\'auth\')">登录后报名</button>'}
-    else{html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();showRegFormForComp('+c.id+')">立即报名</button>'}
+    else{html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();startApplication('+c.id+')">立即报名</button>'}
   }else{
     html+='<button class="btn-primary" disabled>当前不可报名</button>';
   }
