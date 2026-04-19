@@ -18,10 +18,30 @@ async function renderProfile(){var container=document.getElementById('profileCon
 function exportAllData(){var data={};for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.indexOf('app_')===0){try{data[key]=JSON.parse(localStorage.getItem(key))}catch(e){data[key]=localStorage.getItem(key)}}}var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='competition-hub-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showCopyToast('数据已导出')}
 function clearAllData(){showConfirm('确定要清除所有数据吗？<br><small style="color:var(--text-muted)">报名数据存储在云端，不受影响</small>',function(){var keys=[];for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.indexOf('app_')===0)keys.push(key)}keys.forEach(function(k){localStorage.removeItem(k)});showCopyToast('所有数据已清除','success');setTimeout(function(){location.reload()},1000)})}
 
+/* --- Page Meta for SEO --- */
+var PAGE_META = {
+  home: { title: '竞赛助手 - 学科竞赛智能查询与报名平台', desc: '覆盖55+项学科竞赛，AI智能问答，一站式竞赛查询与报名管理' },
+  ai: { title: 'AI智能问答 - 竞赛助手', desc: 'AI智能问答，快速查询竞赛信息、专业介绍、校园生活' },
+  academic: { title: '学业助手 - 竞赛助手', desc: '专业查询、选课指南、考试安排、成绩查询' },
+  campus: { title: '校园生活 - 竞赛助手', desc: '校区导览、食堂、图书馆、宿舍、交通指南' },
+  admission: { title: '招生咨询 - 竞赛助手', desc: '招生政策、专业大全、录取分数线、学费标准' },
+  news: { title: '校园资讯 - 竞赛助手', desc: '通知公告、社团活动、二手交易、失物招领' },
+  competition: { title: '学科竞赛 - 竞赛助手', desc: '55+项学科竞赛大全，在线报名，截止提醒' },
+  toolbox: { title: '工具箱 - 竞赛助手', desc: 'GPA计算器、学分统计、倒计时、课程表、番茄钟' },
+  profile: { title: '个人中心 - 竞赛助手', desc: '管理你的竞赛报名和个人信息' }
+};
+
 /* --- Override navigate() for auth/admin/myregistrations guard --- */
 _origNavigate = navigate;
 navigate = function(page, tab) {
   updateMobileNav(page);
+  /* SEO: 动态 Title 和 Description */
+  var meta = PAGE_META[page];
+  if (meta) {
+    document.title = meta.title;
+    var descEl = document.querySelector('meta[name="description"]');
+    if (descEl) descEl.setAttribute('content', meta.desc);
+  }
   if (page === 'auth' || page === 'admin' || page === 'myregistrations') {
     document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); p.classList.remove('fading-out'); });
     document.querySelectorAll('.nav-link').forEach(function(l) { l.classList.remove('active'); });

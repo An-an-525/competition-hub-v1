@@ -1,6 +1,12 @@
 /* Registration System v2 - Applications, Reviews, Files */
 
 // ==========================================
+// 0. 防重复提交锁
+// ==========================================
+
+var _submitLock = false;
+
+// ==========================================
 // 1. 报名入口
 // ==========================================
 
@@ -62,22 +68,28 @@ function showApplicationTypeSelector(compId) {
 // ==========================================
 
 async function createApplication(compId, type) {
-  var user = getCurrentUser();
-  var res = await fetch(HUB_URL + '/rest/v1/applications', {
-    method: 'POST',
-    headers: HUB_HEADERS,
-    body: JSON.stringify({
-      competition_id: compId,
-      applicant_user_id: user.id,
-      type: type,
-      status: 'draft',
-      data: {}
-    })
-  });
-  if (!res.ok) { showCopyToast('创建报名失败', 'error'); return; }
-  var app = await res.json();
-  showCopyToast('报名已创建，请填写信息', 'success');
-  showApplicationForm(compId, app.id);
+  if (_submitLock) { showCopyToast('请勿重复提交', 'warning'); return; }
+  _submitLock = true;
+  try {
+    var user = getCurrentUser();
+    var res = await fetch(HUB_URL + '/rest/v1/applications', {
+      method: 'POST',
+      headers: HUB_HEADERS,
+      body: JSON.stringify({
+        competition_id: compId,
+        applicant_user_id: user.id,
+        type: type,
+        status: 'draft',
+        data: {}
+      })
+    });
+    if (!res.ok) { showCopyToast('创建报名失败', 'error'); return; }
+    var app = await res.json();
+    showCopyToast('报名已创建，请填写信息', 'success');
+    showApplicationForm(compId, app.id);
+  } finally {
+    _submitLock = false;
+  }
 }
 
 // ==========================================
@@ -191,16 +203,22 @@ async function showApplicationForm(compId, applicationId) {
 // ==========================================
 
 async function saveDraft(applicationId, compId) {
-  var data = collectFormData();
-  var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
-    method: 'PATCH',
-    headers: HUB_HEADERS,
-    body: JSON.stringify({ data: data })
-  });
-  if (res.ok) {
-    showCopyToast('草稿已保存', 'success');
-  } else {
-    showCopyToast('保存失败', 'error');
+  if (_submitLock) { showCopyToast('请勿重复提交', 'warning'); return; }
+  _submitLock = true;
+  try {
+    var data = collectFormData();
+    var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
+      method: 'PATCH',
+      headers: HUB_HEADERS,
+      body: JSON.stringify({ data: data })
+    });
+    if (res.ok) {
+      showCopyToast('草稿已保存', 'success');
+    } else {
+      showCopyToast('保存失败', 'error');
+    }
+  } finally {
+    _submitLock = false;
   }
 }
 
@@ -209,34 +227,40 @@ async function saveDraft(applicationId, compId) {
 // ==========================================
 
 async function submitApplication(applicationId, compId) {
-  var data = collectFormData();
-  // 验证必填字段
-  var formRes = await fetch(HUB_URL + '/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_HEADERS });
-  var formData = (await formRes.json())[0];
-  if (formData) {
-    var missing = formData.schema.filter(function(f) { return f.required && !data[f.key]; });
-    if (missing.length > 0) {
-      showCopyToast('请填写必填项：' + missing.map(function(f) { return f.label; }).join('、'), 'error');
-      return;
+  if (_submitLock) { showCopyToast('请勿重复提交', 'warning'); return; }
+  _submitLock = true;
+  try {
+    var data = collectFormData();
+    // 验证必填字段
+    var formRes = await fetch(HUB_URL + '/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_HEADERS });
+    var formData = (await formRes.json())[0];
+    if (formData) {
+      var missing = formData.schema.filter(function(f) { return f.required && !data[f.key]; });
+      if (missing.length > 0) {
+        showCopyToast('请填写必填项：' + missing.map(function(f) { return f.label; }).join('、'), 'error');
+        return;
+      }
     }
-  }
-  showConfirm('确认提交报名？提交后将无法修改。', async function() {
-    var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
-      method: 'PATCH',
-      headers: HUB_HEADERS,
-      body: JSON.stringify({
-        data: data,
-        status: 'submitted',
-        submitted_at: new Date().toISOString()
-      })
+    showConfirm('确认提交报名？提交后将无法修改。', async function() {
+      var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
+        method: 'PATCH',
+        headers: HUB_HEADERS,
+        body: JSON.stringify({
+          data: data,
+          status: 'submitted',
+          submitted_at: new Date().toISOString()
+        })
+      });
+      if (res.ok) {
+        showCopyToast('报名已提交！', 'success');
+        showApplicationForm(compId, applicationId);
+      } else {
+        showCopyToast('提交失败', 'error');
+      }
     });
-    if (res.ok) {
-      showCopyToast('报名已提交！', 'success');
-      showApplicationForm(compId, applicationId);
-    } else {
-      showCopyToast('提交失败', 'error');
-    }
-  });
+  } finally {
+    _submitLock = false;
+  }
 }
 
 // ==========================================
@@ -244,35 +268,41 @@ async function submitApplication(applicationId, compId) {
 // ==========================================
 
 async function handleFileUpload(applicationId, requirementKey, input, allowMulti) {
-  var user = getCurrentUser();
-  if (!input.files || input.files.length === 0) return;
+  if (_submitLock) { showCopyToast('请勿重复提交', 'warning'); return; }
+  _submitLock = true;
+  try {
+    var user = getCurrentUser();
+    if (!input.files || input.files.length === 0) return;
 
-  for (var i = 0; i < input.files.length; i++) {
-    var file = input.files[i];
-    // 模拟上传（实际应使用 Supabase Storage）
-    // 这里将文件信息存入数据库，file_path 存储文件名
-    var res = await fetch(HUB_URL + '/rest/v1/application_files', {
-      method: 'POST',
-      headers: HUB_HEADERS,
-      body: JSON.stringify({
-        application_id: applicationId,
-        requirement_key: requirementKey,
-        file_path: 'uploads/' + applicationId + '/' + file.name,
-        file_name: file.name,
-        file_size: file.size,
-        mime_type: file.type,
-        version: 1,
-        uploaded_by: user.id
-      })
-    });
-    if (res.ok) {
-      showCopyToast(file.name + ' 上传成功', 'success');
+    for (var i = 0; i < input.files.length; i++) {
+      var file = input.files[i];
+      // 模拟上传（实际应使用 Supabase Storage）
+      // 这里将文件信息存入数据库，file_path 存储文件名
+      var res = await fetch(HUB_URL + '/rest/v1/application_files', {
+        method: 'POST',
+        headers: HUB_HEADERS,
+        body: JSON.stringify({
+          application_id: applicationId,
+          requirement_key: requirementKey,
+          file_path: 'uploads/' + applicationId + '/' + file.name,
+          file_name: file.name,
+          file_size: file.size,
+          mime_type: file.type,
+          version: 1,
+          uploaded_by: user.id
+        })
+      });
+      if (res.ok) {
+        showCopyToast(file.name + ' 上传成功', 'success');
+      }
     }
-  }
-  // 刷新表单
-  var compId = document.querySelector('[data-comp-id]');
-  if (compId) {
-    showApplicationForm(compId.getAttribute('data-comp-id'), applicationId);
+    // 刷新表单
+    var compId = document.querySelector('[data-comp-id]');
+    if (compId) {
+      showApplicationForm(compId.getAttribute('data-comp-id'), applicationId);
+    }
+  } finally {
+    _submitLock = false;
   }
 }
 

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://an-an-525.github.io/competition-hub/sitemap.xml

@@ -277,6 +277,10 @@ function saveFavorites(list) {
   setLS('app_favorites', JSON.stringify(list));
 }
 function toggleFavorite(compId) {
+  if (!isLoggedIn()) {
+    showConfirm('收藏需要先登录，是否前往登录？', function() { navigate('auth'); });
+    return;
+  }
   var favs = getFavorites();
   var idx = favs.indexOf(compId);
   if (idx >= 0) {
@@ -296,7 +300,7 @@ function isFavorited(compId) {
 }
 function getFavoriteButtonHtml(compId) {
   var fav = isFavorited(compId);
-  return '<button onclick="event.stopPropagation();toggleFavorite(\'' + compId + '\')" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:50%;transition:all 0.2s ease;color:' + (fav ? '#FFC84A' : 'var(--text-muted)') + '" title="' + (fav ? '取消收藏' : '收藏') + '">' + (fav ? '&#9733;' : '&#9734;') + '</button>';
+  return '<button aria-label="' + (fav ? '取消收藏' : '收藏') + '" onclick="event.stopPropagation();toggleFavorite(\'' + compId + '\')" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:50%;transition:all 0.2s ease;color:' + (fav ? '#FFC84A' : 'var(--text-muted)') + '">' + (fav ? '&#9733;' : '&#9734;') + '</button>';
 }
 
 /* === DDL 提醒（本地存储） === */
@@ -307,6 +311,10 @@ function saveReminders(list) {
   setLS('app_reminders', JSON.stringify(list));
 }
 function toggleReminder(compId, compName, deadline) {
+  if (!isLoggedIn()) {
+    showConfirm('提醒需要先登录，是否前往登录？', function() { navigate('auth'); });
+    return;
+  }
   var reminders = getReminders();
   var idx = reminders.findIndex(function(r) { return r.id === compId; });
   if (idx >= 0) {
@@ -323,7 +331,7 @@ function isReminded(compId) {
 }
 function getReminderButtonHtml(compId, compName, deadline) {
   var on = isReminded(compId);
-  return '<button onclick="event.stopPropagation();toggleReminder(\'' + compId + '\',\'' + esc(compName).replace(/'/g, "\\'") + '\',\'' + esc(deadline || '').replace(/'/g, "\\'") + '\')" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:50%;transition:all 0.2s ease;font-size:14px;color:' + (on ? '#FFC84A' : 'var(--text-muted)') + '" title="' + (on ? '取消提醒' : '订阅截止提醒') + '">' + (on ? '&#128276;' : '&#128274;') + '</button>';
+  return '<button aria-label="' + (on ? '取消提醒' : '订阅截止提醒') + '" onclick="event.stopPropagation();toggleReminder(\'' + compId + '\',\'' + esc(compName).replace(/'/g, "\\'") + '\',\'' + esc(deadline || '').replace(/'/g, "\\'") + '\')" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:50%;transition:all 0.2s ease;font-size:14px;color:' + (on ? '#FFC84A' : 'var(--text-muted)') + '">' + (on ? '&#128276;' : '&#128274;') + '</button>';
 }
 
 function showFavoritesList() {

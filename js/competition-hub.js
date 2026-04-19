@@ -5,14 +5,46 @@ var HUB_HEADERS={'apikey':HUB_KEY,'Authorization':'Bearer '+HUB_KEY,'Content-Typ
 var _cachedCompetitions=null;
 var _cachedRegCounts={};
 var _notifPollTimer=null;
+var _cacheTimestamp = 0;
+var _CACHE_TTL = 5 * 60 * 1000; // 5分钟
 
 async function fetchCompetitions(){
-  if(_cachedCompetitions)return _cachedCompetitions;
+  // 先返回缓存（如果有）
+  if(_cachedCompetitions) return _cachedCompetitions;
+
+  // 尝试从 localStorage 读取
+  try {
+    var cached = localStorage.getItem('hub_competitions');
+    if(cached) {
+      var parsed = JSON.parse(cached);
+      if(parsed.data && parsed.ts && (Date.now() - parsed.ts < _CACHE_TTL)) {
+        _cachedCompetitions = parsed.data;
+        return parsed.data;
+      }
+      // 缓存过期但有数据，先返回旧数据，后台刷新
+      if(parsed.data) {
+        _cachedCompetitions = parsed.data;
+        _refreshCompetitionsInBackground();
+        return parsed.data;
+      }
+    }
+  } catch(e) {}
+
+  // 无缓存，正常请求
+  return await _fetchCompetitionsFromServer();
+}
+
+async function _fetchCompetitionsFromServer(){
   try{
     var res=await fetch(HUB_URL+'/rest/v1/competitions?order=sort_order.desc,created_at.desc',{headers:HUB_HEADERS});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
-    if(data&&data.length>0){_cachedCompetitions=data;return data}
+    if(data&&data.length>0){
+      _cachedCompetitions=data;
+      // 存入 localStorage
+      try { localStorage.setItem('hub_competitions', JSON.stringify({data:data, ts:Date.now()})); } catch(e){}
+      return data;
+    }
   }catch(e){console.warn('Supabase竞赛数据获取失败，使用本地数据:',e.message)}
   // Fallback to local CSUST_DATA
   if(typeof CSUST_DATA!=='undefined'&&CSUST_DATA.competitions&&CSUST_DATA.competitions.length>0){
@@ -22,6 +54,16 @@ async function fetchCompetitions(){
     return _cachedCompetitions;
   }
   return[];
+}
+
+function _refreshCompetitionsInBackground(){
+  _fetchCompetitionsFromServer().then(function(data){
+    if(data && data.length > 0) {
+      // 静默刷新成功，更新页面（如果当前在竞赛页面）
+      var hubList = document.getElementById('hubCompList');
+      if(hubList) renderCompHub(document.getElementById('competitionContent'));
+    }
+  });
 }
 async function fetchRegCounts(){
   try{
@@ -127,14 +169,25 @@ async function renderCompHub(container){
   categories.forEach(function(c,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'cat\',\''+esc(c)+'\')">'+esc(c)+'</button>'});
   html+='</div></div><div style="margin-bottom:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">状态</div><div class="club-filter-bar" id="hubStatusFilter">';
   statuses.forEach(function(s,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'status\',\''+s+'\')">'+esc(statusLabels[s])+'</button>'});
-  html+='</div></div><div id="hubCompList" class="knowledge-list"><div id="hubCompCount" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">共 '+comps.length+' 项竞赛</div>';
+  html+='</div></div>';
+  // 排序下拉 + 已选条件
+  html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">';
+  html+='<select id="hubSortSelect" onchange="applyHubFilters()" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel-bg);color:var(--text-primary);font-size:13px">';
+  html+='<option value="default">默认排序</option>';
+  html+='<option value="deadline">按截止时间</option>';
+  html+='<option value="name">按名称</option>';
+  html+='</select>';
+  html+='<div id="hubActiveFilters" style="font-size:12px;color:var(--text-muted)"></div>';
+  html+='<button id="hubClearFilters" style="display:none;font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;text-decoration:underline" onclick="clearHubFilters()">清除筛选</button>';
+  html+='</div>';
+  html+='<div id="hubCompList" class="knowledge-list"><div id="hubCompCount" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">共 '+comps.length+' 项竞赛</div>';
   comps.forEach(function(c,idx){
     var regCount=counts[c.id]||0;
     var levelClass=getLevelClass(c.level);
     var catClass=getCategoryIconClass(c.category);
     var catIconSvg=getCategoryIconSvg(c.category);
     var isFeatured=idx===0;
-    html+='<div class="comp-hub-card hub-card'+(isFeatured?' hub-card-featured':'')+'" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" onclick="showHubCompDetail('+c.id+')">';
+    html+='<div class="comp-hub-card hub-card'+(isFeatured?' hub-card-featured':'')+'" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" data-reg-end="'+esc(c.reg_end||'')+'" onclick="showHubCompDetail('+c.id+')">';
     html+='<div class="comp-card-gradient '+levelClass+'"></div>';
     html+='<div class="comp-card-category-icon '+catClass+'">'+catIconSvg+'</div>';
     html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h4 style="flex:1">'+esc(c.name)+'</h4><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">'+getFavoriteButtonHtml(String(c.id))+getReminderButtonHtml(String(c.id), c.name, c.reg_end || '')+'</div>'+getStatusBadge(c.status)+'</div>';
@@ -150,14 +203,19 @@ async function renderCompHub(container){
     html+='</div>';
     html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div class="reg-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'+regCount+'人已报名</div>';
     if(c.status==='open')html+='<button class="btn-primary btn-sm" onclick="event.stopPropagation();startApplication('+c.id+')">立即报名</button>';
-    html+='</div></div>';
+    html+='</div>';
   });
   html+='</div>';
+  html+='<div id="hubPagination"></div>';
   container.innerHTML=html;
+  // 初始化分页和筛选
+  _hubPage = 1;
+  applyHubFilters();
 }
 function filterHubBy(type,val){
   var filterId=type==='cat'?'hubCatFilter':'hubStatusFilter';
   document.querySelectorAll('#'+filterId+' .club-filter-btn').forEach(function(b){b.classList.toggle('active',b.textContent===val)});
+  _hubPage = 1;
   applyHubFilters();
 }
 function applyHubFilters(){
@@ -169,6 +227,10 @@ function applyHubFilters(){
   var statusVal=statusMap[status]||'';
   var q=document.getElementById('hubSearchInput')?document.getElementById('hubSearchInput').value.toLowerCase():'';
   var visibleCount=0;
+  var sortSelect=document.getElementById('hubSortSelect');
+  var sortVal=sortSelect?sortSelect.value:'default';
+  // 收集可见卡片并排序
+  var visibleCards=[];
   document.querySelectorAll('.hub-card').forEach(function(card){
     var name=card.getAttribute('data-name')||'';
     var cardCat=card.getAttribute('data-category')||'';
@@ -176,11 +238,95 @@ function applyHubFilters(){
     var matchCat=(cat==='全部'||cardCat===cat);
     var matchStatus=(!statusVal||cardStatus===statusVal);
     var matchQ=(!q||name.indexOf(q)>=0);
-    card.style.display=(matchCat&&matchStatus&&matchQ)?'':'none';
-    if(matchCat&&matchStatus&&matchQ)visibleCount++;
+    if(matchCat&&matchStatus&&matchQ){
+      card.style.display='';
+      visibleCards.push(card);
+      visibleCount++;
+    }else{
+      card.style.display='none';
+    }
   });
+  // 排序
+  if(sortVal==='deadline'){
+    visibleCards.sort(function(a,b){
+      var da=a.getAttribute('data-reg-end')||'';
+      var db=b.getAttribute('data-reg-end')||'';
+      if(!da&&db)return 1;if(da&&!db)return -1;return da.localeCompare(db);
+    });
+  }else if(sortVal==='name'){
+    visibleCards.sort(function(a,b){
+      return(a.getAttribute('data-name')||'').localeCompare(b.getAttribute('data-name')||'');
+    });
+  }
+  // 重新排列DOM
+  var list=document.getElementById('hubCompList');
+  if(list){
+    visibleCards.forEach(function(card){list.appendChild(card)});
+  }
+  // 分页
+  var pages=Math.ceil(visibleCount/_hubPageSize);
+  visibleCards.forEach(function(card,idx){
+    if(pages>1){
+      card.style.display=(idx>=(_hubPage-1)*_hubPageSize&&idx<_hubPage*_hubPageSize)?'':'none';
+    }
+  });
+  // 更新分页UI
+  var pagEl=document.getElementById('hubPagination');
+  if(pagEl)pagEl.innerHTML=renderHubPagination(visibleCount,visibleCount);
+  // 更新已选条件
+  updateHubActiveFilters(cat,statusVal,q);
   var countEl=document.getElementById('hubCompCount');
   if(countEl)countEl.textContent='显示 '+visibleCount+' 项竞赛';
+}
+
+var _hubPage = 1;
+var _hubPageSize = 8;
+
+function renderHubPagination(total, visible) {
+  var pages = Math.ceil(visible / _hubPageSize);
+  if(pages <= 1) return '';
+  var html = '<div style="display:flex;justify-content:center;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">';
+  html += '<button class="btn-secondary btn-sm" onclick="hubGoPage(' + (_hubPage-1) + ')"' + (_hubPage<=1?' disabled':'') + '>上一页</button>';
+  for(var i=1;i<=pages;i++){
+    html += '<button class="btn-sm ' + (i===_hubPage?'btn-primary':'btn-secondary') + '" style="min-width:36px" onclick="hubGoPage('+i+')">'+i+'</button>';
+  }
+  html += '<button class="btn-secondary btn-sm" onclick="hubGoPage(' + (_hubPage+1) + ')"' + (_hubPage>=pages?' disabled':'') + '>下一页</button>';
+  html += '</div>';
+  return html;
+}
+
+function hubGoPage(p) {
+  _hubPage = p;
+  applyHubFilters();
+}
+
+function updateHubActiveFilters(cat,statusVal,q){
+  var el=document.getElementById('hubActiveFilters');
+  var clearBtn=document.getElementById('hubClearFilters');
+  if(!el)return;
+  var tags=[];
+  if(cat&&cat!=='全部')tags.push('分类:'+cat);
+  if(statusVal){
+    var sm={'open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
+    tags.push('状态:'+(sm[statusVal]||statusVal));
+  }
+  if(q)tags.push('搜索:'+q);
+  if(tags.length>0){
+    el.textContent='已选: '+tags.join(' / ');
+    if(clearBtn)clearBtn.style.display='';
+  }else{
+    el.textContent='';
+    if(clearBtn)clearBtn.style.display='none';
+  }
+}
+
+function clearHubFilters(){
+  _hubPage=1;
+  document.querySelectorAll('#hubCatFilter .club-filter-btn').forEach(function(b,i){b.classList.toggle('active',i===0)});
+  document.querySelectorAll('#hubStatusFilter .club-filter-btn').forEach(function(b,i){b.classList.toggle('active',i===0)});
+  var si=document.getElementById('hubSearchInput');if(si)si.value='';
+  var ss=document.getElementById('hubSortSelect');if(ss)ss.value='default';
+  applyHubFilters();
 }
 
 /* --- Competition Detail Modal --- */
