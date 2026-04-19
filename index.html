@@ -184,11 +184,16 @@
   <main class="shell" id="main-content">
     <!-- Home Page -->
     <div id="page-home" class="page active">
+      <!-- Decorative elements -->
+      <div class="hero-deco hero-deco-circle"></div>
+      <div class="hero-deco hero-deco-dots"></div>
+      <div class="hero-deco hero-deco-ring"></div>
+
       <div class="home-welcome">
-        <h1 class="hero-title animate-in delay-1">你好，同学 &#128075;</h1>
-        <div class="hero-subtitle animate-in delay-2">学科竞赛与校园资讯，一站查询</div>
+        <h1 class="hero-title">你好，同学</h1>
+        <div class="hero-subtitle">学科竞赛与校园资讯，一站查询</div>
       </div>
-      <div class="home-search animate-in delay-2">
+      <div class="home-search">
         <div class="search-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
@@ -197,7 +202,28 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
-      <div class="daily-quote animate-in delay-3">
+
+      <!-- Stats Section -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number">55+</div>
+          <div class="stat-label">竞赛资源</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">8</div>
+          <div class="stat-label">大竞赛类别</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Live</div>
+          <div class="stat-label">实时报名系统</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">AI</div>
+          <div class="stat-label">智能问答</div>
+        </div>
+      </div>
+
+      <div class="daily-quote">
         <div class="quote-card" id="quoteCard">
           <div class="quote-bar"></div>
           <div class="quote-body">
@@ -207,7 +233,16 @@
           <button class="quote-refresh" onclick="event.stopPropagation();refreshQuote()" aria-label="换一条">&#8635;</button>
         </div>
       </div>
-      <div class="featured-row animate-in delay-2">
+
+      <!-- Featured Competitions -->
+      <div class="featured-competitions-section">
+        <h3 class="section-label">热门竞赛</h3>
+        <div class="featured-competitions-scroll" id="featuredCompsRow">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="featured-row">
         <div class="featured-item" onclick="navigate('academic')">
           <div class="fi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div>
           <div class="fi-text"><h3>专业大全</h3><p>22个学院 74个专业</p></div>
@@ -224,7 +259,7 @@
           <div class="fi-arrow">&#8250;</div>
         </div>
       </div>
-      <div class="service-list animate-in delay-3">
+      <div class="service-list">
         <div class="service-item" onclick="navigate('academic','exams')">
           <div class="si-dot"></div>
           <div class="si-label">校历安排</div>
@@ -261,7 +296,7 @@
           <div class="si-arrow">&#8250;</div>
         </div>
       </div>
-      <div class="footer-simple animate-in delay-4">
+      <div class="footer-simple">
         <span>&copy; 2025-<script>document.write(new Date().getFullYear())</script> 学科竞赛智能助手</span>
       </div>
     </div>
@@ -461,7 +496,9 @@
   <!-- Contact Modal -->
   <div class="contact-modal-overlay" id="contactModal" onclick="if(event.target===this)hideContactModal()">
     <div class="contact-modal">
-      <button class="modal-close" onclick="hideContactModal()">&#10005;</button>
+      <button class="modal-close" onclick="hideContactModal()" aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
       <h3>联系方式</h3>
       <p class="contact-subtitle">招生咨询</p>
       <div class="contact-item" data-copy="0731-85834715" onclick="copyContactInfo(this)"><div class="contact-icon">招生热线</div><div class="contact-info"><div class="contact-label">招生办电话</div><div class="contact-value">0731-85834715</div><div class="contact-copy-hint">长按或点击复制</div></div></div>
@@ -474,7 +511,9 @@
   <!-- Legal Modal -->
   <div class="legal-modal-overlay" id="legalModal" onclick="if(event.target===this)hideLegalModal()">
     <div class="legal-modal">
-      <button class="modal-close" onclick="hideLegalModal()">&#10005;</button>
+      <button class="modal-close" onclick="hideLegalModal()" aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
       <h3>法律条款</h3>
       <div class="legal-tabs">
         <button class="legal-tab active" data-tab="terms" onclick="switchLegalTab('terms')">用户协议</button>
