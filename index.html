@@ -143,6 +143,12 @@
   --bg-hover:#2a2720;
 }
     [data-theme="dark"] .bg-noise{opacity:0.03}
+    /* 暗色模式状态徽章适配 */
+    [data-theme="dark"] .status-open{background:rgba(22,101,52,0.3);color:#4ade80}
+    [data-theme="dark"] .status-upcoming{background:rgba(30,64,175,0.3);color:#60a5fa}
+    [data-theme="dark"] .status-ended{background:rgba(107,114,128,0.2);color:#9ca3af}
+    [data-theme="dark"] .status-closed{background:rgba(153,27,27,0.3);color:#f87171}
+    [data-theme="dark"] .mobile-menu::-webkit-scrollbar-thumb{background:rgba(212,165,116,0.35)}.mobile-menu::-webkit-scrollbar-thumb:hover{background:rgba(212,165,116,0.55)}
     [data-theme="light"] .bg-noise{opacity:0.015}
     [data-theme="dark"] ::selection { background: rgba(245,158,11,0.2); color: #f5f0e8; }
     ::selection{background:rgba(217,119,6,0.15);color:#1a1a1a}
@@ -170,6 +176,10 @@
     .nav-link:hover{color:var(--text-secondary);background:var(--bg-hover)}
     .nav-link.active{color:var(--accent);background:var(--surface-accent)}
     .nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    /* 移动端搜索按钮 */
+    .nav-search-btn{display:none;width:32px;height:32px;border:none;background:none;color:var(--text-secondary);cursor:pointer;border-radius:50%;align-items:center;justify-content:center;transition:all .25s ease}
+    .nav-search-btn:hover{background:var(--bg-hover);color:var(--accent)}
+    .nav-search-btn svg{width:20px;height:20px}
     .nav-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1A1A1A;cursor:pointer;border:2px solid var(--border-gold);transition:all .25s ease}
     .nav-avatar:hover{border-color:var(--accent);transform:scale(1.05)}
     .nav-login-btn{padding:6px 16px;font-size:13px;font-weight:600;color:var(--accent);border:1px solid var(--border-accent);border-radius:999px;background:transparent;cursor:pointer;transition:all .25s ease}
@@ -177,17 +187,24 @@
     .hamburger{display:none;width:32px;height:32px;border:none;background:none;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
     .hamburger span{display:block;width:20px;height:1.5px;background:var(--text-primary);border-radius:2px;transition:all .25s ease}
     .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.hamburger.open span:nth-child(2){opacity:0}.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-    .mobile-menu{display:none;position:fixed;top:var(--nav-height);left:0;right:0;bottom:0;background:var(--surface-glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);z-index:99;padding:20px;flex-direction:column;gap:4px;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
-    .mobile-menu.open{transform:translateX(0);display:flex}.mobile-menu .nav-link{font-size:16px;padding:14px 16px;border-radius:var(--radius-sm)}
+    .mobile-menu{display:flex;position:fixed;top:var(--nav-height);left:0;right:0;bottom:0;background:var(--surface-glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);z-index:99;padding:20px;flex-direction:column;gap:4px;overflow-y:auto;max-height:calc(100vh - var(--nav-height));transform:translateX(100%);visibility:hidden;opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1),visibility .3s}
+    .mobile-menu::-webkit-scrollbar{width:6px}.mobile-menu::-webkit-scrollbar-track{background:transparent}.mobile-menu::-webkit-scrollbar-thumb{background:rgba(194,136,78,0.35);border-radius:3px}.mobile-menu::-webkit-scrollbar-thumb:hover{background:rgba(194,136,78,0.55)}
+    .mobile-menu.open{transform:translateX(0);visibility:visible;opacity:1;pointer-events:auto}
+    .mobile-menu::after{content:'';position:sticky;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to bottom,transparent,var(--surface-glass));pointer-events:none;flex-shrink:0;margin-top:auto}
+    .mobile-menu .nav-link{font-size:16px;padding:14px 16px;border-radius:var(--radius-sm)}
     .mobile-menu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-subtle)}
     .mobile-menu-header span{font-size:14px;font-weight:600;color:var(--text-primary)}
     .mobile-menu-close{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:8px;font-size:20px;line-height:1}
     .mobile-menu-label{padding:12px 16px 6px;font-size:11px;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;font-weight:600}
-    @media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}.top-nav{padding:0 16px}.nav-group .nav-dropdown{display:none !important}}
+    @media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}.top-nav{padding:0 16px}.nav-group .nav-dropdown{display:none !important}.nav-search-btn{display:flex}}
     @media(max-width:1024px) and (min-width:769px){.nav-group .nav-dropdown{min-width:160px}.nav-link{padding:8px 10px;font-size:13px}}
   </style>
   <style>
     .shell{max-width:720px;margin:0 auto;padding:calc(var(--nav-height) + 24px) 16px 56px;position:relative;z-index:2}
+    /* ===== 响应式布局宽度 ===== */
+    @media(min-width:769px) and (max-width:1024px){.shell{max-width:720px}}
+    @media(min-width:1025px) and (max-width:1280px){.shell{max-width:960px}}
+    @media(min-width:1281px){.shell{max-width:1080px}}
     .card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:border-color .25s ease}
     .card:hover{border-color:var(--border-accent);box-shadow:var(--shadow-md);transform:translateY(-2px)}
     button{border:0;cursor:pointer;font:inherit;outline:none}button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
@@ -268,15 +285,22 @@
     .ai-send-btn{width:42px;height:42px;border-radius:50%;border:none;background:var(--accent-gradient);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s ease;flex-shrink:0}
     .ai-send-btn:hover{transform:scale(1.05)}
     .ai-send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
-    .msg{max-width:75%;padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.7;word-break:break-word}
-    .msg-ai{align-self:flex-start;background:var(--bg-card);color:var(--text-primary);border-bottom-left-radius:4px;border:1px solid var(--border-subtle)}
-    .msg-user{align-self:flex-end;background:linear-gradient(135deg,rgba(217,119,6,0.12),rgba(245,158,11,0.08));color:var(--text-primary);border-bottom-right-radius:4px}
-    .msg-time{font-size:10px;color:var(--text-muted);margin-top:4px}
-    .ai-typing-indicator{display:flex;gap:4px;padding:12px 16px;align-self:flex-start}
+    .msg{max-width:75%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.7;word-break:break-word}
+    /* AI消息气泡 - 左对齐 */
+    .msg-ai{align-self:flex-start;background:var(--bg-secondary);color:var(--text-primary);border-radius:18px 18px 18px 4px;border:none}
+    /* 用户消息气泡 - 右对齐金色渐变 */
+    .msg-user{align-self:flex-end;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;border-radius:18px 18px 4px 18px;border:none}
+    .msg-time{font-size:12px;color:var(--text-muted);margin-top:4px}
+    /* AI头像 */
+    .msg-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+    /* 消息间距 */
+    .ai-messages{gap:16px}
+    /* 打字指示器 - 三点弹跳动画 */
+    .ai-typing-indicator{display:flex;gap:4px;padding:12px 16px;align-self:flex-start;border-radius:18px 18px 18px 4px;background:var(--bg-secondary)}
     .ai-typing-indicator span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:typingBounce 1.2s ease-in-out infinite}
     .ai-typing-indicator span:nth-child(2){animation-delay:0.15s}
     .ai-typing-indicator span:nth-child(3){animation-delay:0.3s}
-    @keyframes typingBounce{to{opacity:.3;transform:translateY(-4px)}}
+    @keyframes typingBounce{0%,100%{opacity:.4;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
     .ai-clear-btn{padding:8px 16px;border-radius:999px;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);font-size:13px;cursor:pointer;transition:all .25s ease;font-family:inherit}
     .ai-clear-btn:hover{border-color:var(--border-gold);color:var(--accent)}
   </style>
@@ -403,24 +427,45 @@
       .profile-header{padding:24px 16px}
     }
     /* ===== Competition Hub Registration System ===== */
+    /* ===== 骨架屏加载效果 ===== */
+    @keyframes skeletonPulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .skeleton{background:#e8e4dc;border-radius:var(--radius-sm);animation:skeletonPulse 1.5s ease-in-out infinite}
+    [data-theme="dark"] .skeleton{background:#2a2820}
+    .skeleton-card{border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:20px;background:var(--bg-card);margin-bottom:12px}
+    .skeleton-card .skeleton{margin-bottom:10px}
+    .skeleton-card .skeleton:last-child{margin-bottom:0}
+    .skeleton-line{height:14px;border-radius:6px;margin-bottom:8px}
+    .skeleton-line:last-child{margin-bottom:0}
+    .skeleton-title{height:20px;width:60%;margin-bottom:12px}
+    .skeleton-row{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--bg-card);margin-bottom:10px}
+    .skeleton-row .skeleton-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0}
+    .skeleton-row .skeleton-content{flex:1}
     .loading-spinner{display:inline-block;border:3px solid var(--border-subtle);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
     .loading-overlay{text-align:center;padding:48px 20px;color:var(--text-muted)}
     .empty-state{text-align:center;padding:48px 20px;color:var(--text-muted)}
     .empty-state-icon{font-size:48px;margin-bottom:12px}
     .empty-state p{font-size:14px;margin-top:4px}
     .status-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
-    .status-open{background:rgba(46,204,113,0.12);color:#2ecc71}
-    .status-upcoming{background:rgba(52,152,219,0.12);color:#3498db}
-    .status-ended{background:rgba(149,165,166,0.12);color:#95a5a6}
-    .status-closed{background:rgba(231,76,60,0.12);color:#e74c3c}
+    /* 状态徽章 - 药丸样式 */
+    .status-open{background:#dcfce7;color:#166534}
+    .status-upcoming{background:#dbeafe;color:#1e40af}
+    .status-ended{background:#f3f4f6;color:#6b7280}
+    .status-closed{background:#fee2e2;color:#991b1b}
     .status-pending{background:rgba(243,156,18,0.12);color:#f39c12}
     .status-approved{background:rgba(46,204,113,0.12);color:#2ecc71}
     .status-rejected{background:rgba(231,76,60,0.12);color:#e74c3c}
     .status-cancelled{background:rgba(149,165,166,0.12);color:#95a5a6}
     .status-forming{background:rgba(52,152,219,0.12);color:#3498db}
     .status-submitted{background:rgba(243,156,18,0.12);color:#f39c12}
-    .comp-hub-card{border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:20px;background:var(--bg-card);box-shadow:var(--shadow-sm);transition:all .25s ease;cursor:pointer}
-    .comp-hub-card:hover{border-color:var(--border-accent);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .comp-hub-card{border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:20px;background:var(--bg-card);box-shadow:var(--shadow-sm);transition:all .25s ease;cursor:pointer;position:relative;overflow:hidden}
+    /* 竞赛卡片左侧彩色边条 */
+    .comp-hub-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;transition:background .25s ease}
+    .comp-hub-card[data-level="A类"]::before,.comp-hub-card[data-level="A"]::before{background:#dc2626}
+    .comp-hub-card[data-level="B+类"]::before,.comp-hub-card[data-level="B+"]::before{background:#2563eb}
+    .comp-hub-card[data-level="B-类"]::before,.comp-hub-card[data-level="B-"]::before{background:#2563eb}
+    .comp-hub-card[data-level="C级"]::before,.comp-hub-card[data-level="C"]::before{background:#16a34a}
+    .comp-hub-card:hover{border-color:var(--border-accent);box-shadow:var(--shadow-deep);transform:translateY(-2px)}
+    .comp-hub-card:hover::before{background:var(--gold) !important}
     .comp-hub-card h4{font-size:15px;color:var(--text-primary);margin-bottom:8px;line-height:1.5}
     .comp-hub-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
     .comp-hub-info{font-size:13px;color:var(--text-secondary);line-height:1.6}
@@ -504,8 +549,58 @@
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @supports(padding:env(safe-area-inset-bottom)){.shell{padding-bottom:calc(56px + env(safe-area-inset-bottom))}}
   </style>
+  <style>
+    /* ===== 移动端交互优化 ===== */
+    /* 触摸反馈：去除点击高亮 */
+    *{-webkit-tap-highlight-color:transparent}
+    /* 触摸反馈：按钮/卡片按下缩放 */
+    button:active,.nav-link:active,.card:active,.comp-hub-card:active,.settings-item:active{transform:scale(0.96)}
+    /* 密码显示切换按钮 */
+    .pwd-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center}
+    .pwd-toggle svg{width:18px;height:18px}
+    .auth-field.pwd-field{position:relative}
+    .auth-field.pwd-field input{padding-right:40px}
+    /* 返回导航栏 */
+    .back-nav{display:none;position:fixed;top:var(--nav-height);left:0;right:0;height:48px;z-index:99;background:var(--surface-glass);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);border-bottom:1px solid var(--border-subtle);align-items:center;padding:0 16px}
+    .back-nav-arrow{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:none;color:var(--text-primary);cursor:pointer;border-radius:50%;flex-shrink:0}
+    .back-nav-arrow:active{background:var(--bg-hover);transform:scale(0.9)}
+    .back-nav-arrow svg{width:20px;height:20px}
+    .back-nav-title{flex:1;text-align:center;font-size:15px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}
+    .back-nav-spacer{width:32px;flex-shrink:0}
+    /* 底部标签栏 */
+    .bottom-tab-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;height:calc(56px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--surface-glass);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);border-top:1px solid var(--border-subtle);align-items:center;justify-content:space-around}
+    .bottom-tab-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;padding:6px 0;flex:1;transition:transform .2s ease;position:relative}
+    .bottom-tab-item:active{transform:scale(0.9)}
+    .bottom-tab-item svg{width:24px;height:24px;color:var(--text-muted);transition:color .2s ease}
+    .bottom-tab-item span{font-size:10px;color:var(--text-muted);transition:color .2s ease}
+    .bottom-tab-item.active{transform:translateY(-2px)}
+    .bottom-tab-item.active svg{color:var(--accent)}
+    .bottom-tab-item.active span{color:var(--accent);font-weight:600}
+    .bottom-tab-item.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--accent);border-radius:1px}
+    /* 回到顶部按钮 */
+    .back-to-top{display:none;position:fixed;right:16px;bottom:calc(56px + 16px + env(safe-area-inset-bottom,0px));width:44px;height:44px;border-radius:50%;background:var(--accent-gradient);color:#fff;border:none;cursor:pointer;z-index:90;box-shadow:var(--shadow-md);align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease,transform .3s ease;transform:translateY(10px)}
+    .back-to-top.visible{opacity:1;transform:translateY(0)}
+    .back-to-top:active{transform:scale(0.9)}
+    .back-to-top svg{width:20px;height:20px}
+    /* 筛选栏横向滚动 */
+    .club-filter-bar,.tabs-bar{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative}
+    .club-filter-bar::-webkit-scrollbar,.tabs-bar::-webkit-scrollbar{display:none}
+    .club-filter-bar::after,.tabs-bar::after{content:'';position:absolute;top:0;right:0;bottom:0;width:32px;background:linear-gradient(to right,transparent,var(--bg-card));pointer-events:none;z-index:1}
+    /* 报名表单提交按钮粘性定位 */
+    .reg-submit-sticky{position:sticky;bottom:0;padding:16px;background:var(--bg-card);border-top:1px solid var(--border-subtle);margin:16px -20px -20px;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+    @media(max-width:768px){
+      .back-nav{display:flex}
+      .bottom-tab-bar{display:flex}
+      .back-to-top{display:flex}
+      .shell{padding-top:calc(var(--nav-height) + 48px + 24px)}
+      .shell.on-sub-page{padding-top:calc(var(--nav-height) + 48px + 24px)}
+      body{padding-bottom:calc(56px + env(safe-area-inset-bottom,0px))}
+    }
+  </style>
 <style>
 .search-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:5000;justify-content:center;padding-top:15vh}
+/* 移动端搜索弹窗全屏适配 */
+@media(max-width:768px){.search-modal-overlay{padding-top:0;align-items:flex-start}.search-modal{width:100%;max-width:100%;max-height:100vh;height:100vh;border-radius:0;border:none}.search-modal-results{max-height:calc(100vh - 110px)}}
 .search-modal-overlay.active{display:flex;animation:modalOverlayIn .2s ease forwards}
 .search-modal{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);width:90%;max-width:560px;max-height:70vh;overflow:hidden;box-shadow:var(--shadow-lg);animation:modalScaleIn .3s var(--ease-out-expo) forwards}
 .search-modal-input-wrap{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border-subtle)}
@@ -527,7 +622,7 @@
 .toolbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
 .toolbox-card{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px 16px;text-align:center;cursor:pointer;transition:all .25s ease;background:var(--bg-card)}
 .toolbox-card:hover{border-color:var(--border-accent);background:var(--surface-accent);transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.toolbox-card-icon{font-size:28px;margin-bottom:8px}
+.toolbox-card-icon{margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:var(--accent);width:40px;height:40px;border-radius:var(--radius-sm);background:var(--surface-accent)}
 .toolbox-card-title{font-size:14px;font-weight:600;color:var(--text-primary)}
 .toolbox-card-desc{font-size:12px;color:var(--text-muted);margin-top:4px}
 .gpa-table{width:100%;border-collapse:collapse;margin-bottom:16px}
@@ -592,6 +687,115 @@
 .credit-stat-value{font-size:24px;font-weight:700;color:var(--accent)}
 .credit-stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
 @media(max-width:600px){.credit-summary{grid-template-columns:1fr}.toolbox-grid{grid-template-columns:repeat(2,1fr)}.pomodoro-time{font-size:48px}.schedule-grid{font-size:10px}}
+
+/* ========== 校历日历样式 ========== */
+/* 日历容器 */
+.cal-container{max-width:720px;margin:0 auto}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.cal-title{font-size:var(--text-xl);font-weight:700;color:var(--text-primary)}
+.cal-semester-tabs{display:flex;gap:4px;background:var(--bg-secondary);border-radius:var(--radius-2xs);padding:3px}
+.cal-semester-tab{padding:6px 16px;border-radius:5px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all .2s}
+.cal-semester-tab.active{background:var(--bg-card);color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.cal-semester-tab:hover:not(.active){color:var(--text-secondary)}
+.cal-month-nav{display:flex;align-items:center;gap:12px}
+.cal-month-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.cal-month-btn:hover{border-color:var(--border-accent);color:var(--accent)}
+.cal-month-label{font-size:var(--text-md);font-weight:600;color:var(--text-primary);min-width:120px;text-align:center}
+
+/* 日历网格 */
+.cal-grid-wrapper{position:relative;overflow:hidden}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;background:var(--bg-secondary);border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-subtle)}
+.cal-weekday{text-align:center;padding:10px 4px;font-size:12px;font-weight:600;color:var(--text-muted);background:var(--bg-tertiary)}
+.cal-cell{min-height:72px;padding:6px;background:var(--bg-card);cursor:pointer;transition:all .15s;position:relative}
+.cal-cell:hover{background:var(--bg-hover)}
+.cal-cell.other-month{opacity:0.35}
+.cal-cell.other-month:hover{opacity:0.55}
+.cal-cell.today .cal-date{background:var(--accent);color:#fff;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+.cal-date{font-size:13px;font-weight:500;color:var(--text-primary);display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px}
+.cal-dots{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;justify-content:center}
+.cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cal-cell.has-events{cursor:pointer}
+
+/* 图例 */
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md)}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .15s;user-select:none}
+.cal-legend-item:hover{background:var(--bg-hover)}
+.cal-legend-item.active{background:var(--bg-secondary);font-weight:600}
+.cal-legend-item.inactive{opacity:0.35}
+.cal-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* 列表视图切换按钮 */
+.cal-view-toggle{display:flex;gap:4px;margin-bottom:12px}
+.cal-view-btn{padding:6px 14px;border-radius:var(--radius-2xs);border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-muted);font-size:12px;cursor:pointer;transition:all .2s;font-weight:500}
+.cal-view-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* 事件列表视图 */
+.cal-event-list{display:flex;flex-direction:column;gap:8px}
+.cal-event-list-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);transition:border-color .2s}
+.cal-event-list-item:hover{border-color:var(--border-accent)}
+.cal-event-list-date{min-width:56px;text-align:center;padding:8px;background:var(--bg-secondary);border-radius:var(--radius-2xs)}
+.cal-event-list-day{font-size:20px;font-weight:700;color:var(--text-primary);line-height:1.1}
+.cal-event-list-month{font-size:11px;color:var(--text-muted)}
+.cal-event-list-info{flex:1}
+.cal-event-list-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+.cal-event-list-desc{font-size:12px;color:var(--text-muted)}
+.cal-event-list-category{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin-top:4px;font-weight:500}
+
+/* 近期事项 */
+.cal-upcoming{margin-top:20px}
+.cal-upcoming-title{font-size:var(--text-md);font-weight:600;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.cal-upcoming-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);margin-bottom:6px;transition:border-color .2s}
+.cal-upcoming-item:hover{border-color:var(--border-accent)}
+.cal-upcoming-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cal-upcoming-info{flex:1}
+.cal-upcoming-title-text{font-size:13px;font-weight:600;color:var(--text-primary)}
+.cal-upcoming-date-text{font-size:11px;color:var(--text-muted)}
+.cal-upcoming-empty{text-align:center;padding:20px;color:var(--text-muted);font-size:13px}
+
+/* 事件详情弹窗 */
+.cal-popup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .2s}
+.cal-popup-overlay.show{opacity:1}
+.cal-popup{background:var(--bg-card);border-radius:var(--radius-md);border:1px solid var(--border-subtle);box-shadow:0 20px 60px rgba(0,0,0,0.2);max-width:380px;width:100%;padding:24px;transform:translateY(10px);transition:transform .2s}
+.cal-popup-overlay.show .cal-popup{transform:translateY(0)}
+.cal-popup-date{font-size:var(--text-lg);font-weight:700;color:var(--text-primary);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-subtle)}
+.cal-popup-event{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.cal-popup-event:last-of-type{border-bottom:none}
+.cal-popup-event-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.cal-popup-event-title{font-size:14px;font-weight:600;color:var(--text-primary)}
+.cal-popup-event-desc{font-size:12px;color:var(--text-muted);margin-top:2px}
+.cal-popup-event-btn{display:inline-block;margin-top:6px;padding:4px 12px;border-radius:var(--radius-2xs);background:var(--accent);color:#fff;font-size:12px;cursor:pointer;border:none;font-weight:500;transition:opacity .2s}
+.cal-popup-event-btn:hover{opacity:0.85}
+.cal-popup-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;border:none;background:var(--bg-secondary);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s}
+.cal-popup-close:hover{background:var(--bg-hover);color:var(--text-primary)}
+.cal-popup{position:relative}
+
+/* 日历淡入淡出动画 */
+.cal-fade-enter{opacity:0;transition:opacity .2s ease}
+.cal-fade-enter.cal-fade-active{opacity:1}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .cal-cell:hover{background:var(--bg-hover)}
+[data-theme="dark"] .cal-popup{box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+[data-theme="dark"] .cal-popup-overlay{background:rgba(0,0,0,0.6)}
+[data-theme="dark"] .cal-semester-tab.active{box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+
+/* 移动端适配 */
+@media(max-width:600px){
+  .cal-header{flex-direction:column;align-items:stretch}
+  .cal-title{text-align:center}
+  .cal-semester-tabs{justify-content:center}
+  .cal-month-nav{justify-content:center}
+  .cal-cell{min-height:48px;padding:4px}
+  .cal-date{font-size:11px;width:22px;height:22px}
+  .cal-cell.today .cal-date{width:22px;height:22px}
+  .cal-dot{width:4px;height:4px}
+  .cal-weekday{padding:8px 2px;font-size:11px}
+  .cal-legend{gap:8px;padding:10px 12px}
+  .cal-legend-item{font-size:11px;padding:3px 6px}
+  .cal-popup{padding:18px;margin:0 8px}
+  .cal-event-list-item{flex-direction:column;gap:8px}
+  .cal-event-list-date{min-width:auto;text-align:left;display:flex;gap:8px;align-items:center}
+}
 </style>
 </head>
 <body>
@@ -670,11 +874,15 @@
           <div class="notif-list" id="notifList"><div class="notif-empty">暂无通知</div></div>
         </div>
       </div>
-      <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn" aria-label="切换主题">
+      <button class="theme-toggle-btn" onclick="event.stopPropagation();toggleTheme()" id="themeToggleBtn" aria-label="切换主题">
         <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+      <!-- 移动端搜索按钮 -->
+      <button class="nav-search-btn" onclick="openGlobalSearch()" aria-label="搜索">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="hamburger" id="hamburgerBtn" onclick="event.stopPropagation();toggleMobileMenu()"><span></span><span></span><span></span></button>
     </div>
   </nav>
   <div class="mobile-menu" id="mobileMenu">
@@ -711,7 +919,7 @@
     <button class="nav-link" data-page="competition" onclick="navigate('competition','calendar');closeMobileMenu()">竞赛日历</button>
     <button class="nav-link" data-page="competition" onclick="navigate('competition','achievements');closeMobileMenu()">竞赛战绩</button>
     <button class="nav-link" data-page="competition" onclick="navigate('competition','guide');closeMobileMenu()">竞赛指南</button>
-    <button class="nav-link" data-page="competition" onclick="navigate('competition','security');closeMobileMenu()">公安安全类</button>
+    <button class="nav-link" data-page="competition" onclick="navigate('competition','security');closeMobileMenu()">公共安全类</button>
     <div class="mobile-menu-label">工具</div>
     <button class="nav-link" data-page="toolbox" onclick="navigate('toolbox');closeMobileMenu()">工具箱</button>
     <div class="mobile-menu-label">个人</div>
@@ -720,6 +928,14 @@
     <button class="nav-link" data-page="admin" onclick="navigate('admin');closeMobileMenu()" id="mobileAdminBtn" style="display:none">管理面板</button>
     <button class="nav-link" data-page="auth" onclick="navigate('auth');closeMobileMenu()" id="mobileAuthBtn">登录/注册</button>
     <button class="nav-link" id="mobileLogoutBtn" style="display:none" onclick="doLogout();closeMobileMenu()">退出登录</button>
+  </div>
+  <!-- 移动端返回导航栏 -->
+  <div class="back-nav" id="backNav">
+    <button class="back-nav-arrow" onclick="history.back()" aria-label="返回">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="back-nav-title" id="backNavTitle"></div>
+    <div class="back-nav-spacer"></div>
   </div>
   <main class="shell" id="main-content">
     <div id="page-home" class="page active">
@@ -743,22 +959,22 @@
             <div class="quote-text" id="quoteText"></div>
             <div class="quote-author" id="quoteAuthor"></div>
           </div>
-          <button class="quote-refresh" onclick="refreshQuote()" aria-label="换一条">&#8635;</button>
+          <button class="quote-refresh" onclick="event.stopPropagation();refreshQuote()" aria-label="换一条">&#8635;</button>
         </div>
       </div>
       <div class="featured-row animate-in delay-2">
         <div class="featured-item" onclick="navigate('academic')">
-          <div class="fi-icon">&#127891;</div>
+          <div class="fi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div>
           <div class="fi-text"><h3>专业大全</h3><p>22个学院 74个专业</p></div>
           <div class="fi-arrow">&#8250;</div>
         </div>
         <div class="featured-item" onclick="navigate('admission','scores')">
-          <div class="fi-icon">&#128200;</div>
+          <div class="fi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
           <div class="fi-text"><h3>录取分数</h3><p>2024各省投档线</p></div>
           <div class="fi-arrow">&#8250;</div>
         </div>
         <div class="featured-item" onclick="navigate('campus')">
-          <div class="fi-icon">&#127979;</div>
+          <div class="fi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/></svg></div>
           <div class="fi-text"><h3>校园生活</h3><p>食堂 宿舍 图书馆</p></div>
           <div class="fi-arrow">&#8250;</div>
         </div>
@@ -896,7 +1112,7 @@
           <button class="tab-btn" onclick="switchCompetitionTab('calendar')">竞赛日历</button>
           <button class="tab-btn" onclick="switchCompetitionTab('achievements')">竞赛战绩</button>
           <button class="tab-btn" onclick="switchCompetitionTab('guide')">竞赛指南</button>
-          <button class="tab-btn" onclick="switchCompetitionTab('security')">公安安全类</button>
+          <button class="tab-btn" onclick="switchCompetitionTab('security')">公共安全类</button>
         </div>
         <div id="competitionContent"></div>
       </div>
@@ -905,11 +1121,11 @@
       <div class="content-page">
         <h2 class="content-page-title"><span class="gold">工具箱</span></h2>
         <div class="toolbox-grid">
-          <div class="toolbox-card" onclick="switchToolboxTab('gpa')"><div class="toolbox-card-icon">&#127942;</div><div class="toolbox-card-title">GPA计算器</div><div class="toolbox-card-desc">计算你的绩点</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('credits')"><div class="toolbox-card-icon">&#128218;</div><div class="toolbox-card-title">学分统计</div><div class="toolbox-card-desc">统计已修学分</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('countdown')"><div class="toolbox-card-icon">&#9203;</div><div class="toolbox-card-title">倒计时</div><div class="toolbox-card-desc">考试/放假/开学</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('schedule')"><div class="toolbox-card-icon">&#128197;</div><div class="toolbox-card-title">课程表</div><div class="toolbox-card-desc">简易课程安排</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('pomodoro')"><div class="toolbox-card-icon">&#127813;</div><div class="toolbox-card-title">番茄钟</div><div class="toolbox-card-desc">专注学习计时</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('gpa')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div><div class="toolbox-card-title">GPA计算器</div><div class="toolbox-card-desc">计算你的绩点</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('credits')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div><div class="toolbox-card-title">学分统计</div><div class="toolbox-card-desc">统计已修学分</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('countdown')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toolbox-card-title">倒计时</div><div class="toolbox-card-desc">考试/放假/开学</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('schedule')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="toolbox-card-title">课程表</div><div class="toolbox-card-desc">简易课程安排</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('pomodoro')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3L2 6"/><path d="M22 6l-3-3"/><line x1="6" y1="19" x2="6.01" y2="19"/><line x1="18" y1="19" x2="18.01" y2="19"/></svg></div><div class="toolbox-card-title">番茄钟</div><div class="toolbox-card-desc">专注学习计时</div></div>
         </div>
         <div id="toolboxContent"></div>
       </div>
@@ -925,17 +1141,17 @@
             <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
           </div>
           <div id="authLoginForm" class="auth-form active">
-            <div class="auth-field"><label>学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" /></div>
-            <div class="auth-field"><label>密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+            <div class="auth-field"><label>学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
+            <div class="auth-field pwd-field"><label>密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-error" id="authLoginError"></div>
             <button class="btn-primary auth-submit" onclick="doLogin()" id="authLoginBtn">登录</button>
           </div>
           <div id="authRegisterForm" class="auth-form">
-            <div class="auth-field"><label>学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" /></div>
+            <div class="auth-field"><label>学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
             <div class="auth-field"><label>姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" /></div>
             <div class="auth-field"><label>学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" /></div>
-            <div class="auth-field"><label>密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
-            <div class="auth-field"><label>确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /></div>
+            <div class="auth-field pwd-field"><label>密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
+            <div class="auth-field pwd-field"><label>确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword2',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-agreement"><input type="checkbox" id="authAgree" /><span>我已阅读并同意 <a onclick="showLegalModal('terms')">用户协议</a> 和 <a onclick="showLegalModal('privacy')">隐私政策</a></span></div>
             <div class="auth-error" id="authRegError"></div>
             <button class="btn-primary auth-submit" onclick="doRegister()" id="authRegBtn">注册</button>
@@ -946,6 +1162,29 @@
     <div id="page-admin" class="page"><div id="adminContent"></div></div>
     <div id="page-myregistrations" class="page"><div id="myRegsContent"></div></div>
   </main>
+  <!-- 移动端底部标签栏 -->
+  <div class="bottom-tab-bar" id="bottomTabBar">
+    <button class="bottom-tab-item active" data-tab="home" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>首页</span>
+    </button>
+    <button class="bottom-tab-item" data-tab="competition" onclick="navigate('competition')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      <span>竞赛</span>
+    </button>
+    <button class="bottom-tab-item" data-tab="toolbox" onclick="navigate('toolbox')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span>工具</span>
+    </button>
+    <button class="bottom-tab-item" data-tab="profile" onclick="navigate('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>我的</span>
+    </button>
+  </div>
+  <!-- 回到顶部按钮 -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
   <div class="copy-toast" id="copyToast">已复制到剪贴板</div>
   <div class="contact-modal-overlay" id="contactModal" onclick="if(event.target===this)hideContactModal()">
     <div class="contact-modal">
@@ -1152,7 +1391,7 @@ faq:[
 {q:"学校有打印店吗？",a:"有的，校园内有多家打印店，可以打印、复印和扫描文件。"},
 {q:"学校有超市吗？",a:"有的，校园内有超市和便利店，可以购买日常生活用品和学习用品。"},
 {q:"开学要带什么？",a:"建议携带录取通知书、身份证、户口迁移证（自愿）、一寸和两寸照片、个人衣物和日用品。床上用品也可以到校后购买。"},
-{q:"长沙理工大学有哪些竞赛可以参加？",a:"长沙理工大学支持55项学科竞赛，涵盖理工类、创新创业类、公安安全类、文科类、艺术体育类、综合类等。其中A类竞赛包括中国国际大学生创新大赛（互联网+）、挑战杯等；B+类包括数学建模、电子设计竞赛、蓝桥杯等。具体可在学科竞赛页面查看完整列表。"},{q:"什么是A类竞赛？",a:"A类竞赛是长沙理工大学竞赛支持体系中最高级别的竞赛，学校给予最大力度的支持和奖励。主要包括：中国国际大学生创新大赛（互联网+）、挑战杯全国大学生课外学术科技作品竞赛等。A类竞赛获奖在保研、评优中具有最高权重。"},{q:"数学建模竞赛怎么报名？",a:"全国大学生数学建模竞赛由数统学院负责组织。报名流程：1）每年5月参加校赛（第十六届校赛有118支队伍参赛）；2）5月-9月通过中国知网竞赛平台在线报名国赛；3）每队3人，竞赛时长72小时。2024年长沙理工获全国一等奖。"},{q:"长沙理工在挑战杯中成绩怎么样？",a:"长沙理工大学在挑战杯中成绩优异！2025年第十九届获特等奖（擂主）1项、二等奖多项，共27项国奖。校团委负责组织。挑战杯被誉为中国大学生科技创新的奥林匹克，含金量极高。"},{q:"信息安全竞赛有哪些？",a:"信息安全相关竞赛主要有：1）全国大学生信息安全竞赛（CISCN）- 计算机学院、物电学院组织，B-级支持；2）ISCC信息安全与对抗技术竞赛 - 计算机学院、物电学院、卓工学院组织，B-级支持；3）强网杯全国网络安全挑战赛 - 国家网信办指导的权威赛事。"},],
+{q:"长沙理工大学有哪些竞赛可以参加？",a:"长沙理工大学支持55项学科竞赛，涵盖理工类、创新创业类、公共安全类、文科类、艺术体育类、综合类等。其中A类竞赛包括中国国际大学生创新大赛（互联网+）、挑战杯等；B+类包括数学建模、电子设计竞赛、蓝桥杯等。具体可在学科竞赛页面查看完整列表。"},{q:"什么是A类竞赛？",a:"A类竞赛是长沙理工大学竞赛支持体系中最高级别的竞赛，学校给予最大力度的支持和奖励。主要包括：中国国际大学生创新大赛（互联网+）、挑战杯全国大学生课外学术科技作品竞赛等。A类竞赛获奖在保研、评优中具有最高权重。"},{q:"数学建模竞赛怎么报名？",a:"全国大学生数学建模竞赛由数统学院负责组织。报名流程：1）每年5月参加校赛（第十六届校赛有118支队伍参赛）；2）5月-9月通过中国知网竞赛平台在线报名国赛；3）每队3人，竞赛时长72小时。2024年长沙理工获全国一等奖。"},{q:"长沙理工在挑战杯中成绩怎么样？",a:"长沙理工大学在挑战杯中成绩优异！2025年第十九届获特等奖（擂主）1项、二等奖多项，共27项国奖。校团委负责组织。挑战杯被誉为中国大学生科技创新的奥林匹克，含金量极高。"},{q:"信息安全竞赛有哪些？",a:"信息安全相关竞赛主要有：1）全国大学生信息安全竞赛（CISCN）- 计算机学院、物电学院组织，B-级支持；2）ISCC信息安全与对抗技术竞赛 - 计算机学院、物电学院、卓工学院组织，B-级支持；3）强网杯全国网络安全挑战赛 - 国家网信办指导的权威赛事。"},],
 scholarships:[
 {name:"国家奖学金",amount:"8000元/年",condition:"学习成绩优异，年级排名前5%",category:"国家"},
 {name:"国家励志奖学金",amount:"5000元/年",condition:"家庭经济困难且成绩优秀",category:"国家"},
@@ -1201,7 +1440,7 @@ shuttleBus:[
 {route:"金盆岭→云塘",schedule:"7:00-21:00",interval:"约15分钟一班",bus:"209路",duration:"约30分钟"},
 {route:"云塘→地铁1号线",schedule:"6:30-22:00",interval:"约10分钟一班",bus:"702路",duration:"约20分钟"},
 {route:"云塘→长沙南站",schedule:"6:30-21:00",interval:"约20分钟一班",bus:"702路转地铁",duration:"约40分钟"}]
-,competitions:[{"name":"中国国际大学生创新大赛（互联网+）","level":"国家级","category":"创新创业类","organizer":"教育部、中央统战部、中央网信办、国家发展改革委、工业和信息化部、人力资源社会保障部、农业农村部、中国科学院、中国工程院、国家知识产权局、共青团中央","registration_period":"5月-7月","competition_period":"10月（总决赛）","awards":"设金、银、铜奖及优秀奖，省级设一、二、三等奖","csust_status":"2025年获银奖2项、铜奖5项，学校设有卓越工程师学院负责组织","description":"中国最大规模的大学生创新创业赛事，原为'互联网+'大学生创新创业大赛，涵盖高教主赛道、青年红色筑梦之旅赛道、职教赛道等。采用校赛-省赛-国赛三级赛制。","official_website":"https://cy.ncss.cn/","ministry_recognized":true},{"name":"“挑战杯”全国大学生课外学术科技作品竞赛（大挑）","level":"国家级","category":"综合类","organizer":"共青团中央、中国科协、教育部、中国社会科学院、全国学联","registration_period":"1月-6月","competition_period":"10月-11月（全国决赛，偶数年举办）","awards":"特等奖、一等奖、二等奖、三等奖","csust_status":"2025年第十九届获特等奖（擂主）1项、二等奖多项，共27项国奖，校团委负责组织","description":"被誉为中国大学生科技创新的‘奥林匹克’，每两年举办一届（偶数年）。分为自然科学类学术论文、哲学社会科学类调查报告和学术论文、科技发明制作三大类。","official_website":"http://www.tiaozhanbei.net/","ministry_recognized":true},{"name":"“挑战杯”中国大学生创业计划竞赛（小挑/创青春）","level":"国家级","category":"创新创业类","organizer":"共青团中央、教育部、人力资源社会保障部、中国科协、全国学联","registration_period":"1月-6月","competition_period":"10月-11月（全国决赛，奇数年举办）","awards":"金奖、银奖、铜奖","csust_status":"校团委负责组织，长沙理工大学积极参与并多次获奖","description":"与‘大挑’交替举办（奇数年），聚焦创业计划，注重商业计划书和项目可行性。设科技创新和未来产业、乡村振兴和农业农村现代化、生态文明建设和绿色低碳发展、文化创意和区域交流合作、社会治理和公共服务等五个赛道。","official_website":"http://www.tiaozhanbei.net/","ministry_recognized":true},{"name":"ACM-ICPC国际大学生程序设计竞赛","level":"国家级/国际级","category":"理工类","organizer":"美国计算机协会(ACM)","registration_period":"9月-10月","competition_period":"10月-12月（亚洲区域赛），次年4-6月（世界总决赛）","awards":"金、银、铜牌","csust_status":"计算机学院负责组织，曾获亚洲区域赛银牌等成绩","description":"全球最具影响力的大学生程序设计竞赛，要求参赛队伍在规定时间内用C/C++/Java/Python等语言解决算法问题。采用区域赛-总决赛赛制。","official_website":"https://icpc.global/","ministry_recognized":true},{"name":"全国大学生数学建模竞赛","level":"国家级","category":"理工类","organizer":"中国工业与应用数学学会(CSIAM)","registration_period":"5月-9月","competition_period":"9月（通常为9月中旬，竞赛时长72小时）","awards":"国家一等奖、二等奖；省级一、二、三等奖","csust_status":"数统学院负责组织，2024年获全国一等奖，校赛每年5月举办（第十六届校赛有118支队伍参赛）","description":"创办于1992年，每年一届，是中国高校规模最大的基础性学科竞赛。参赛者需在72小时内就指定问题完成从模型建立、求解到论文撰写的全过程。2025年有1837所院校68311队参赛。","official_website":"http://www.mcm.edu.cn/","ministry_recognized":true},{"name":"全国大学生电子设计竞赛","level":"国家级","category":"理工类","organizer":"教育部高等教育司、工业和信息化部人事司","registration_period":"3月-5月","competition_period":"7月底-8月初（竞赛时长4天3夜，奇数年举办国赛）","awards":"国家一等奖、二等奖；赛区一、二、三等奖","csust_status":"物电学院、电气学院、卓工学院负责组织，长沙理工大学积极参赛","description":"奇数年为国赛（全国统一命题），偶数年为省赛（各赛区自命题）。涉及模数电路、单片机、嵌入式系统、自动控制等领域。是中国电子类学科最高水平竞赛之一。","official_website":"http://www.nuedcchina.com/","ministry_recognized":true},{"name":"蓝桥杯全国软件和信息技术专业人才大赛","level":"国家级","category":"理工类","organizer":"工业和信息化部人才交流中心","registration_period":"10月-次年3月","competition_period":"省赛4月，全国总决赛5月-6月","awards":"省赛一、二、三等奖（一等奖晋级国赛）；国赛特等奖（可空缺）、一、二、三等奖","csust_status":"计算机学院负责组织，长沙理工大学学生多次获省赛一等奖并晋级国赛","description":"涵盖软件赛（C/C++/Java/Python/Web应用等）、电子赛（单片机/嵌入式/物联网等）、人工智能赛、视觉艺术设计赛、数字科技创新赛等多个赛道。IT类参赛人数最多的赛事之一。","official_website":"http://dasai.lanqiao.cn/","ministry_recognized":true},{"name":"全国大学生机械创新设计大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校机械学科教学指导委员会","registration_period":"3月-5月","competition_period":"省赛5月-6月，全国决赛7月-8月（偶数年举办国赛）","awards":"国家一等奖、二等奖；省级一、二、三等奖","csust_status":"机械学院负责组织，长沙理工大学为支持项目","description":"每两年举办一届国赛（偶数年），奇数年为省赛。主题围绕机械创新设计与实际应用，注重培养学生的创新设计能力和工程实践能力。","official_website":"http://umic.ckcest.cn/","ministry_recognized":true},{"name":"全国大学生结构设计竞赛","level":"国家级","category":"理工类","organizer":"中国高等教育学会工程教育专业委员会","registration_period":"1月-3月","competition_period":"省赛4月-6月，全国决赛10月-11月","awards":"国家特等奖、一等奖、二等奖；省级一、二、三等奖","csust_status":"土木学院负责组织，长沙理工大学为B+级支持项目","description":"土木工程领域最具影响力的学科竞赛，要求学生利用竹材/木材等材料设计制作结构模型并进行加载测试。考察结构设计、力学分析和动手制作能力。","official_website":"http://www.structurecontest.com/","ministry_recognized":true},{"name":"全国大学生化工设计竞赛","level":"国家级","category":"理工类","organizer":"中国化工学会","registration_period":"3月-4月","competition_period":"省级评审6月-7月，全国总决赛8月中旬","awards":"国家一等奖、二等奖、三等奖","csust_status":"化学学院负责组织，长沙理工大学为B+级支持项目","description":"面向化工类专业学生的顶级赛事，要求团队完成化工厂的工艺流程设计、设备选型、自动控制、经济分析等全套工程设计。","official_website":"http://iche.zju.edu.cn/","ministry_recognized":true},{"name":"全国大学生智能汽车竞赛","level":"国家级","category":"理工类","organizer":"中国自动化学会","registration_period":"1月-6月","competition_period":"省赛/分区赛7月，全国总决赛8月","awards":"国家一等奖、二等奖；赛区一、二、三等奖","csust_status":"计算机学院、电气学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"以智能汽车为研究对象的创意性科技竞赛，涵盖竞速组（光电组、摄像头组等）和创意组。要求学生设计制作能够自主识别路径的智能模型汽车。2025年第二十届有3287支队伍参赛。","official_website":"http://www.smartcarrace.com/","ministry_recognized":true},{"name":"全国大学生广告艺术大赛（大广赛）","level":"国家级","category":"艺术体育类","organizer":"全国大学生广告艺术大赛组委会、中国传媒大学（教育部高教司指导）","registration_period":"1月-6月（作品提交截止6月中旬）","competition_period":"省赛6月-7月，全国总评审8月-9月","awards":"国家一等奖、二等奖、三等奖、优秀奖；省级相应奖项","csust_status":"文新学院、艺术学院负责组织，长沙理工大学为B+级支持项目","description":"中国高校文科重要赛事，涵盖平面海报、视频（微电影/动画）、广播、策划案、文案、UI/UX设计等多个类别。企业命题与公益命题并行。","official_website":"https://www.sun-ada.net/","ministry_recognized":true},{"name":"全国大学生电子商务‘创新、创意及创业’挑战赛（三创赛）","level":"国家级","category":"综合类","organizer":"教育部高等学校电子商务类专业教学指导委员会","registration_period":"9月-12月","competition_period":"校赛次年3月-4月，省赛次年5月-6月，全国总决赛次年7月-8月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"经管学院负责组织，长沙理工大学为B+级支持项目","description":"中国电子商务领域最具影响力的赛事，分常规赛和实战赛。强调创新思维、创意设计和创业实践，涵盖三农电子商务、工业电子商务、跨境电子商务等主题。","official_website":"http://www.3chuang.net/","ministry_recognized":true},{"name":"全国大学生节能减排社会实践与科技竞赛","level":"国家级","category":"理工类","organizer":"教育部高等教育司","registration_period":"4月-5月","competition_period":"全国决赛8月","awards":"国家特等奖（可空缺）、一等奖、二等奖、三等奖","csust_status":"能动学院、电气学院、水利学院负责组织，长沙理工大学为B+级支持项目","description":"以‘节能减排，绿色能源’为主题，涵盖能源、机械、资源、环境、建筑、化工等多个学科领域。分为科技作品类和社会实践调查报告类。","official_website":"http://www.jienengjianpai.org/","ministry_recognized":true},{"name":"“外研社·国才杯”‘理解当代中国’全国大学生外语能力大赛","level":"国家级","category":"文科类","organizer":"外语教学与研究出版社","registration_period":"4月-10月","competition_period":"校赛4月-6月，省赛9月-10月，全国决赛11月-12月","awards":"国家金奖、银奖、铜奖；省级一、二、三等奖","csust_status":"外语学院负责组织，长沙理工大学为B+级支持项目","description":"涵盖英语演讲、英语辩论、英语写作、英语阅读四个赛项，是国内规模最大、规格最高的大学生外语综合能力赛事。2023年起增设多语种组别。","official_website":"http://uchallenge.unipus.cn/","ministry_recognized":true},{"name":"“21世纪杯”全国英语演讲比赛","level":"国家级","category":"文科类","organizer":"中国日报社","registration_period":"1月-3月","competition_period":"地区赛3月-5月，全国总决赛10月","awards":"全国冠军、亚军、季军及一、二、三等奖","csust_status":"外语学院负责组织，长沙理工大学为B+级支持项目","description":"国内最具影响力的英语演讲比赛之一，已举办二十余届。获胜者有机会代表中国参加国际公众演讲比赛(IPSC)。","official_website":"https://contest.i21st.cn/","ministry_recognized":true},{"name":"全国大学生信息安全竞赛","level":"国家级","category":"公安安全类","organizer":"教育部高等学校信息安全类专业教学指导委员会","registration_period":"4月-6月","competition_period":"初赛线上7月-8月，决赛线下9月-10月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院、物电学院负责组织，长沙理工大学为B-级支持项目","description":"信息安全领域最具权威性的大学生学科竞赛，分为作品赛和技能赛（CTF赛制）。涵盖Web安全、逆向工程、密码学、二进制漏洞利用、AI安全等方向。","official_website":"http://www.ciscn.cn/","ministry_recognized":true},{"name":"全国大学生信息安全与对抗技术竞赛（ISCC）","level":"国家级","category":"公安安全类","organizer":"中国兵工学会、中国兵工学会信息安全与对抗技术专业委员会","registration_period":"4月-5月","competition_period":"线上赛5月，线下决赛6月-7月","awards":"国家一、二、三等奖及优胜奖","csust_status":"计算机学院、物电学院、卓工学院负责组织，长沙理工大学为B-级支持项目","description":"国内历史最悠久的信息安全竞赛之一（始于2004年），采用个人挑战赛和分组对抗赛结合的形式，涵盖网络攻防、密码学、逆向分析等技术方向。","official_website":"http://www.isclab.org.cn","ministry_recognized":true},{"name":"“强网杯”全国网络安全挑战赛","level":"国家级","category":"公安安全类","organizer":"中央网信办、河南省人民政府（指导）；河南省委网信办、河南省教育厅、郑州市人民政府、信息工程大学、郑州大学、中国网络空间安全协会（主办）","registration_period":"9月-10月","competition_period":"线上赛10月-11月，线下赛11月-12月","awards":"一等奖、二等奖、三等奖及优秀奖","csust_status":"未列入长沙理工大学竞赛支持清单，但计算机学院学生可参与","description":"国家级网络安全顶级赛事，采用CTF（Capture The Flag）赛制，涵盖Web安全、逆向工程、密码学、Pwn、移动安全等方向。同时举办行业领域专项赛和创新创业专项赛。","official_website":"http://www.qiangwangbei.com","ministry_recognized":false},{"name":"中国大学生计算机设计大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校计算机类专业教学指导委员会等","registration_period":"4月-5月","competition_period":"省赛/初赛5月-6月，国赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B-级支持项目","description":"涵盖软件应用与开发、微课与教学辅助、数媒设计（海报/动画/微电影等）、数媒动漫、数媒游戏、Web应用、大数据、人工智能等多个类别。","official_website":"http://jsjds.blcu.edu.cn/","ministry_recognized":true},{"name":"中国高校计算机大赛（CCF CC）","level":"国家级","category":"理工类","organizer":"教育部高等学校计算机类专业教学指导委员会等","registration_period":"6月-7月","competition_period":"各赛项分不同时间，8月-11月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B-级支持项目","description":"包含大数据挑战赛、团体程序设计天梯赛、移动应用创新赛、网络技术挑战赛、人工智能创意赛等多个赛项，由中国高校计算机教育领域权威机构联合主办。","official_website":"http://www.c4best.cn/","ministry_recognized":true},{"name":"全国大学生物联网设计竞赛","level":"国家级","category":"理工类","organizer":"全国高等学校计算机教育研究会","registration_period":"4月-6月","competition_period":"线上预选赛7月，分区赛8月，全国总决赛9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B+级支持项目","description":"以物联网技术为核心，要求学生设计并实现具有创新性和实用性的物联网应用系统。华为、TI等知名企业提供技术平台支持。","official_website":"https://developer.huaweicloud.com/college/wulianwang.html","ministry_recognized":true},{"name":"全国大学生光电设计竞赛","level":"国家级","category":"理工类","organizer":"中国光学学会、教育部高等学校光电信息科学与工程专业教学指导分委员会","registration_period":"4月-8月","competition_period":"全国决赛8月-9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"物电学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"面向光电信息科学与工程、光学工程等相关专业，要求学生利用光电技术解决实际问题，涵盖光学测量、光电检测、光通信等方向。","official_website":"http://gd.p.moocollege.com/","ministry_recognized":true},{"name":"全国大学生物流设计大赛","level":"国家级","category":"综合类","organizer":"教育部高等学校物流类专业教学指导委员会、中国物流与采购联合会","registration_period":"3月-4月","competition_period":"省赛/初赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"交通学院负责组织，长沙理工大学为B+级支持项目","description":"以企业真实物流案例为背景，要求学生运用物流管理理论和方法进行方案设计，涵盖仓储、运输、供应链管理等方向。","official_website":"http://www.clpp.org.cn/","ministry_recognized":true},{"name":"全国大学生工程实践与创新能力大赛","level":"国家级","category":"理工类","organizer":"教育部高等教育司","registration_period":"9月起","competition_period":"省赛次年3月-5月，全国决赛次年6月-8月","awards":"国家金奖、银奖、铜奖","csust_status":"卓工学院负责组织，长沙理工大学为B+级支持项目","description":"面向工程训练和工程实践的综合赛事，涵盖工程基础、智能+、虚拟仿真等赛道，强调跨学科综合实践能力培养。","official_website":"http://www.gcxl.edu.cn/new/index.html","ministry_recognized":true},{"name":"“西门子杯”中国智能制造挑战赛","level":"国家级","category":"理工类","organizer":"教育部高等学校自动化类专业教学指导委员会、中国仿真学会、西门子(中国)有限公司","registration_period":"3月-5月","competition_period":"初赛6月-7月，全国决赛8月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"人工智能学院、电气学院、计算机学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"以智能制造技术为核心，涵盖工业自动化、运动控制、工业信息、智能产线、数控系统等方向。基于西门子工业自动化平台进行竞赛。","official_website":"http://www.siemenscup-cimc.org.cn/","ministry_recognized":true},{"name":"全国大学生机器人大赛（ROBOCON/ROBOMASTER/ROBOTAC）","level":"国家级","category":"理工类","organizer":"共青团中央、全国学联","registration_period":"10月-次年3月","competition_period":"分区赛5月-6月，全国总决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院、计算机学院、人工智能学院、电气学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"包含三个子赛事：ROBOCON（亚太大学生机器人大赛国内选拔）、ROBOMASTER（机甲大师赛，侧重对抗竞技）、ROBOTAC（侧重技术挑战）。是中国规模最大的大学生机器人赛事。","official_website":"https://www.cnrobocon.net/","ministry_recognized":true},{"name":"中国大学生服务外包创新创业大赛","level":"国家级","category":"创新创业类","organizer":"教育部、商务部","registration_period":"12月-次年3月","competition_period":"区域赛4月-5月，全国决赛6月-7月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院负责组织，长沙理工大学为B+级支持项目","description":"聚焦服务外包领域，设置企业命题类（A类）和创业实践类（B类）两大赛道。企业命题由知名企业发布真实业务需求，创业实践类侧重创新创业项目。","official_website":"http://www.fwwb.org.cn/","ministry_recognized":true},{"name":"全国大学生市场调查与分析大赛","level":"国家级","category":"综合类","organizer":"中国商业统计学会","registration_period":"9月-10月（知识赛），次年3月（实践赛报名）","competition_period":"知识赛11月-12月，省赛次年4月-5月，全国总决赛次年5月-6月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"数统学院、经管学院负责组织，长沙理工大学为B+级支持项目","description":"分为个人知识赛（网考）和团队实践赛两个环节。要求学生完成从选题、问卷设计、数据采集、统计分析到报告撰写的全过程市场调查研究。","official_website":"http://www.china-cssc.org/list-56-1.html","ministry_recognized":true},{"name":"全国大学生职业规划大赛","level":"国家级","category":"综合类","organizer":"教育部","registration_period":"10月-次年1月","competition_period":"校赛10月-12月，省赛次年1月-3月，全国决赛次年4月-5月","awards":"国家金奖、银奖、铜奖；省级一、二、三等奖","csust_status":"创业就业指导处负责组织，长沙理工大学为B+级支持项目","description":"分为成长赛道（面向低年级学生）和就业赛道（面向高年级学生）。成长赛道侧重职业发展规划，就业赛道侧重求职实战能力。","official_website":"https://www.zgs.chsi.com.cn/","ministry_recognized":true},{"name":"中华经典诵写讲大赛","level":"国家级","category":"文科类","organizer":"教育部、国家语委","registration_period":"4月-7月","competition_period":"初赛4月-6月，省赛6月-7月，全国决赛8月-10月","awards":"国家一等奖、二等奖、三等奖及优秀奖","csust_status":"文新学院负责组织，长沙理工大学为B+级支持项目","description":"包含‘诵读中国’经典诵读大赛、‘诗教中国’诗词讲解大赛、‘笔墨中国’汉字书写大赛、‘印记中国’师生篆刻大赛四个赛项。","official_website":"https://jdsxj.eduyun.cn/","ministry_recognized":true},{"name":"全国大学生英语竞赛（NECCS）","level":"国家级","category":"文科类","organizer":"国际英语外语教师协会中国英语外语教师协会（TEFL China）、高等学校大学外语教学研究会","registration_period":"12月-次年3月","competition_period":"初赛4月，决赛5月，全国总决赛暨夏令营7月-8月","awards":"国家特等奖、一等奖、二等奖、三等奖；省级一、二、三等奖","csust_status":"外语学院负责组织，长沙理工大学研究生竞赛奖励认定项目（只奖励最高奖项）","description":"创办于1999年，全国规模最大的英语学科竞赛。分A类（研究生）、B类（英语专业本科生）、C类（非英语专业本科生）、D类（体育/艺术类本科生）四个类别。初赛含笔试和听力。","official_website":"https://www.saikr.com/vse/neccs/2026","ministry_recognized":true},{"name":"全国大学生物理实验竞赛","level":"国家级","category":"理工类","organizer":"国家实验教学示范中心联席会、全国高等学校实验物理教学研究会、中国物理学会","registration_period":"1月-5月","competition_period":"全国决赛6月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"物电学院负责组织，长沙理工大学为B+级支持项目","description":"分为命题实验和创新实验两类，要求学生现场完成物理实验操作、数据分析和实验报告。注重物理实验基本技能和创新能力培养。","official_website":"http://wlsycx.moocollege.com/","ministry_recognized":true},{"name":"全国周培源大学生力学竞赛","level":"国家级","category":"理工类","organizer":"教育部高等学校力学基础课程教学指导委员会、中国力学学会、周培源基金会","registration_period":"1月-3月","competition_period":"初赛5月（个人赛笔试），决赛6月-7月（团队实验赛）","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"土木学院负责组织，长沙理工大学为B+级支持项目","description":"中国力学界最高水平的大学生学科竞赛，分为个人笔试（理论力学、材料力学）和团队实验赛。每两年举办一届（偶数年），以著名力学家周培源命名。","official_website":"http://zpy.cstam.org.cn/index.aspx","ministry_recognized":true},{"name":"全国大学生先进成图技术与产品信息建模创新大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校工程图学课程教学指导委员会、中国图学学会","registration_period":"4月","competition_period":"省赛/预赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"土木学院、机械学院负责组织，长沙理工大学为C级支持项目","description":"涵盖机械类和建筑类两个方向，要求学生掌握先进的工程图学和三维建模技术，包括尺规绘图、计算机绘图、3D建模等。","official_website":"http://www.chengtudasai.com/","ministry_recognized":true},{"name":"全国三维数字化创新设计大赛（3D大赛）","level":"国家级","category":"理工类","organizer":"国家制造业信息化培训中心、光华设计发展基金会、全国三维数字化技术推广服务与教育培训联盟(3D动力)","registration_period":"3月-6月","competition_period":"省赛6月-8月，全国总决赛11月-12月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"卓工学院、艺术学院、机械学院、土木学院、建筑学院负责组织，长沙理工大学为B-级支持项目","description":"以三维数字化/3D技术为核心，涵盖数字工业（工业设计/智能制造等）、数字人居（建筑设计/BIM等）、数字文化（文化创意/游戏动漫等）三大方向。","official_website":"https://3dds.3ddl.net/","ministry_recognized":true},{"name":"全国大学生金相技能大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校材料类专业教学指导委员会","registration_period":"12月-次年4月","competition_period":"分区赛5月-6月，全国决赛10月","awards":"国家一等奖、二等奖、三等奖","csust_status":"机械学院、材料学院负责组织，长沙理工大学为B+级支持项目","description":"材料科学领域最具影响力的实践技能竞赛，要求选手在规定时间内完成金属样品的取样、镶嵌、磨制、抛光、腐蚀和金相显微观察等操作。","official_website":"http://www.jxds.tech/","ministry_recognized":true},{"name":"全国大学生集成电路创新创业大赛","level":"国家级","category":"理工类","organizer":"工业和信息化部人才交流中心","registration_period":"1月-3月","competition_period":"分赛区决赛5月-6月，全国总决赛7月","awards":"国家一等奖、二等奖、三等奖及优秀奖","csust_status":"物电学院、电气学院负责组织，长沙理工大学为B-级支持项目","description":"聚焦集成电路设计与应用，涵盖芯片设计、EDA工具开发、集成电路测试等方向。华为、紫光展锐等企业提供技术支持。","official_website":"http://univ.ciciec.com/","ministry_recognized":true},{"name":"全国大学生化学实验创新设计竞赛","level":"国家级","category":"理工类","organizer":"中国化学会、教育部高等学校国家级实验教学示范中心联席会","registration_period":"4月","competition_period":"初赛（方案评审）5月-6月，全国决赛8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"化学学院负责组织，长沙理工大学为B+级支持项目","description":"分为新实验设计、已有实验改进和科普实验设计三类。要求学生完成实验方案设计、实验操作和答辩展示。","official_website":"https://cid.nju.edu.cn/","ministry_recognized":true},{"name":"全国大学生水利创新设计大赛","level":"国家级","category":"理工类","organizer":"中国水利教育协会、教育部高等学校水利类专业教学指导委员会","registration_period":"4月-5月","competition_period":"全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"水利学院负责组织，长沙理工大学为B+级支持项目","description":"以水利水电工程创新设计为主题，要求学生设计制作水利创新模型或装置，注重解决实际水利工程中的技术问题。","official_website":"https://sljzw.hhu.edu.cn/","ministry_recognized":true},{"name":"未来设计师·全国高校数字艺术设计大赛（NCDA）","level":"国家级","category":"艺术体育类","organizer":"工业和信息化部人才交流中心、联合国训练研究所上海中心","registration_period":"12月-次年6月","competition_period":"省赛5月-6月，全国总决赛7月-8月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B+级支持项目","description":"涵盖视觉传达设计、数字影像、交互设计、环境空间设计、时尚设计等多个类别。是国内艺术设计领域最具影响力的赛事之一。","official_website":"https://www.ncda.org.cn/","ministry_recognized":true},{"name":"米兰设计周——中国高校设计学科师生优秀作品展","level":"国家级","category":"艺术体育类","organizer":"中国高等教育学会、中国教育国际交流协会、福建高等教育学会","registration_period":"10月-次年3月","competition_period":"省赛3月-4月，全国总评审5月-6月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B-级支持项目","description":"与米兰设计周联动，展示中国高校设计学科优秀作品。涵盖视觉传达、产品设计、环境设计、服装设计、数字媒体等多个类别。","official_website":"http://www.dandad.cn/","ministry_recognized":true},{"name":"中国好创意暨全国数字艺术设计大赛","level":"国家级","category":"艺术体育类","organizer":"全国高等院校计算机基础教育研究会、中国电子视像行业协会","registration_period":"10月-次年6月","competition_period":"省赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B-级支持项目","description":"涵盖视觉传达、数字动画、微电影、交互设计、VR/AR设计等多个类别，是国内数字艺术设计领域的重要赛事。","official_website":"https://www.cdec.org.cn/","ministry_recognized":true},{"name":"全国大学生工业设计大赛","level":"国家级","category":"艺术体育类","organizer":"全国工业设计一流专业建设协同创新平台、广东省教育厅","registration_period":"6月-7月","competition_period":"省赛8月-9月，全国决赛10月-11月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B-级支持项目","description":"面向工业设计及相关专业，涵盖智能装备、生活用品、文创产品、交通工具等方向。强调设计创新与产业需求的结合。","official_website":"https://www.cuidc.net/","ministry_recognized":true},{"name":"中美青年创客大赛","level":"国家级","category":"创新创业类","organizer":"教育部","registration_period":"5月-6月","competition_period":"分赛区选拔赛6月-7月，全国总决赛8月-9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院、校团委负责组织，长沙理工大学为B+级支持项目","description":"中美人文交流高层磋商配套活动，要求参赛者以创客形式提出解决社会问题的创新方案，注重软硬件结合的原型制作。","official_website":"https://chinaus-maker.cscse.edu.cn/","ministry_recognized":true},{"name":"iCAN大学生创新创业大赛","level":"国家级","category":"创新创业类","organizer":"中国信息协会","registration_period":"4月-7月","competition_period":"分赛区选拔赛8月-9月，全国总决赛10月-11月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院、经管学院、计算机学院负责组织，长沙理工大学为B-级支持项目","description":"原中国MEMS传感器应用大赛，聚焦物联网、智能硬件、可穿戴设备等领域的创新创业。要求参赛团队完成从创意到原型的全过程。","official_website":"http://www.g-ican.com/home/index","ministry_recognized":true},{"name":"“学创杯”全国大学生创业综合模拟大赛","level":"国家级","category":"创新创业类","organizer":"国家级实验教学示范中心联席会经济与管理学科组","registration_period":"1月-3月","competition_period":"校赛3月-4月，省赛4月-5月，全国总决赛5月-6月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"经管学院负责组织，长沙理工大学为B+级支持项目","description":"采用创业管理模拟软件，参赛团队在虚拟市场中经营企业，进行创业决策。分为创业计划书评审和模拟经营两个环节。","official_website":"http://www.bster.cn/cyds/index","ministry_recognized":true},{"name":"全国大学生生命科学竞赛（CULSC）","level":"国家级","category":"理工类","organizer":"教育部大学生物学课程教学指导委员会等","registration_period":"7月-次年1月","competition_period":"网络评审次年3月-4月，全国决赛次年5月-6月","awards":"国家一等奖、二等奖、三等奖","csust_status":"食品学院负责组织，长沙理工大学为B+级支持项目","description":"以‘原创科研、全程实操’为核心，要求学生独立完成实验设计、实验操作、数据分析和论文撰写。是生命科学领域最具影响力的学科竞赛之一。","official_website":"https://www.culsc.cn/","ministry_recognized":true},{"name":"全国大学生统计建模大赛","level":"国家级","category":"理工类","organizer":"中国统计教育学会、教育部高等学校统计学类专业教学指导委员会、全国应用统计专业学位研究生教育指导委员会","registration_period":"2月-5月","competition_period":"省赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"数统学院负责组织，长沙理工大学为B-级支持项目","description":"要求参赛者运用统计学方法对经济社会热点问题进行建模分析，完成从选题、数据收集、模型构建到论文撰写的全过程。","official_website":"http://tjjmds.ai-learning.net","ministry_recognized":true},{"name":"全国企业竞争模拟大赛","level":"国家级","category":"综合类","organizer":"中国管理现代化研究会决策模拟专业委员会","registration_period":"3月","competition_period":"初赛3月-4月，复赛4月-5月，全国总决赛5月","awards":"国家一等奖、二等奖、三等奖","csust_status":"经管学院负责组织，2025年获全国一等奖2项，长沙理工大学为B-级支持项目","description":"采用计算机模拟企业经营环境，参赛团队在虚拟市场中经营企业，制定营销、生产、财务、人力资源等决策。分为企业决策赛道和数智沙盘赛道。","official_website":"http://www.ibizsim.cn/","ministry_recognized":true},{"name":"全国大学生交通运输科技大赛","level":"国家级","category":"理工类","organizer":"中国交通运输协会、中国交通教育研究会","registration_period":"3月-4月","competition_period":"全国决赛6月-7月","awards":"国家一等奖、二等奖、三等奖","csust_status":"交通学院负责组织，长沙理工大学为C级支持项目","description":"面向交通运输工程领域，涵盖道路与桥梁工程、交通运输规划与管理、交通信息工程及控制、载运工具运用工程等方向。","official_website":"","ministry_recognized":true},{"name":"全国大学生法学学生模拟立法大赛","level":"国家级","category":"文科类","organizer":"中国法学会立法学研究会","registration_period":"3月-5月","competition_period":"初赛（文本评审）6月-7月，决赛（现场答辩）8月-9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"法学院负责组织，长沙理工大学为C级支持项目","description":"要求参赛团队围绕指定立法主题，完成立法草案的起草、论证和说明，模拟真实的立法过程。培养法学生的立法实务能力。","official_website":"","ministry_recognized":true},{"name":"华为ICT大赛","level":"国家级","category":"理工类","organizer":"华为公司","registration_period":"9月-11月","competition_period":"省赛/初赛11月-12月，全球总决赛次年4月-5月","awards":"全球总冠军、一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B-级支持项目","description":"全球最大的ICT（信息通信技术）人才竞技赛事，分为网络、云、计算三个赛道。基于华为认证体系，考察学生在网络、云计算、大数据、人工智能等领域的技术能力。","official_website":"https://e.huawei.com/cn/talent/ict-academy/#/ict-contest","ministry_recognized":true},{"name":"“大唐杯”全国大学生新一代信息通信技术大赛","level":"国家级","category":"理工类","organizer":"工业和信息化部人才交流中心、中国通信企业协会","registration_period":"12月-次年2月","competition_period":"省赛3月-4月，全国决赛5月-6月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"物电学院负责组织，长沙理工大学为B-级支持项目","description":"聚焦5G/6G移动通信技术，涵盖5G网络规划与优化、5G+行业应用开发等方向。大唐移动等企业提供技术平台支持。","official_website":"https://dtcup.dtxiaotangren.com","ministry_recognized":true},{"name":"全国大学生嵌入式芯片与系统设计竞赛","level":"国家级","category":"理工类","organizer":"中国电子学会","registration_period":"3月-4月","competition_period":"分赛区决赛6月-7月，全国总决赛8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"物电学院、计算机学院负责组织，长沙理工大学为B-级支持项目","description":"聚焦嵌入式系统设计，要求学生基于指定芯片平台完成嵌入式系统的软硬件设计，涵盖应用赛道和设计赛道。","official_website":"http://www.socchina.net/","ministry_recognized":true}]};
+,competitions:[{"name":"中国国际大学生创新大赛（互联网+）","level":"国家级","category":"创新创业类","organizer":"教育部、中央统战部、中央网信办、国家发展改革委、工业和信息化部、人力资源社会保障部、农业农村部、中国科学院、中国工程院、国家知识产权局、共青团中央","registration_period":"5月-7月","competition_period":"10月（总决赛）","awards":"设金、银、铜奖及优秀奖，省级设一、二、三等奖","csust_status":"2025年获银奖2项、铜奖5项，学校设有卓越工程师学院负责组织","description":"中国最大规模的大学生创新创业赛事，原为'互联网+'大学生创新创业大赛，涵盖高教主赛道、青年红色筑梦之旅赛道、职教赛道等。采用校赛-省赛-国赛三级赛制。","official_website":"https://cy.ncss.cn/","ministry_recognized":true},{"name":"“挑战杯”全国大学生课外学术科技作品竞赛（大挑）","level":"国家级","category":"综合类","organizer":"共青团中央、中国科协、教育部、中国社会科学院、全国学联","registration_period":"1月-6月","competition_period":"10月-11月（全国决赛，偶数年举办）","awards":"特等奖、一等奖、二等奖、三等奖","csust_status":"2025年第十九届获特等奖（擂主）1项、二等奖多项，共27项国奖，校团委负责组织","description":"被誉为中国大学生科技创新的‘奥林匹克’，每两年举办一届（偶数年）。分为自然科学类学术论文、哲学社会科学类调查报告和学术论文、科技发明制作三大类。","official_website":"http://www.tiaozhanbei.net/","ministry_recognized":true},{"name":"“挑战杯”中国大学生创业计划竞赛（小挑/创青春）","level":"国家级","category":"创新创业类","organizer":"共青团中央、教育部、人力资源社会保障部、中国科协、全国学联","registration_period":"1月-6月","competition_period":"10月-11月（全国决赛，奇数年举办）","awards":"金奖、银奖、铜奖","csust_status":"校团委负责组织，长沙理工大学积极参与并多次获奖","description":"与‘大挑’交替举办（奇数年），聚焦创业计划，注重商业计划书和项目可行性。设科技创新和未来产业、乡村振兴和农业农村现代化、生态文明建设和绿色低碳发展、文化创意和区域交流合作、社会治理和公共服务等五个赛道。","official_website":"http://www.tiaozhanbei.net/","ministry_recognized":true},{"name":"ACM-ICPC国际大学生程序设计竞赛","level":"国家级/国际级","category":"理工类","organizer":"美国计算机协会(ACM)","registration_period":"9月-10月","competition_period":"10月-12月（亚洲区域赛），次年4-6月（世界总决赛）","awards":"金、银、铜牌","csust_status":"计算机学院负责组织，曾获亚洲区域赛银牌等成绩","description":"全球最具影响力的大学生程序设计竞赛，要求参赛队伍在规定时间内用C/C++/Java/Python等语言解决算法问题。采用区域赛-总决赛赛制。","official_website":"https://icpc.global/","ministry_recognized":true},{"name":"全国大学生数学建模竞赛","level":"国家级","category":"理工类","organizer":"中国工业与应用数学学会(CSIAM)","registration_period":"5月-9月","competition_period":"9月（通常为9月中旬，竞赛时长72小时）","awards":"国家一等奖、二等奖；省级一、二、三等奖","csust_status":"数统学院负责组织，2024年获全国一等奖，校赛每年5月举办（第十六届校赛有118支队伍参赛）","description":"创办于1992年，每年一届，是中国高校规模最大的基础性学科竞赛。参赛者需在72小时内就指定问题完成从模型建立、求解到论文撰写的全过程。2025年有1837所院校68311队参赛。","official_website":"http://www.mcm.edu.cn/","ministry_recognized":true},{"name":"全国大学生电子设计竞赛","level":"国家级","category":"理工类","organizer":"教育部高等教育司、工业和信息化部人事司","registration_period":"3月-5月","competition_period":"7月底-8月初（竞赛时长4天3夜，奇数年举办国赛）","awards":"国家一等奖、二等奖；赛区一、二、三等奖","csust_status":"物电学院、电气学院、卓工学院负责组织，长沙理工大学积极参赛","description":"奇数年为国赛（全国统一命题），偶数年为省赛（各赛区自命题）。涉及模数电路、单片机、嵌入式系统、自动控制等领域。是中国电子类学科最高水平竞赛之一。","official_website":"http://www.nuedcchina.com/","ministry_recognized":true},{"name":"蓝桥杯全国软件和信息技术专业人才大赛","level":"国家级","category":"理工类","organizer":"工业和信息化部人才交流中心","registration_period":"10月-次年3月","competition_period":"省赛4月，全国总决赛5月-6月","awards":"省赛一、二、三等奖（一等奖晋级国赛）；国赛特等奖（可空缺）、一、二、三等奖","csust_status":"计算机学院负责组织，长沙理工大学学生多次获省赛一等奖并晋级国赛","description":"涵盖软件赛（C/C++/Java/Python/Web应用等）、电子赛（单片机/嵌入式/物联网等）、人工智能赛、视觉艺术设计赛、数字科技创新赛等多个赛道。IT类参赛人数最多的赛事之一。","official_website":"http://dasai.lanqiao.cn/","ministry_recognized":true},{"name":"全国大学生机械创新设计大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校机械学科教学指导委员会","registration_period":"3月-5月","competition_period":"省赛5月-6月，全国决赛7月-8月（偶数年举办国赛）","awards":"国家一等奖、二等奖；省级一、二、三等奖","csust_status":"机械学院负责组织，长沙理工大学为支持项目","description":"每两年举办一届国赛（偶数年），奇数年为省赛。主题围绕机械创新设计与实际应用，注重培养学生的创新设计能力和工程实践能力。","official_website":"http://umic.ckcest.cn/","ministry_recognized":true},{"name":"全国大学生结构设计竞赛","level":"国家级","category":"理工类","organizer":"中国高等教育学会工程教育专业委员会","registration_period":"1月-3月","competition_period":"省赛4月-6月，全国决赛10月-11月","awards":"国家特等奖、一等奖、二等奖；省级一、二、三等奖","csust_status":"土木学院负责组织，长沙理工大学为B+级支持项目","description":"土木工程领域最具影响力的学科竞赛，要求学生利用竹材/木材等材料设计制作结构模型并进行加载测试。考察结构设计、力学分析和动手制作能力。","official_website":"http://www.structurecontest.com/","ministry_recognized":true},{"name":"全国大学生化工设计竞赛","level":"国家级","category":"理工类","organizer":"中国化工学会","registration_period":"3月-4月","competition_period":"省级评审6月-7月，全国总决赛8月中旬","awards":"国家一等奖、二等奖、三等奖","csust_status":"化学学院负责组织，长沙理工大学为B+级支持项目","description":"面向化工类专业学生的顶级赛事，要求团队完成化工厂的工艺流程设计、设备选型、自动控制、经济分析等全套工程设计。","official_website":"http://iche.zju.edu.cn/","ministry_recognized":true},{"name":"全国大学生智能汽车竞赛","level":"国家级","category":"理工类","organizer":"中国自动化学会","registration_period":"1月-6月","competition_period":"省赛/分区赛7月，全国总决赛8月","awards":"国家一等奖、二等奖；赛区一、二、三等奖","csust_status":"计算机学院、电气学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"以智能汽车为研究对象的创意性科技竞赛，涵盖竞速组（光电组、摄像头组等）和创意组。要求学生设计制作能够自主识别路径的智能模型汽车。2025年第二十届有3287支队伍参赛。","official_website":"http://www.smartcarrace.com/","ministry_recognized":true},{"name":"全国大学生广告艺术大赛（大广赛）","level":"国家级","category":"艺术体育类","organizer":"全国大学生广告艺术大赛组委会、中国传媒大学（教育部高教司指导）","registration_period":"1月-6月（作品提交截止6月中旬）","competition_period":"省赛6月-7月，全国总评审8月-9月","awards":"国家一等奖、二等奖、三等奖、优秀奖；省级相应奖项","csust_status":"文新学院、艺术学院负责组织，长沙理工大学为B+级支持项目","description":"中国高校文科重要赛事，涵盖平面海报、视频（微电影/动画）、广播、策划案、文案、UI/UX设计等多个类别。企业命题与公益命题并行。","official_website":"https://www.sun-ada.net/","ministry_recognized":true},{"name":"全国大学生电子商务‘创新、创意及创业’挑战赛（三创赛）","level":"国家级","category":"综合类","organizer":"教育部高等学校电子商务类专业教学指导委员会","registration_period":"9月-12月","competition_period":"校赛次年3月-4月，省赛次年5月-6月，全国总决赛次年7月-8月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"经管学院负责组织，长沙理工大学为B+级支持项目","description":"中国电子商务领域最具影响力的赛事，分常规赛和实战赛。强调创新思维、创意设计和创业实践，涵盖三农电子商务、工业电子商务、跨境电子商务等主题。","official_website":"http://www.3chuang.net/","ministry_recognized":true},{"name":"全国大学生节能减排社会实践与科技竞赛","level":"国家级","category":"理工类","organizer":"教育部高等教育司","registration_period":"4月-5月","competition_period":"全国决赛8月","awards":"国家特等奖（可空缺）、一等奖、二等奖、三等奖","csust_status":"能动学院、电气学院、水利学院负责组织，长沙理工大学为B+级支持项目","description":"以‘节能减排，绿色能源’为主题，涵盖能源、机械、资源、环境、建筑、化工等多个学科领域。分为科技作品类和社会实践调查报告类。","official_website":"http://www.jienengjianpai.org/","ministry_recognized":true},{"name":"“外研社·国才杯”‘理解当代中国’全国大学生外语能力大赛","level":"国家级","category":"文科类","organizer":"外语教学与研究出版社","registration_period":"4月-10月","competition_period":"校赛4月-6月，省赛9月-10月，全国决赛11月-12月","awards":"国家金奖、银奖、铜奖；省级一、二、三等奖","csust_status":"外语学院负责组织，长沙理工大学为B+级支持项目","description":"涵盖英语演讲、英语辩论、英语写作、英语阅读四个赛项，是国内规模最大、规格最高的大学生外语综合能力赛事。2023年起增设多语种组别。","official_website":"http://uchallenge.unipus.cn/","ministry_recognized":true},{"name":"“21世纪杯”全国英语演讲比赛","level":"国家级","category":"文科类","organizer":"中国日报社","registration_period":"1月-3月","competition_period":"地区赛3月-5月，全国总决赛10月","awards":"全国冠军、亚军、季军及一、二、三等奖","csust_status":"外语学院负责组织，长沙理工大学为B+级支持项目","description":"国内最具影响力的英语演讲比赛之一，已举办二十余届。获胜者有机会代表中国参加国际公众演讲比赛(IPSC)。","official_website":"https://contest.i21st.cn/","ministry_recognized":true},{"name":"全国大学生信息安全竞赛","level":"国家级","category":"公共安全类","organizer":"教育部高等学校信息安全类专业教学指导委员会","registration_period":"4月-6月","competition_period":"初赛线上7月-8月，决赛线下9月-10月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院、物电学院负责组织，长沙理工大学为B-级支持项目","description":"信息安全领域最具权威性的大学生学科竞赛，分为作品赛和技能赛（CTF赛制）。涵盖Web安全、逆向工程、密码学、二进制漏洞利用、AI安全等方向。","official_website":"http://www.ciscn.cn/","ministry_recognized":true},{"name":"全国大学生信息安全与对抗技术竞赛（ISCC）","level":"国家级","category":"公共安全类","organizer":"中国兵工学会、中国兵工学会信息安全与对抗技术专业委员会","registration_period":"4月-5月","competition_period":"线上赛5月，线下决赛6月-7月","awards":"国家一、二、三等奖及优胜奖","csust_status":"计算机学院、物电学院、卓工学院负责组织，长沙理工大学为B-级支持项目","description":"国内历史最悠久的信息安全竞赛之一（始于2004年），采用个人挑战赛和分组对抗赛结合的形式，涵盖网络攻防、密码学、逆向分析等技术方向。","official_website":"http://www.isclab.org.cn","ministry_recognized":true},{"name":"“强网杯”全国网络安全挑战赛","level":"国家级","category":"公共安全类","organizer":"中央网信办、河南省人民政府（指导）；河南省委网信办、河南省教育厅、郑州市人民政府、信息工程大学、郑州大学、中国网络空间安全协会（主办）","registration_period":"9月-10月","competition_period":"线上赛10月-11月，线下赛11月-12月","awards":"一等奖、二等奖、三等奖及优秀奖","csust_status":"未列入长沙理工大学竞赛支持清单，但计算机学院学生可参与","description":"国家级网络安全顶级赛事，采用CTF（Capture The Flag）赛制，涵盖Web安全、逆向工程、密码学、Pwn、移动安全等方向。同时举办行业领域专项赛和创新创业专项赛。","official_website":"http://www.qiangwangbei.com","ministry_recognized":false},{"name":"中国大学生计算机设计大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校计算机类专业教学指导委员会等","registration_period":"4月-5月","competition_period":"省赛/初赛5月-6月，国赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B-级支持项目","description":"涵盖软件应用与开发、微课与教学辅助、数媒设计（海报/动画/微电影等）、数媒动漫、数媒游戏、Web应用、大数据、人工智能等多个类别。","official_website":"http://jsjds.blcu.edu.cn/","ministry_recognized":true},{"name":"中国高校计算机大赛（CCF CC）","level":"国家级","category":"理工类","organizer":"教育部高等学校计算机类专业教学指导委员会等","registration_period":"6月-7月","competition_period":"各赛项分不同时间，8月-11月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B-级支持项目","description":"包含大数据挑战赛、团体程序设计天梯赛、移动应用创新赛、网络技术挑战赛、人工智能创意赛等多个赛项，由中国高校计算机教育领域权威机构联合主办。","official_website":"http://www.c4best.cn/","ministry_recognized":true},{"name":"全国大学生物联网设计竞赛","level":"国家级","category":"理工类","organizer":"全国高等学校计算机教育研究会","registration_period":"4月-6月","competition_period":"线上预选赛7月，分区赛8月，全国总决赛9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B+级支持项目","description":"以物联网技术为核心，要求学生设计并实现具有创新性和实用性的物联网应用系统。华为、TI等知名企业提供技术平台支持。","official_website":"https://developer.huaweicloud.com/college/wulianwang.html","ministry_recognized":true},{"name":"全国大学生光电设计竞赛","level":"国家级","category":"理工类","organizer":"中国光学学会、教育部高等学校光电信息科学与工程专业教学指导分委员会","registration_period":"4月-8月","competition_period":"全国决赛8月-9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"物电学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"面向光电信息科学与工程、光学工程等相关专业，要求学生利用光电技术解决实际问题，涵盖光学测量、光电检测、光通信等方向。","official_website":"http://gd.p.moocollege.com/","ministry_recognized":true},{"name":"全国大学生物流设计大赛","level":"国家级","category":"综合类","organizer":"教育部高等学校物流类专业教学指导委员会、中国物流与采购联合会","registration_period":"3月-4月","competition_period":"省赛/初赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"交通学院负责组织，长沙理工大学为B+级支持项目","description":"以企业真实物流案例为背景，要求学生运用物流管理理论和方法进行方案设计，涵盖仓储、运输、供应链管理等方向。","official_website":"http://www.clpp.org.cn/","ministry_recognized":true},{"name":"全国大学生工程实践与创新能力大赛","level":"国家级","category":"理工类","organizer":"教育部高等教育司","registration_period":"9月起","competition_period":"省赛次年3月-5月，全国决赛次年6月-8月","awards":"国家金奖、银奖、铜奖","csust_status":"卓工学院负责组织，长沙理工大学为B+级支持项目","description":"面向工程训练和工程实践的综合赛事，涵盖工程基础、智能+、虚拟仿真等赛道，强调跨学科综合实践能力培养。","official_website":"http://www.gcxl.edu.cn/new/index.html","ministry_recognized":true},{"name":"“西门子杯”中国智能制造挑战赛","level":"国家级","category":"理工类","organizer":"教育部高等学校自动化类专业教学指导委员会、中国仿真学会、西门子(中国)有限公司","registration_period":"3月-5月","competition_period":"初赛6月-7月，全国决赛8月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"人工智能学院、电气学院、计算机学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"以智能制造技术为核心，涵盖工业自动化、运动控制、工业信息、智能产线、数控系统等方向。基于西门子工业自动化平台进行竞赛。","official_website":"http://www.siemenscup-cimc.org.cn/","ministry_recognized":true},{"name":"全国大学生机器人大赛（ROBOCON/ROBOMASTER/ROBOTAC）","level":"国家级","category":"理工类","organizer":"共青团中央、全国学联","registration_period":"10月-次年3月","competition_period":"分区赛5月-6月，全国总决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院、计算机学院、人工智能学院、电气学院、机械学院负责组织，长沙理工大学为B+级支持项目","description":"包含三个子赛事：ROBOCON（亚太大学生机器人大赛国内选拔）、ROBOMASTER（机甲大师赛，侧重对抗竞技）、ROBOTAC（侧重技术挑战）。是中国规模最大的大学生机器人赛事。","official_website":"https://www.cnrobocon.net/","ministry_recognized":true},{"name":"中国大学生服务外包创新创业大赛","level":"国家级","category":"创新创业类","organizer":"教育部、商务部","registration_period":"12月-次年3月","competition_period":"区域赛4月-5月，全国决赛6月-7月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院负责组织，长沙理工大学为B+级支持项目","description":"聚焦服务外包领域，设置企业命题类（A类）和创业实践类（B类）两大赛道。企业命题由知名企业发布真实业务需求，创业实践类侧重创新创业项目。","official_website":"http://www.fwwb.org.cn/","ministry_recognized":true},{"name":"全国大学生市场调查与分析大赛","level":"国家级","category":"综合类","organizer":"中国商业统计学会","registration_period":"9月-10月（知识赛），次年3月（实践赛报名）","competition_period":"知识赛11月-12月，省赛次年4月-5月，全国总决赛次年5月-6月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"数统学院、经管学院负责组织，长沙理工大学为B+级支持项目","description":"分为个人知识赛（网考）和团队实践赛两个环节。要求学生完成从选题、问卷设计、数据采集、统计分析到报告撰写的全过程市场调查研究。","official_website":"http://www.china-cssc.org/list-56-1.html","ministry_recognized":true},{"name":"全国大学生职业规划大赛","level":"国家级","category":"综合类","organizer":"教育部","registration_period":"10月-次年1月","competition_period":"校赛10月-12月，省赛次年1月-3月，全国决赛次年4月-5月","awards":"国家金奖、银奖、铜奖；省级一、二、三等奖","csust_status":"创业就业指导处负责组织，长沙理工大学为B+级支持项目","description":"分为成长赛道（面向低年级学生）和就业赛道（面向高年级学生）。成长赛道侧重职业发展规划，就业赛道侧重求职实战能力。","official_website":"https://www.zgs.chsi.com.cn/","ministry_recognized":true},{"name":"中华经典诵写讲大赛","level":"国家级","category":"文科类","organizer":"教育部、国家语委","registration_period":"4月-7月","competition_period":"初赛4月-6月，省赛6月-7月，全国决赛8月-10月","awards":"国家一等奖、二等奖、三等奖及优秀奖","csust_status":"文新学院负责组织，长沙理工大学为B+级支持项目","description":"包含‘诵读中国’经典诵读大赛、‘诗教中国’诗词讲解大赛、‘笔墨中国’汉字书写大赛、‘印记中国’师生篆刻大赛四个赛项。","official_website":"https://jdsxj.eduyun.cn/","ministry_recognized":true},{"name":"全国大学生英语竞赛（NECCS）","level":"国家级","category":"文科类","organizer":"国际英语外语教师协会中国英语外语教师协会（TEFL China）、高等学校大学外语教学研究会","registration_period":"12月-次年3月","competition_period":"初赛4月，决赛5月，全国总决赛暨夏令营7月-8月","awards":"国家特等奖、一等奖、二等奖、三等奖；省级一、二、三等奖","csust_status":"外语学院负责组织，长沙理工大学研究生竞赛奖励认定项目（只奖励最高奖项）","description":"创办于1999年，全国规模最大的英语学科竞赛。分A类（研究生）、B类（英语专业本科生）、C类（非英语专业本科生）、D类（体育/艺术类本科生）四个类别。初赛含笔试和听力。","official_website":"https://www.saikr.com/vse/neccs/2026","ministry_recognized":true},{"name":"全国大学生物理实验竞赛","level":"国家级","category":"理工类","organizer":"国家实验教学示范中心联席会、全国高等学校实验物理教学研究会、中国物理学会","registration_period":"1月-5月","competition_period":"全国决赛6月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"物电学院负责组织，长沙理工大学为B+级支持项目","description":"分为命题实验和创新实验两类，要求学生现场完成物理实验操作、数据分析和实验报告。注重物理实验基本技能和创新能力培养。","official_website":"http://wlsycx.moocollege.com/","ministry_recognized":true},{"name":"全国周培源大学生力学竞赛","level":"国家级","category":"理工类","organizer":"教育部高等学校力学基础课程教学指导委员会、中国力学学会、周培源基金会","registration_period":"1月-3月","competition_period":"初赛5月（个人赛笔试），决赛6月-7月（团队实验赛）","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"土木学院负责组织，长沙理工大学为B+级支持项目","description":"中国力学界最高水平的大学生学科竞赛，分为个人笔试（理论力学、材料力学）和团队实验赛。每两年举办一届（偶数年），以著名力学家周培源命名。","official_website":"http://zpy.cstam.org.cn/index.aspx","ministry_recognized":true},{"name":"全国大学生先进成图技术与产品信息建模创新大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校工程图学课程教学指导委员会、中国图学学会","registration_period":"4月","competition_period":"省赛/预赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"土木学院、机械学院负责组织，长沙理工大学为C级支持项目","description":"涵盖机械类和建筑类两个方向，要求学生掌握先进的工程图学和三维建模技术，包括尺规绘图、计算机绘图、3D建模等。","official_website":"http://www.chengtudasai.com/","ministry_recognized":true},{"name":"全国三维数字化创新设计大赛（3D大赛）","level":"国家级","category":"理工类","organizer":"国家制造业信息化培训中心、光华设计发展基金会、全国三维数字化技术推广服务与教育培训联盟(3D动力)","registration_period":"3月-6月","competition_period":"省赛6月-8月，全国总决赛11月-12月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"卓工学院、艺术学院、机械学院、土木学院、建筑学院负责组织，长沙理工大学为B-级支持项目","description":"以三维数字化/3D技术为核心，涵盖数字工业（工业设计/智能制造等）、数字人居（建筑设计/BIM等）、数字文化（文化创意/游戏动漫等）三大方向。","official_website":"https://3dds.3ddl.net/","ministry_recognized":true},{"name":"全国大学生金相技能大赛","level":"国家级","category":"理工类","organizer":"教育部高等学校材料类专业教学指导委员会","registration_period":"12月-次年4月","competition_period":"分区赛5月-6月，全国决赛10月","awards":"国家一等奖、二等奖、三等奖","csust_status":"机械学院、材料学院负责组织，长沙理工大学为B+级支持项目","description":"材料科学领域最具影响力的实践技能竞赛，要求选手在规定时间内完成金属样品的取样、镶嵌、磨制、抛光、腐蚀和金相显微观察等操作。","official_website":"http://www.jxds.tech/","ministry_recognized":true},{"name":"全国大学生集成电路创新创业大赛","level":"国家级","category":"理工类","organizer":"工业和信息化部人才交流中心","registration_period":"1月-3月","competition_period":"分赛区决赛5月-6月，全国总决赛7月","awards":"国家一等奖、二等奖、三等奖及优秀奖","csust_status":"物电学院、电气学院负责组织，长沙理工大学为B-级支持项目","description":"聚焦集成电路设计与应用，涵盖芯片设计、EDA工具开发、集成电路测试等方向。华为、紫光展锐等企业提供技术支持。","official_website":"http://univ.ciciec.com/","ministry_recognized":true},{"name":"全国大学生化学实验创新设计竞赛","level":"国家级","category":"理工类","organizer":"中国化学会、教育部高等学校国家级实验教学示范中心联席会","registration_period":"4月","competition_period":"初赛（方案评审）5月-6月，全国决赛8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"化学学院负责组织，长沙理工大学为B+级支持项目","description":"分为新实验设计、已有实验改进和科普实验设计三类。要求学生完成实验方案设计、实验操作和答辩展示。","official_website":"https://cid.nju.edu.cn/","ministry_recognized":true},{"name":"全国大学生水利创新设计大赛","level":"国家级","category":"理工类","organizer":"中国水利教育协会、教育部高等学校水利类专业教学指导委员会","registration_period":"4月-5月","competition_period":"全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"水利学院负责组织，长沙理工大学为B+级支持项目","description":"以水利水电工程创新设计为主题，要求学生设计制作水利创新模型或装置，注重解决实际水利工程中的技术问题。","official_website":"https://sljzw.hhu.edu.cn/","ministry_recognized":true},{"name":"未来设计师·全国高校数字艺术设计大赛（NCDA）","level":"国家级","category":"艺术体育类","organizer":"工业和信息化部人才交流中心、联合国训练研究所上海中心","registration_period":"12月-次年6月","competition_period":"省赛5月-6月，全国总决赛7月-8月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B+级支持项目","description":"涵盖视觉传达设计、数字影像、交互设计、环境空间设计、时尚设计等多个类别。是国内艺术设计领域最具影响力的赛事之一。","official_website":"https://www.ncda.org.cn/","ministry_recognized":true},{"name":"米兰设计周——中国高校设计学科师生优秀作品展","level":"国家级","category":"艺术体育类","organizer":"中国高等教育学会、中国教育国际交流协会、福建高等教育学会","registration_period":"10月-次年3月","competition_period":"省赛3月-4月，全国总评审5月-6月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B-级支持项目","description":"与米兰设计周联动，展示中国高校设计学科优秀作品。涵盖视觉传达、产品设计、环境设计、服装设计、数字媒体等多个类别。","official_website":"http://www.dandad.cn/","ministry_recognized":true},{"name":"中国好创意暨全国数字艺术设计大赛","level":"国家级","category":"艺术体育类","organizer":"全国高等院校计算机基础教育研究会、中国电子视像行业协会","registration_period":"10月-次年6月","competition_period":"省赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B-级支持项目","description":"涵盖视觉传达、数字动画、微电影、交互设计、VR/AR设计等多个类别，是国内数字艺术设计领域的重要赛事。","official_website":"https://www.cdec.org.cn/","ministry_recognized":true},{"name":"全国大学生工业设计大赛","level":"国家级","category":"艺术体育类","organizer":"全国工业设计一流专业建设协同创新平台、广东省教育厅","registration_period":"6月-7月","competition_period":"省赛8月-9月，全国决赛10月-11月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"艺术学院负责组织，长沙理工大学为B-级支持项目","description":"面向工业设计及相关专业，涵盖智能装备、生活用品、文创产品、交通工具等方向。强调设计创新与产业需求的结合。","official_website":"https://www.cuidc.net/","ministry_recognized":true},{"name":"中美青年创客大赛","level":"国家级","category":"创新创业类","organizer":"教育部","registration_period":"5月-6月","competition_period":"分赛区选拔赛6月-7月，全国总决赛8月-9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院、校团委负责组织，长沙理工大学为B+级支持项目","description":"中美人文交流高层磋商配套活动，要求参赛者以创客形式提出解决社会问题的创新方案，注重软硬件结合的原型制作。","official_website":"https://chinaus-maker.cscse.edu.cn/","ministry_recognized":true},{"name":"iCAN大学生创新创业大赛","level":"国家级","category":"创新创业类","organizer":"中国信息协会","registration_period":"4月-7月","competition_period":"分赛区选拔赛8月-9月，全国总决赛10月-11月","awards":"国家一等奖、二等奖、三等奖","csust_status":"卓工学院、经管学院、计算机学院负责组织，长沙理工大学为B-级支持项目","description":"原中国MEMS传感器应用大赛，聚焦物联网、智能硬件、可穿戴设备等领域的创新创业。要求参赛团队完成从创意到原型的全过程。","official_website":"http://www.g-ican.com/home/index","ministry_recognized":true},{"name":"“学创杯”全国大学生创业综合模拟大赛","level":"国家级","category":"创新创业类","organizer":"国家级实验教学示范中心联席会经济与管理学科组","registration_period":"1月-3月","competition_period":"校赛3月-4月，省赛4月-5月，全国总决赛5月-6月","awards":"国家特等奖、一等奖、二等奖、三等奖","csust_status":"经管学院负责组织，长沙理工大学为B+级支持项目","description":"采用创业管理模拟软件，参赛团队在虚拟市场中经营企业，进行创业决策。分为创业计划书评审和模拟经营两个环节。","official_website":"http://www.bster.cn/cyds/index","ministry_recognized":true},{"name":"全国大学生生命科学竞赛（CULSC）","level":"国家级","category":"理工类","organizer":"教育部大学生物学课程教学指导委员会等","registration_period":"7月-次年1月","competition_period":"网络评审次年3月-4月，全国决赛次年5月-6月","awards":"国家一等奖、二等奖、三等奖","csust_status":"食品学院负责组织，长沙理工大学为B+级支持项目","description":"以‘原创科研、全程实操’为核心，要求学生独立完成实验设计、实验操作、数据分析和论文撰写。是生命科学领域最具影响力的学科竞赛之一。","official_website":"https://www.culsc.cn/","ministry_recognized":true},{"name":"全国大学生统计建模大赛","level":"国家级","category":"理工类","organizer":"中国统计教育学会、教育部高等学校统计学类专业教学指导委员会、全国应用统计专业学位研究生教育指导委员会","registration_period":"2月-5月","competition_period":"省赛5月-6月，全国决赛7月-8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"数统学院负责组织，长沙理工大学为B-级支持项目","description":"要求参赛者运用统计学方法对经济社会热点问题进行建模分析，完成从选题、数据收集、模型构建到论文撰写的全过程。","official_website":"http://tjjmds.ai-learning.net","ministry_recognized":true},{"name":"全国企业竞争模拟大赛","level":"国家级","category":"综合类","organizer":"中国管理现代化研究会决策模拟专业委员会","registration_period":"3月","competition_period":"初赛3月-4月，复赛4月-5月，全国总决赛5月","awards":"国家一等奖、二等奖、三等奖","csust_status":"经管学院负责组织，2025年获全国一等奖2项，长沙理工大学为B-级支持项目","description":"采用计算机模拟企业经营环境，参赛团队在虚拟市场中经营企业，制定营销、生产、财务、人力资源等决策。分为企业决策赛道和数智沙盘赛道。","official_website":"http://www.ibizsim.cn/","ministry_recognized":true},{"name":"全国大学生交通运输科技大赛","level":"国家级","category":"理工类","organizer":"中国交通运输协会、中国交通教育研究会","registration_period":"3月-4月","competition_period":"全国决赛6月-7月","awards":"国家一等奖、二等奖、三等奖","csust_status":"交通学院负责组织，长沙理工大学为C级支持项目","description":"面向交通运输工程领域，涵盖道路与桥梁工程、交通运输规划与管理、交通信息工程及控制、载运工具运用工程等方向。","official_website":"","ministry_recognized":true},{"name":"全国大学生法学学生模拟立法大赛","level":"国家级","category":"文科类","organizer":"中国法学会立法学研究会","registration_period":"3月-5月","competition_period":"初赛（文本评审）6月-7月，决赛（现场答辩）8月-9月","awards":"国家一等奖、二等奖、三等奖","csust_status":"法学院负责组织，长沙理工大学为C级支持项目","description":"要求参赛团队围绕指定立法主题，完成立法草案的起草、论证和说明，模拟真实的立法过程。培养法学生的立法实务能力。","official_website":"","ministry_recognized":true},{"name":"华为ICT大赛","level":"国家级","category":"理工类","organizer":"华为公司","registration_period":"9月-11月","competition_period":"省赛/初赛11月-12月，全球总决赛次年4月-5月","awards":"全球总冠军、一等奖、二等奖、三等奖","csust_status":"计算机学院负责组织，长沙理工大学为B-级支持项目","description":"全球最大的ICT（信息通信技术）人才竞技赛事，分为网络、云、计算三个赛道。基于华为认证体系，考察学生在网络、云计算、大数据、人工智能等领域的技术能力。","official_website":"https://e.huawei.com/cn/talent/ict-academy/#/ict-contest","ministry_recognized":true},{"name":"“大唐杯”全国大学生新一代信息通信技术大赛","level":"国家级","category":"理工类","organizer":"工业和信息化部人才交流中心、中国通信企业协会","registration_period":"12月-次年2月","competition_period":"省赛3月-4月，全国决赛5月-6月","awards":"国家一等奖、二等奖、三等奖；省级相应奖项","csust_status":"物电学院负责组织，长沙理工大学为B-级支持项目","description":"聚焦5G/6G移动通信技术，涵盖5G网络规划与优化、5G+行业应用开发等方向。大唐移动等企业提供技术平台支持。","official_website":"https://dtcup.dtxiaotangren.com","ministry_recognized":true},{"name":"全国大学生嵌入式芯片与系统设计竞赛","level":"国家级","category":"理工类","organizer":"中国电子学会","registration_period":"3月-4月","competition_period":"分赛区决赛6月-7月，全国总决赛8月","awards":"国家一等奖、二等奖、三等奖","csust_status":"物电学院、计算机学院负责组织，长沙理工大学为B-级支持项目","description":"聚焦嵌入式系统设计，要求学生基于指定芯片平台完成嵌入式系统的软硬件设计，涵盖应用赛道和设计赛道。","official_website":"http://www.socchina.net/","ministry_recognized":true}]};
 
 var QUOTES=[
   {text:'博学力行，守正拓新',author:'长沙理工大学校训'},
@@ -1246,25 +1485,25 @@ function supabaseHeaders(){return{'apikey':SUPABASE_KEY,'Authorization':'Bearer 
 async function getRegistrations(){try{var res=await fetch(SUPABASE_REST+'?select=*&order=created_at.desc',supabaseHeaders());if(!res.ok)return[];var data=await res.json();return data.map(function(r){return{id:r.id,compName:r.comp_name,name:r.name,studentId:r.student_id,college:r.college,phone:r.phone||'',email:r.email||'',note:r.note||'',status:r.status||'已报名',registeredAt:r.created_at}})}catch(e){console.error('获取报名数据失败:',e);return[]}}
 async function saveRegistration(reg){try{var res=await fetch(SUPABASE_REST,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({comp_name:reg.compName,name:reg.name,student_id:reg.studentId,college:reg.college,phone:reg.phone,email:reg.email,note:reg.note,status:reg.status||'已报名'})});return res.ok}catch(e){console.error('保存报名失败:',e);return false}}
 async function deleteRegistration(id){try{var res=await fetch(SUPABASE_REST+'?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});return res.ok}catch(e){return false}}
-async function removeRegistration(idx){var regs=window._cachedRegs||[];if(regs[idx]&&regs[idx].id){var ok=await deleteRegistration(regs[idx].id);if(ok){showCopyToast('已取消报名','success');renderProfile()}else{showCopyToast('取消失败，请重试','warning')}}}
+async function removeRegistration(idx){hapticFeedback();var regs=window._cachedRegs||[];if(regs[idx]&&regs[idx].id){var ok=await deleteRegistration(regs[idx].id);if(ok){showCopyToast('已取消报名','success');renderProfile()}else{showCopyToast('取消失败，请重试','warning')}}}
 async function checkDuplicateRegistration(compName,studentId){try{var res=await fetch(SUPABASE_REST+'?select=id&comp_name=eq.'+encodeURIComponent(compName)+'&student_id=eq.'+encodeURIComponent(studentId),supabaseHeaders());if(!res.ok)return false;var data=await res.json();return data.length>0}catch(e){return false}}
-function showRegForm(compName){navigate('profile');setTimeout(function(){var container=document.getElementById('profileContent');container.innerHTML='<div style="max-width:500px;margin:0 auto"><h3 style="margin-bottom:16px">报名：'+esc(compName)+'</h3><div class="settings-group"><div class="auth-field" style="margin-bottom:12px"><label>姓名 *</label><input type="text" id="regName" placeholder="请输入真实姓名" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>学号/工号 *</label><input type="text" id="regStudentId" placeholder="请输入学号或工号" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>学院/单位 *</label><input type="text" id="regCollege" placeholder="请输入所在学院或单位" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>联系电话</label><input type="tel" id="regPhone" placeholder="选填" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>邮箱</label><input type="email" id="regEmail" placeholder="选填" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:16px"><label>备注</label><textarea id="regNote" placeholder="如有队友信息或其他需要说明的内容，请在此填写" rows="3" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary);resize:vertical"></textarea></div><div id="regFormError" style="color:#e74c3c;font-size:13px;margin-bottom:12px;display:none"></div><div style="display:flex;gap:10px"><button class="auth-submit" style="flex:1" onclick="submitRegistration(\''+compName.replace(/'/g,"\\'")+'\')">确认报名</button><button class="auth-submit" style="flex:0 0 auto;background:var(--bg-hover);color:var(--text-secondary)" onclick="renderProfile()">取消</button></div></div></div>'},50)}
+function showRegForm(compName){navigate('profile');setTimeout(function(){var container=document.getElementById('profileContent');container.innerHTML='<div style="max-width:500px;margin:0 auto"><h3 style="margin-bottom:16px">报名：'+esc(compName)+'</h3><div class="settings-group"><div class="auth-field" style="margin-bottom:12px"><label>姓名 *</label><input type="text" id="regName" placeholder="请输入真实姓名" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>学号/工号 *</label><input type="text" id="regStudentId" placeholder="请输入学号或工号" inputmode="numeric" pattern="[0-9]*" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>学院/单位 *</label><input type="text" id="regCollege" placeholder="请输入所在学院或单位" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>联系电话</label><input type="tel" id="regPhone" placeholder="选填" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:12px"><label>邮箱</label><input type="email" id="regEmail" placeholder="选填" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary)" /></div><div class="auth-field" style="margin-bottom:16px"><label>备注</label><textarea id="regNote" placeholder="如有队友信息或其他需要说明的内容，请在此填写" rows="3" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-primary);color:var(--text-primary);resize:vertical"></textarea></div><div id="regFormError" style="color:#e74c3c;font-size:13px;margin-bottom:12px;display:none"></div><div style="display:flex;gap:10px"><button class="auth-submit" style="flex:1" onclick="submitRegistration(\''+compName.replace(/'/g,"\\'")+'\')">确认报名</button><button class="auth-submit" style="flex:0 0 auto;background:var(--bg-hover);color:var(--text-secondary)" onclick="renderProfile()">取消</button></div></div></div>'},50)}
 async function submitRegistration(compName){var name=document.getElementById('regName').value.trim();var studentId=document.getElementById('regStudentId').value.trim();var college=document.getElementById('regCollege').value.trim();var phone=document.getElementById('regPhone').value.trim();var email=document.getElementById('regEmail').value.trim();var note=document.getElementById('regNote').value.trim();var errEl=document.getElementById('regFormError');if(!name){errEl.textContent='请输入姓名';errEl.style.display='block';return}if(!studentId){errEl.textContent='请输入学号/工号';errEl.style.display='block';return}if(!college){errEl.textContent='请输入学院/单位';errEl.style.display='block';return}var dup=await checkDuplicateRegistration(compName,studentId);if(dup){errEl.textContent='你已经报名过该竞赛';errEl.style.display='block';return}var ok=await saveRegistration({compName:compName,name:name,studentId:studentId,college:college,phone:phone,email:email,note:note,status:'已报名'});if(ok){showCopyToast('报名成功！已报名：'+compName,'success');renderProfile()}else{errEl.textContent='报名失败，请检查网络后重试';errEl.style.display='block'}}
 async function renderProfile(){var container=document.getElementById('profileContent');container.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted)"><div class="loading-spinner" style="width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div>加载中...</div>';var regs=await getRegistrations();window._cachedRegs=regs;var chatCount=getLS('ai_messages',[]).length;var html='<div style="max-width:600px;margin:0 auto"><h3 style="margin-bottom:20px">我的报名</h3>';if(regs.length===0){html+='<div style="text-align:center;padding:40px 20px;color:var(--text-muted)"><div style="font-size:48px;margin-bottom:12px">&#128203;</div><p>暂无报名记录</p><p style="font-size:13px;margin-top:8px">前往学科竞赛页面，点击竞赛卡片上的"报名"按钮即可报名</p><button class="auth-submit" style="margin-top:16px" onclick="navigate(\'competition\')">浏览竞赛</button></div>'}else{html+='<div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">共 '+regs.length+' 条报名记录（云端同步）</div>';regs.forEach(function(r,i){var d=new Date(r.registeredAt);var dateStr=d.getFullYear()+'-'+(d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate()+' '+(d.getHours()<10?'0':'')+d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();html+='<div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.compName)+'</div><div style="font-size:13px;color:var(--text-secondary)">'+esc(r.name)+' | '+esc(r.college)+'</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">'+dateStr+'</div></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px"><span style="font-size:11px;padding:3px 8px;border-radius:99px;background:rgba(39,174,96,0.1);color:#27ae60;font-weight:600">'+esc(r.status)+'</span><button onclick="removeRegistration('+i+')" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center" title="取消报名">&#10005;</button></div></div></div>'})}html+='<div class="settings-group-title" style="margin-top:24px">数据管理</div><div class="settings-group"><div class="settings-item"><div class="si-icon" style="background:rgba(217,119,6,0.08);color:var(--accent)">&#128172;</div><div><div class="si-label">AI对话记录</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px">累计 '+chatCount+' 条消息</div></div></div><div class="settings-item" onclick="exportAllData()"><div class="si-icon" style="background:rgba(52,152,219,0.1);color:#3498db">&#128190;</div><div class="si-label">导出数据</div><div class="si-arrow">&#8250;</div></div><div class="settings-item" onclick="clearAllData()"><div class="si-icon" style="background:rgba(231,76,60,0.1);color:#e74c3c">&#128465;</div><div class="si-label">清除所有数据</div><div class="si-arrow">&#8250;</div></div></div><div class="settings-group-title">关于</div><div class="settings-group"><div class="settings-item" onclick="showLegalModal(\'terms\')"><div class="si-icon" style="background:rgba(217,119,6,0.08);color:var(--accent)">&#128196;</div><div class="si-label">用户协议</div><div class="si-arrow">&#8250;</div></div><div class="settings-item" onclick="showLegalModal(\'privacy\')"><div class="si-icon" style="background:rgba(217,119,6,0.08);color:var(--accent)">&#128274;</div><div class="si-label">隐私政策</div><div class="si-arrow">&#8250;</div></div></div></div>';container.innerHTML=html}
 function exportAllData(){var data={};for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.indexOf('app_')===0){try{data[key]=JSON.parse(localStorage.getItem(key))}catch(e){data[key]=localStorage.getItem(key)}}}var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='competition-hub-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showCopyToast('数据已导出')}
 function clearAllData(){showConfirm('确定要清除所有数据吗？<br><small style="color:var(--text-muted)">报名数据存储在云端，不受影响</small>',function(){var keys=[];for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.indexOf('app_')===0)keys.push(key)}keys.forEach(function(k){localStorage.removeItem(k)});showCopyToast('所有数据已清除','success');setTimeout(function(){location.reload()},1000)})}
 function updateAIView(){var container=document.getElementById('aiChatContainer');var emptyState=document.getElementById('aiEmpty');var hasMessages=container&&container.children.length>0;if(hasMessages){emptyState.style.display='none';container.style.display='flex'}else{emptyState.style.display='flex';container.style.display='none'}}
-function addChatMessage(role,content,save){var container=document.getElementById('aiChatContainer');var emptyState=document.getElementById('aiEmpty');emptyState.style.display='none';container.style.display='flex';var msg=document.createElement('div');msg.className='msg '+(role==='assistant'?'msg-ai':'msg-user');var time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var formatted=esc(content).replace(/\\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^(\d+)\.\s/gm,'<span style="display:inline-block;margin-left:1.2em;text-indent:-1.2em">$1. </span>').replace(/^- (.+)$/gm,'<span style="display:block;padding-left:1em;position:relative">• $1</span>');var avatarHtml=role==='assistant'?'<div style="display:flex;align-items:flex-start;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">AI</div><div style="flex:1;min-width:0"><div>'+formatted+'</div><div class="msg-time">'+time+'</div></div></div>':'<div>'+formatted+'</div><div class="msg-time" style="text-align:right">'+time+'</div>';msg.innerHTML=avatarHtml;container.appendChild(msg);container.scrollTop=container.scrollHeight;if(save!==false){var messages=getLS('ai_messages',[]);messages.push({role:role,content:content,time:new Date().toISOString()});if(messages.length>200)messages=messages.slice(-200);setLS('ai_messages',messages)}}
-function addTypingIndicator(){var container=document.getElementById('aiChatContainer');var indicator=document.createElement('div');indicator.className='ai-typing-indicator';indicator.id='aiTypingIndicator';indicator.innerHTML='<span></span><span></span><span></span>';container.appendChild(indicator);container.scrollTop=container.scrollHeight}
+function addChatMessage(role,content,save){var container=document.getElementById('aiChatContainer');var emptyState=document.getElementById('aiEmpty');emptyState.style.display='none';container.style.display='flex';var msg=document.createElement('div');msg.className='msg '+(role==='assistant'?'msg-ai':'msg-user');var time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var formatted=esc(content).replace(/\\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^(\d+)\.\s/gm,'<span style="display:inline-block;margin-left:1.2em;text-indent:-1.2em">$1. </span>').replace(/^- (.+)$/gm,'<span style="display:block;padding-left:1em;position:relative">• $1</span>');if(role==='assistant'){/* AI消息：左对齐气泡 + 头像 */msg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;min-width:0"><div>'+formatted+'</div><div class="msg-time">'+time+'</div></div></div>'}else{/* 用户消息：右对齐金色气泡 */msg.innerHTML='<div>'+formatted+'</div><div class="msg-time" style="text-align:right">'+time+'</div>'}container.appendChild(msg);container.scrollTop=container.scrollHeight;if(save!==false){var messages=getLS('ai_messages',[]);messages.push({role:role,content:content,time:new Date().toISOString()});if(messages.length>200)messages=messages.slice(-200);setLS('ai_messages',messages)}}
+function addTypingIndicator(){var container=document.getElementById('aiChatContainer');var wrapper=document.createElement('div');wrapper.id='aiTypingIndicator';wrapper.style.cssText='display:flex;align-items:flex-start;gap:10px;align-self:flex-start';wrapper.innerHTML='<div class="msg-avatar">AI</div><div class="ai-typing-indicator"><span></span><span></span><span></span></div>';container.appendChild(wrapper);container.scrollTop=container.scrollHeight}
 function removeTypingIndicator(){var indicator=document.getElementById('aiTypingIndicator');if(indicator)indicator.remove()}
 function quickAsk(question){document.getElementById('aiChatInput').value=question;sendAIChat()}
 function sendAIChat(){var input=document.getElementById('aiChatInput');if(!input||!input.value.trim())return;if(input.value.length>2000){showCopyToast('输入内容不能超过2000字','warning');return}if(document.getElementById('aiTypingIndicator'))return;var question=input.value.trim();input.value='';input.style.height='auto';addChatMessage('user',question);addTypingIndicator();setTimeout(function(){removeTypingIndicator();var answer=searchKnowledgeBase(question);addChatMessage('assistant',answer)},500+Math.random()*500)}
 function clearAIChat(){document.getElementById('aiChatContainer').innerHTML='';setLS('ai_messages',[]);updateAIView();showCopyToast('对话已清空')}
 
-function searchKnowledgeBase(query){var q=query.toLowerCase();var results=[];CSUST_DATA.colleges.forEach(function(col){var colMatch=col.name.toLowerCase().indexOf(q)>=0;var majorMatch=false;col.majors.forEach(function(m){if(typeof m==='object'){if(m.name.toLowerCase().indexOf(q)>=0)majorMatch=true;if(m.intro&&m.intro.toLowerCase().indexOf(q)>=0)majorMatch=true;if(m.career&&m.career.some(function(c){return c.toLowerCase().indexOf(q)>=0}))majorMatch=true;if(m.courses&&m.courses.some(function(c){return c.toLowerCase().indexOf(q)>=0}))majorMatch=true}else{if(m.toLowerCase().indexOf(q)>=0)majorMatch=true}});if(colMatch||majorMatch){var names=col.majors.map(function(m){return typeof m==='object'?m.name:m});results.push('【'+col.name+'】包含专业：'+names.join('、'))}});if(q.indexOf('校训')>=0||q.indexOf('motto')>=0)results.push('校训：博学、力行、守正、拓新');if(q.indexOf('代码')>=0||q.indexOf('code')>=0)results.push('学校代码：10536');if(q.indexOf('校区')>=0||q.indexOf('地址')>=0){CSUST_DATA.campuses.forEach(function(c){results.push('【'+c.name+'】'+c.address+'（'+c.type+'）')})}if(q.indexOf('云塘')>=0){var c=CSUST_DATA.campuses[0];results.push('云塘校区：'+c.address+'。公交：'+c.bus.join('、')+'。'+c.desc)}if(q.indexOf('金盆岭')>=0){var c2=CSUST_DATA.campuses[1];results.push('金盆岭校区：'+c2.address+'。公交：'+c2.bus.join('、')+'。地铁：'+c2.subway+'。'+c2.desc)}if(q.indexOf('图书馆')>=0){results.push('图书馆开放时间：'+CSUST_DATA.library.hours+'。'+CSUST_DATA.library.desc+'馆藏：'+CSUST_DATA.library.collections+'。座位：'+CSUST_DATA.library.seats+'。')}if(q.indexOf('宿舍')>=0||q.indexOf('住宿')>=0){results.push('宿舍类型：'+CSUST_DATA.dormitory.type+'。设施：'+CSUST_DATA.dormitory.facilities+'。网络：'+CSUST_DATA.dormitory.internet+'。'+CSUST_DATA.dormitory.desc)}if(q.indexOf('食堂')>=0){CSUST_DATA.canteens.forEach(function(c){results.push('【'+c.name+'】'+c.desc)})}if(q.indexOf('学费')>=0||q.indexOf('费用')>=0){var tuitionInfo='学费标准：';Object.keys(CSUST_DATA.tuition).forEach(function(k){tuitionInfo+=k+' '+CSUST_DATA.tuition[k]+'；'});results.push(tuitionInfo)}if(q.indexOf('电话')>=0||q.indexOf('联系')>=0||q.indexOf('招生')>=0){results.push('招生办电话：'+CSUST_DATA.contact.admission_phone+'，邮箱：'+CSUST_DATA.contact.admission_email+'，招生网：'+CSUST_DATA.contact.admission_website)}if(q.indexOf('专业')>=0&&q.indexOf('中外')<0){var majorList='长沙理工大学共有'+CSUST_DATA.colleges.length+'个学院，开设专业如下：\\n';CSUST_DATA.colleges.forEach(function(col){var names=col.majors.map(function(m){return typeof m==='object'?m.name:m});majorList+=col.name+'：'+names.join('、')+'\\n'});results.push(majorList)}if(q.indexOf('分数')>=0||q.indexOf('录取')>=0||q.indexOf('投档')>=0){results.push('2024年部分省份录取分数线（普通类理工）：\\n湖南：物理类521分\\n广东：物理类535分\\n河南：理科530分\\n湖北：物理类525分\\n江西：理科528分\\n安徽：理科522分\\n具体请查看招生咨询页面的详细数据。')}if(q.indexOf('校车')>=0||q.indexOf('通勤')>=0||q.indexOf('公交')>=0){CSUST_DATA.shuttleBus.forEach(function(s){results.push(s.route+'：'+s.bus+'，'+s.schedule+'，'+s.interval+'，'+s.duration)})}if(q.indexOf('奖学金')>=0||q.indexOf('助学金')>=0||q.indexOf('资助')>=0){CSUST_DATA.scholarships.forEach(function(s){results.push(s.name+'：'+s.amount+'。条件：'+s.condition)})}if(q.indexOf('社团')>=0){CSUST_DATA.clubs.forEach(function(c){results.push('【'+c.name+'】'+c.type+' - '+c.desc+'（成员：'+c.members+'）')})}if(q.indexOf('链接')>=0||q.indexOf('网站')>=0||q.indexOf('系统')>=0){CSUST_DATA.usefulLinks.forEach(function(l){results.push(l.name+'：'+l.url+' - '+l.desc)})}if(q.indexOf('竞赛')>=0||q.indexOf('比赛')>=0||q.indexOf('数学建模')>=0||q.indexOf('互联网+')>=0||q.indexOf('挑战杯')>=0||q.indexOf('acm')>=0||q.indexOf('信息安全')>=0||q.indexOf('强网杯')>=0||q.indexOf('iscc')>=0||q.indexOf('蓝桥杯')>=0||q.indexOf('电子设计')>=0){var matchedComps=CSUST_DATA.competitions.filter(function(c){var searchStr=(c.name+c.category+c.description+c.organizer).toLowerCase();var keywords=q.replace(/[+]/g,'\\+').split(/[,，\s]+/);return keywords.some(function(kw){return kw.length>0&&searchStr.indexOf(kw)>=0})});if(matchedComps.length>0){var compInfo='找到 '+matchedComps.length+' 个相关竞赛：\\n';matchedComps.slice(0,8).forEach(function(c){compInfo+='【'+c.name+'】\\n级别：'+c.level+' | 类别：'+c.category+'\\n比赛时间：'+c.competition_period+'\\n'+(c.csust_status?'长理参赛：'+c.csust_status+'\\n':'')+'\\n'});if(matchedComps.length>8)compInfo+='...还有'+(matchedComps.length-8)+'个竞赛，请在学科竞赛页面查看完整列表。';results.push(compInfo)}else{results.push('长沙理工大学支持55项学科竞赛，涵盖理工类、创新创业类、公安安全类等。你可以在学科竞赛页面浏览完整列表。')}}
+function searchKnowledgeBase(query){var q=query.toLowerCase();var results=[];CSUST_DATA.colleges.forEach(function(col){var colMatch=col.name.toLowerCase().indexOf(q)>=0;var majorMatch=false;col.majors.forEach(function(m){if(typeof m==='object'){if(m.name.toLowerCase().indexOf(q)>=0)majorMatch=true;if(m.intro&&m.intro.toLowerCase().indexOf(q)>=0)majorMatch=true;if(m.career&&m.career.some(function(c){return c.toLowerCase().indexOf(q)>=0}))majorMatch=true;if(m.courses&&m.courses.some(function(c){return c.toLowerCase().indexOf(q)>=0}))majorMatch=true}else{if(m.toLowerCase().indexOf(q)>=0)majorMatch=true}});if(colMatch||majorMatch){var names=col.majors.map(function(m){return typeof m==='object'?m.name:m});results.push('【'+col.name+'】包含专业：'+names.join('、'))}});if(q.indexOf('校训')>=0||q.indexOf('motto')>=0)results.push('校训：博学、力行、守正、拓新');if(q.indexOf('代码')>=0||q.indexOf('code')>=0)results.push('学校代码：10536');if(q.indexOf('校区')>=0||q.indexOf('地址')>=0){CSUST_DATA.campuses.forEach(function(c){results.push('【'+c.name+'】'+c.address+'（'+c.type+'）')})}if(q.indexOf('云塘')>=0){var c=CSUST_DATA.campuses[0];results.push('云塘校区：'+c.address+'。公交：'+c.bus.join('、')+'。'+c.desc)}if(q.indexOf('金盆岭')>=0){var c2=CSUST_DATA.campuses[1];results.push('金盆岭校区：'+c2.address+'。公交：'+c2.bus.join('、')+'。地铁：'+c2.subway+'。'+c2.desc)}if(q.indexOf('图书馆')>=0){results.push('图书馆开放时间：'+CSUST_DATA.library.hours+'。'+CSUST_DATA.library.desc+'馆藏：'+CSUST_DATA.library.collections+'。座位：'+CSUST_DATA.library.seats+'。')}if(q.indexOf('宿舍')>=0||q.indexOf('住宿')>=0){results.push('宿舍类型：'+CSUST_DATA.dormitory.type+'。设施：'+CSUST_DATA.dormitory.facilities+'。网络：'+CSUST_DATA.dormitory.internet+'。'+CSUST_DATA.dormitory.desc)}if(q.indexOf('食堂')>=0){CSUST_DATA.canteens.forEach(function(c){results.push('【'+c.name+'】'+c.desc)})}if(q.indexOf('学费')>=0||q.indexOf('费用')>=0){var tuitionInfo='学费标准：';Object.keys(CSUST_DATA.tuition).forEach(function(k){tuitionInfo+=k+' '+CSUST_DATA.tuition[k]+'；'});results.push(tuitionInfo)}if(q.indexOf('电话')>=0||q.indexOf('联系')>=0||q.indexOf('招生')>=0){results.push('招生办电话：'+CSUST_DATA.contact.admission_phone+'，邮箱：'+CSUST_DATA.contact.admission_email+'，招生网：'+CSUST_DATA.contact.admission_website)}if(q.indexOf('专业')>=0&&q.indexOf('中外')<0){var majorList='长沙理工大学共有'+CSUST_DATA.colleges.length+'个学院，开设专业如下：\\n';CSUST_DATA.colleges.forEach(function(col){var names=col.majors.map(function(m){return typeof m==='object'?m.name:m});majorList+=col.name+'：'+names.join('、')+'\\n'});results.push(majorList)}if(q.indexOf('分数')>=0||q.indexOf('录取')>=0||q.indexOf('投档')>=0){results.push('2024年部分省份录取分数线（普通类理工）：\\n湖南：物理类521分\\n广东：物理类535分\\n河南：理科530分\\n湖北：物理类525分\\n江西：理科528分\\n安徽：理科522分\\n具体请查看招生咨询页面的详细数据。')}if(q.indexOf('校车')>=0||q.indexOf('通勤')>=0||q.indexOf('公交')>=0){CSUST_DATA.shuttleBus.forEach(function(s){results.push(s.route+'：'+s.bus+'，'+s.schedule+'，'+s.interval+'，'+s.duration)})}if(q.indexOf('奖学金')>=0||q.indexOf('助学金')>=0||q.indexOf('资助')>=0){CSUST_DATA.scholarships.forEach(function(s){results.push(s.name+'：'+s.amount+'。条件：'+s.condition)})}if(q.indexOf('社团')>=0){CSUST_DATA.clubs.forEach(function(c){results.push('【'+c.name+'】'+c.type+' - '+c.desc+'（成员：'+c.members+'）')})}if(q.indexOf('链接')>=0||q.indexOf('网站')>=0||q.indexOf('系统')>=0){CSUST_DATA.usefulLinks.forEach(function(l){results.push(l.name+'：'+l.url+' - '+l.desc)})}if(q.indexOf('竞赛')>=0||q.indexOf('比赛')>=0||q.indexOf('数学建模')>=0||q.indexOf('互联网+')>=0||q.indexOf('挑战杯')>=0||q.indexOf('acm')>=0||q.indexOf('信息安全')>=0||q.indexOf('强网杯')>=0||q.indexOf('iscc')>=0||q.indexOf('蓝桥杯')>=0||q.indexOf('电子设计')>=0){var matchedComps=CSUST_DATA.competitions.filter(function(c){var searchStr=(c.name+c.category+c.description+c.organizer).toLowerCase();var keywords=q.replace(/[+]/g,'\\+').split(/[,，\s]+/);return keywords.some(function(kw){return kw.length>0&&searchStr.indexOf(kw)>=0})});if(matchedComps.length>0){var compInfo='找到 '+matchedComps.length+' 个相关竞赛：\\n';matchedComps.slice(0,8).forEach(function(c){compInfo+='【'+c.name+'】\\n级别：'+c.level+' | 类别：'+c.category+'\\n比赛时间：'+c.competition_period+'\\n'+(c.csust_status?'长理参赛：'+c.csust_status+'\\n':'')+'\\n'});if(matchedComps.length>8)compInfo+='...还有'+(matchedComps.length-8)+'个竞赛，请在学科竞赛页面查看完整列表。';results.push(compInfo)}else{results.push('长沙理工大学支持55项学科竞赛，涵盖理工类、创新创业类、公共安全类等。你可以在学科竞赛页面浏览完整列表。')}}
 CSUST_DATA.faq.forEach(function(f){if(f.q.toLowerCase().indexOf(q)>=0||f.a.toLowerCase().indexOf(q)>=0){results.push('Q: '+f.q+'\\nA: '+f.a)}});if(results.length===0){results.push('抱歉，我暂时没有找到关于"'+query+'"的信息。你可以尝试：\\n1. 换个关键词搜索\\n2. 浏览各个分类页面\\n3. 使用 Ctrl+K 全局搜索\\n4. 联系招生办：0731-85834715')}return results.join('\\n\\n')}
 
-function switchAcademicTab(tab){var tabs=document.querySelectorAll('#academicTabs .tab-btn');var tabMap={majors:0,courses:1,exams:2,grades:3,scholarship:4};tabs.forEach(function(t){t.classList.remove('active')});if(tabMap[tab]!==undefined&&tabs[tabMap[tab]])tabs[tabMap[tab]].classList.add('active');var container=document.getElementById('academicContent');container.classList.remove('tab-content-fade');void container.offsetWidth;container.classList.add('tab-content-fade');if(tab==='majors'){var html='<div style="margin-bottom:16px"><input type="text" class="form-input" id="majorSearchInput" placeholder="搜索专业或学院..." oninput="filterMajors()"/></div><div id="majorsList" class="knowledge-list">';CSUST_DATA.colleges.forEach(function(col){html+='<div class="knowledge-card major-card" data-college="'+esc(col.name.toLowerCase())+'" data-majors="'+esc(col.majors.map(function(m){return typeof m==='object'?m.name:m}).join(',').toLowerCase())+'"><h4>'+esc(col.name)+'</h4><p>专业：'+col.majors.map(function(m){var n=typeof m==='object'?m.name:m;return '<span class="tag-pill">'+esc(n)+'</span>'}).join('')+'</p>';if(col.majors.length>0&&typeof col.majors[0]==='object'){html+='<div style="margin-top:10px;font-size:13px;color:var(--text-secondary)">';col.majors.forEach(function(m){html+='<div style="margin-bottom:6px"><strong>'+esc(m.name)+'</strong>（'+esc(m.code)+'）<br/><span style="color:var(--text-muted)">'+esc(m.intro)+'</span></div>'});html+='</div>'}html+='</div>'});html+='</div>';container.innerHTML=html}else if(tab==='courses'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>选课常见问题</h4><p><strong>Q：什么时候选课？</strong><br/>每学期开学前一周进行选课，具体时间以教务系统通知为准。<br/><br/><strong>Q：如何选课？</strong><br/>登录长沙理工大学教务管理系统（jwgl.csust.edu.cn），使用学号和密码登录，进入选课模块。<br/><br/><strong>Q：选课有学分限制吗？</strong><br/>每学期一般建议修读20-25学分，最高不超过30学分。<br/><br/><strong>Q：可以跨专业选课吗？</strong><br/>可以选修全校性公共选修课，部分专业课程需要先获得开课学院同意。<br/><br/><strong>Q：退课有什么规定？</strong><br/>开学后第3周前可以退课，退课后不影响GPA计算。第3周后退课记为W（Withdraw）。</p></div></div>'}else if(tab==='exams'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>校历与考试安排</h4><p><strong>2024-2025学年第二学期：</strong><br/>- 开学时间：2025年2月24日（周二）<br/>- 期中考试：第9-10周（4月中下旬）<br/>- 期末考试：第18-19周（6月下旬）<br/>- 暑假开始：2025年7月初<br/><br/><strong>考试注意事项：</strong><br/>- 考试需携带学生证和身份证<br/>- 提前15分钟进入考场<br/>- 手机等电子设备必须关机放入指定位置<br/>- 迟到超过30分钟不得进入考场</p></div></div>'}else if(tab==='grades'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>成绩查询</h4><p>登录教务管理系统（jwgl.csust.edu.cn）查询各科成绩和GPA。<br/><br/><strong>GPA计算方法：</strong><br/>采用4.0制，A=4.0, B=3.0, C=2.0, D=1.0, F=0<br/>GPA = 各课程绩点 x 学分 之和 / 总学分<br/><br/>你也可以使用<a href="javascript:void(0)" onclick="navigate(\'toolbox\',\'gpa\')" style="color:var(--accent)">工具箱中的GPA计算器</a>来计算。</p></div></div>'}else if(tab==='scholarship'){var html='';var categories={};CSUST_DATA.scholarships.forEach(function(s){if(!categories[s.category])categories[s.category]=[];categories[s.category].push(s)});var catNames={国家:'国家奖助',校级:'校级奖学金',助学:'助学政策'};Object.keys(categories).forEach(function(cat){html+='<div class="scholarship-category"><div class="scholarship-category-title">'+esc(catNames[cat]||cat)+'</div>';categories[cat].forEach(function(s){html+='<div class="scholarship-item"><div class="scholarship-amount">'+esc(s.amount)+'</div><div class="scholarship-info"><div class="scholarship-name">'+esc(s.name)+'</div><div class="scholarship-condition">'+esc(s.condition)+'</div></div></div>'});html+='</div>'});container.innerHTML=html}}
+function switchAcademicTab(tab){var tabs=document.querySelectorAll('#academicTabs .tab-btn');var tabMap={majors:0,courses:1,exams:2,grades:3,scholarship:4};tabs.forEach(function(t){t.classList.remove('active')});if(tabMap[tab]!==undefined&&tabs[tabMap[tab]])tabs[tabMap[tab]].classList.add('active');var container=document.getElementById('academicContent');container.classList.remove('tab-content-fade');void container.offsetWidth;container.classList.add('tab-content-fade');if(tab==='majors'){var html='<div style="margin-bottom:16px"><input type="text" class="form-input" id="majorSearchInput" placeholder="搜索专业或学院..." oninput="filterMajors()"/></div><div id="majorsList" class="knowledge-list">';CSUST_DATA.colleges.forEach(function(col){html+='<div class="knowledge-card major-card" data-college="'+esc(col.name.toLowerCase())+'" data-majors="'+esc(col.majors.map(function(m){return typeof m==='object'?m.name:m}).join(',').toLowerCase())+'"><h4>'+esc(col.name)+'</h4><p>专业：'+col.majors.map(function(m){var n=typeof m==='object'?m.name:m;return '<span class="tag-pill">'+esc(n)+'</span>'}).join('')+'</p>';if(col.majors.length>0&&typeof col.majors[0]==='object'){html+='<div style="margin-top:10px;font-size:13px;color:var(--text-secondary)">';col.majors.forEach(function(m){html+='<div style="margin-bottom:6px"><strong>'+esc(m.name)+'</strong>（'+esc(m.code)+'）<br/><span style="color:var(--text-muted)">'+esc(m.intro)+'</span></div>'});html+='</div>'}html+='</div>'});html+='</div>';container.innerHTML=html}else if(tab==='courses'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>选课常见问题</h4><p><strong>Q：什么时候选课？</strong><br/>每学期开学前一周进行选课，具体时间以教务系统通知为准。<br/><br/><strong>Q：如何选课？</strong><br/>登录长沙理工大学教务管理系统（jwgl.csust.edu.cn），使用学号和密码登录，进入选课模块。<br/><br/><strong>Q：选课有学分限制吗？</strong><br/>每学期一般建议修读20-25学分，最高不超过30学分。<br/><br/><strong>Q：可以跨专业选课吗？</strong><br/>可以选修全校性公共选修课，部分专业课程需要先获得开课学院同意。<br/><br/><strong>Q：退课有什么规定？</strong><br/>开学后第3周前可以退课，退课后不影响GPA计算。第3周后退课记为W（Withdraw）。</p></div></div>'}else if(tab==='exams'){renderCalendar()}else if(tab==='grades'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>成绩查询</h4><p>登录教务管理系统（jwgl.csust.edu.cn）查询各科成绩和GPA。<br/><br/><strong>GPA计算方法：</strong><br/>采用4.0制，A=4.0, B=3.0, C=2.0, D=1.0, F=0<br/>GPA = 各课程绩点 x 学分 之和 / 总学分<br/><br/>你也可以使用<a href="javascript:void(0)" onclick="navigate(\'toolbox\',\'gpa\')" style="color:var(--accent)">工具箱中的GPA计算器</a>来计算。</p></div></div>'}else if(tab==='scholarship'){var html='';var categories={};CSUST_DATA.scholarships.forEach(function(s){if(!categories[s.category])categories[s.category]=[];categories[s.category].push(s)});var catNames={国家:'国家奖助',校级:'校级奖学金',助学:'助学政策'};Object.keys(categories).forEach(function(cat){html+='<div class="scholarship-category"><div class="scholarship-category-title">'+esc(catNames[cat]||cat)+'</div>';categories[cat].forEach(function(s){html+='<div class="scholarship-item"><div class="scholarship-amount">'+esc(s.amount)+'</div><div class="scholarship-info"><div class="scholarship-name">'+esc(s.name)+'</div><div class="scholarship-condition">'+esc(s.condition)+'</div></div></div>'});html+='</div>'});container.innerHTML=html}}
 function filterMajors(){var query=document.getElementById('majorSearchInput').value.toLowerCase();document.querySelectorAll('.major-card').forEach(function(card){var college=card.getAttribute('data-college');var majors=card.getAttribute('data-majors');card.style.display=(!query||college.indexOf(query)>=0||majors.indexOf(query)>=0)?'':'none'})}
 function switchCampusTab(tab){var tabs=document.querySelectorAll('#campusTabs .tab-btn');var tabMap={overview:0,canteen:1,library:2,dorm:3,transport:4,card:5,links:6,shuttle:7};tabs.forEach(function(t){t.classList.remove('active')});if(tabMap[tab]!==undefined&&tabs[tabMap[tab]])tabs[tabMap[tab]].classList.add('active');var container=document.getElementById('campusContent');if(tab==='overview'){var html='';CSUST_DATA.campuses.forEach(function(c){html+='<div class="knowledge-card"><h4>'+esc(c.name)+'（'+esc(c.type)+'）</h4><div class="info-row"><div class="info-label">地址</div><div class="info-value">'+esc(c.address)+'</div></div><div class="info-row"><div class="info-label">公交</div><div class="info-value">'+c.bus.map(function(b){return '<span class="tag-pill">'+b+'</span>'}).join(' ')+'</div></div>'+(c.subway?'<div class="info-row"><div class="info-label">地铁</div><div class="info-value">'+esc(c.subway)+'</div></div>':'')+'<p style="margin-top:12px">'+esc(c.desc)+'</p></div>'});container.innerHTML=html}else if(tab==='canteen'){var html='';CSUST_DATA.canteens.forEach(function(c){html+='<div class="knowledge-card"><h4>'+esc(c.name)+'</h4><p>'+esc(c.desc)+'</p></div>'});html+='<div class="knowledge-card"><h4>用餐提示</h4><p>食堂支持校园一卡通刷卡消费，部分窗口支持支付宝/微信扫码。一般早餐6:30-8:30，午餐11:00-13:00，晚餐17:00-19:00。</p></div>';container.innerHTML=html}else if(tab==='library'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>图书馆信息</h4><div class="info-row"><div class="info-label">开放时间</div><div class="info-value">'+CSUST_DATA.library.hours+'</div></div><div class="info-row"><div class="info-label">馆藏资源</div><div class="info-value">'+CSUST_DATA.library.collections+'</div></div><div class="info-row"><div class="info-label">座位数量</div><div class="info-value">'+CSUST_DATA.library.seats+'</div></div><p style="margin-top:12px">'+CSUST_DATA.library.desc+'</p><p style="margin-top:12px"><strong>借阅规则：</strong><br/>- 本科生最多借阅10本，借期30天<br/>- 研究生最多借阅20本，借期60天<br/>- 可续借1次，续借期15天</p></div></div>'}else if(tab==='dorm'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>宿舍信息</h4><div class="info-row"><div class="info-label">宿舍类型</div><div class="info-value">'+CSUST_DATA.dormitory.type+'</div></div><div class="info-row"><div class="info-label">设施</div><div class="info-value">'+CSUST_DATA.dormitory.facilities+'</div></div><div class="info-row"><div class="info-label">网络</div><div class="info-value">'+CSUST_DATA.dormitory.internet+'</div></div><div class="info-row"><div class="info-label">用电</div><div class="info-value">'+CSUST_DATA.dormitory.electricity+'</div></div><p style="margin-top:12px">'+CSUST_DATA.dormitory.desc+'</p></div></div>'}else if(tab==='transport'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>交通指南</h4><p><strong>云塘校区：</strong><br/>公交：209路、702路、134路、206路<br/>地铁：地铁1号线/5号线附近（乘702路可达）<br/><br/><strong>金盆岭校区：</strong><br/>公交：104路、150路、4路、702路、804路、905路<br/>地铁：地铁1号线涂家冲站<br/><br/><strong>从长沙南站（高铁站）：</strong><br/>地铁2号线转1号线，再转公交702路到云塘校区，约40分钟。<br/><br/><strong>从长沙火车站：</strong><br/>地铁2号线转1号线，再转公交209路到云塘校区，约50分钟。</p></div></div>'}else if(tab==='card'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>校园一卡通</h4><p><strong>功能：</strong>食堂消费、图书馆借阅、门禁通行、校车乘坐等。<br/><br/><strong>充值方式：</strong><br/>1. 校园内自助充值机<br/>2. 支付宝/微信绑定校园卡<br/>3. 一卡通中心现金充值<br/><br/><strong>挂失补办：</strong><br/>丢失后请立即通过自助机或到一卡通中心挂失。补办需携带身份证，工本费约20元。</p></div></div>'}else if(tab==='links'){var html='<div class="links-grid">';CSUST_DATA.usefulLinks.forEach(function(l){html+='<a href="'+esc(l.url)+'" target="_blank" rel="noopener" class="link-item"><div class="link-icon">&#128279;</div><div class="link-info"><div class="link-name">'+esc(l.name)+'</div><div class="link-desc">'+esc(l.desc)+'</div></div><div class="link-arrow">&#8599;</div></a>'});html+='</div>';container.innerHTML=html}else if(tab==='shuttle'){var html='<div class="knowledge-list">';CSUST_DATA.shuttleBus.forEach(function(s){html+='<div class="shuttle-item"><div class="shuttle-route">'+esc(s.route)+'</div><div class="shuttle-details"><span class="shuttle-tag">'+esc(s.bus)+'</span><span class="shuttle-tag">'+esc(s.schedule)+'</span><span class="shuttle-tag">'+esc(s.interval)+'</span><span class="shuttle-tag">'+esc(s.duration)+'</span></div></div>'});html+='<div class="knowledge-card" style="margin-top:12px"><h4>温馨提示</h4><p>两校区之间建议优先乘坐209路公交。高峰时段可能需要等较长时间，建议提前出发。</p></div></div>';container.innerHTML=html}}
 function switchAdmissionTab(tab){var tabs=document.querySelectorAll('#admissionTabs .tab-btn');var tabMap={policy:0,majors:1,scores:2,tuition:3,contact:4};tabs.forEach(function(t){t.classList.remove('active')});if(tabMap[tab]!==undefined&&tabs[tabMap[tab]])tabs[tabMap[tab]].classList.add('active');var container=document.getElementById('admissionContent');if(tab==='policy'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>招生政策摘要</h4><div class="info-row"><div class="info-label">学校性质</div><div class="info-value">'+CSUST_DATA.basic.type+'</div></div><div class="info-row"><div class="info-label">学校代码</div><div class="info-value">'+CSUST_DATA.basic.code+'</div></div><div class="info-row"><div class="info-label">学科特色</div><div class="info-value">'+CSUST_DATA.basic.disciplines+'</div></div><div class="info-row"><div class="info-label">办学层次</div><div class="info-value">'+CSUST_DATA.basic.level+'</div></div><p style="margin-top:16px"><strong>2024年招生计划：</strong>9610人，是湖南省内理工科计划最多的高校。<br/><br/><strong>录取规则：</strong><br/>1. 服从专业调剂，身体条件符合要求，原则上不退档<br/>2. 按分数优先、遵循志愿的原则进行专业分配<br/>3. 无专业级差<br/>4. 中外合作办学专业只录取有专业志愿的考生</p></div></div>'}else if(tab==='majors'){var html='<div style="margin-bottom:16px"><input type="text" class="form-input" id="admissionMajorSearch" placeholder="搜索专业..." oninput="filterAdmissionMajors()"/></div><div id="admissionMajorsList" class="knowledge-list">';CSUST_DATA.colleges.forEach(function(col){var names=col.majors.map(function(m){return typeof m==='object'?m.name:m});html+='<div class="knowledge-card adm-major-card" data-search="'+esc((col.name+names.join(',')).toLowerCase())+'"><h4>'+esc(col.name)+'（'+col.majors.length+'个专业）</h4><p>'+names.map(function(n){return '<span class="tag-pill">'+esc(n)+'</span>'}).join('')+'</p>';if(col.majors.length>0&&typeof col.majors[0]==='object'){html+='<div style="margin-top:8px;font-size:12px;color:var(--text-muted)">';col.majors.forEach(function(m){html+='<span style="margin-right:12px">'+esc(m.code)+' '+esc(m.degree)+' '+esc(m.duration)+'年 '+esc(m.tuition)+'元/年</span>'});html+='</div>'}html+='</div>'});html+='</div>';container.innerHTML=html}else if(tab==='scores'){var html='<div style="margin-bottom:16px"><input type="text" class="form-input" id="scoreSearchInput" placeholder="搜索省份..." oninput="filterScores()"/></div><div style="overflow-x:auto"><table class="score-table"><thead><tr><th>省份</th><th>科类</th><th>2024投档线</th><th>位次</th></tr></thead><tbody>';var scores=[{province:"湖南",type:"物理类",score:"521",rank:"58000"},{province:"湖南",type:"历史类",score:"535",rank:"15000"},{province:"广东",type:"物理类",score:"535",rank:"92000"},{province:"河南",type:"理科",score:"530",rank:"98000"},{province:"湖北",type:"物理类",score:"525",rank:"55000"},{province:"江西",type:"理科",score:"528",rank:"42000"},{province:"安徽",type:"理科",score:"522",rank:"78000"},{province:"山东",type:"综合",score:"520",rank:"120000"},{province:"广西",type:"理科",score:"490",rank:"45000"},{province:"四川",type:"理科",score:"525",rank:"75000"},{province:"贵州",type:"理科",score:"470",rank:"52000"},{province:"云南",type:"理科",score:"505",rank:"40000"},{province:"河北",type:"物理类",score:"520",rank:"75000"},{province:"福建",type:"物理类",score:"525",rank:"45000"},{province:"浙江",type:"综合",score:"560",rank:"95000"}];scores.forEach(function(s){html+='<tr class="score-row" data-province="'+s.province+'"><td>'+s.province+'</td><td>'+s.type+'</td><td>'+s.score+'</td><td>'+s.rank+'</td></tr>'});html+='</tbody></table></div>';container.innerHTML=html}else if(tab==='tuition'){var html='<div class="knowledge-list">';Object.keys(CSUST_DATA.tuition).forEach(function(k){html+='<div class="knowledge-card"><h4>'+esc(k)+'</h4><p style="font-size:18px;color:var(--accent);font-weight:700;margin-top:8px">'+esc(CSUST_DATA.tuition[k])+'</p></div>'});html+='</div>';container.innerHTML=html}else if(tab==='contact'){container.innerHTML='<div class="knowledge-list"><div class="knowledge-card"><h4>联系方式</h4><div class="info-row"><div class="info-label">招生办电话</div><div class="info-value">'+CSUST_DATA.contact.admission_phone+'</div></div><div class="info-row"><div class="info-label">招生邮箱</div><div class="info-value">'+CSUST_DATA.contact.admission_email+'</div></div><div class="info-row"><div class="info-label">学校官网</div><div class="info-value">'+CSUST_DATA.contact.website+'</div></div><div class="info-row"><div class="info-label">招生网</div><div class="info-value">'+CSUST_DATA.contact.admission_website+'</div></div></div></div>'}}
@@ -1309,7 +1548,7 @@ function showMoreSearchResults(){if(!window._searchResults)return;var results=wi
 
 function toggleTheme(){var html=document.documentElement;var isLight=html.getAttribute('data-theme')==='light';var isDark=!isLight;html.setAttribute('data-theme',isLight?'':'dark');setLS('theme',isLight?'light':'dark');var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=isDark?'#0f0e0a':'#fafaf8';var sunIcon=document.getElementById('themeIconSun');var moonIcon=document.getElementById('themeIconMoon');if(sunIcon&&moonIcon){sunIcon.style.display=isLight?'none':'';moonIcon.style.display=isLight?'':'none'}}
 document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openGlobalSearch()}if(e.key==='Escape'){hideContactModal();hideLegalModal();closeGlobalSearch()}});
-document.addEventListener('DOMContentLoaded',function(){refreshQuote();var theme=getLS('theme','light');if(theme==='dark'){document.documentElement.setAttribute('data-theme','dark');var sunIcon=document.getElementById('themeIconSun');var moonIcon=document.getElementById('themeIconMoon');if(sunIcon)sunIcon.style.display='none';if(moonIcon)moonIcon.style.display=''}var savedMsgs=getLS('ai_messages',[]);if(savedMsgs.length>0){savedMsgs.forEach(function(m){addChatMessage(m.role,m.content,false)})}var aiInput=document.getElementById('aiChatInput');if(aiInput){aiInput.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'})}});
+document.addEventListener('DOMContentLoaded',function(){refreshQuote();initBackToTop();var theme=getLS('theme','light');if(theme==='dark'){document.documentElement.setAttribute('data-theme','dark');var sunIcon=document.getElementById('themeIconSun');var moonIcon=document.getElementById('themeIconMoon');if(sunIcon)sunIcon.style.display='none';if(moonIcon)moonIcon.style.display=''}var savedMsgs=getLS('ai_messages',[]);if(savedMsgs.length>0){savedMsgs.forEach(function(m){addChatMessage(m.role,m.content,false)})}var aiInput=document.getElementById('aiChatInput');if(aiInput){aiInput.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'})}});
 
 function getCompLevelTag(level){
   if(level.indexOf('A类')>=0)return'<span class="tag-pill" style="background:rgba(231,76,60,0.12);color:#e74c3c">A类</span>';
@@ -1320,7 +1559,7 @@ function getCompLevelTag(level){
   return'<span class="tag-pill">'+esc(level)+'</span>';
 }
 function getCompCategoryColor(cat){
-  var colors={'理工类':'rgba(52,152,219,0.12);color:#3498db','创新创业类':'rgba(231,76,60,0.12);color:#e74c3c','公安安全类':'rgba(155,89,182,0.12);color:#9b59b6','文科类':'rgba(46,204,113,0.12);color:#2ecc71','艺术体育类':'rgba(243,156,18,0.12);color:#f39c12','综合类':'rgba(149,165,166,0.12);color:#95a5a6'};
+  var colors={'理工类':'rgba(52,152,219,0.12);color:#3498db','创新创业类':'rgba(231,76,60,0.12);color:#e74c3c','公共安全类':'rgba(155,89,182,0.12);color:#9b59b6','文科类':'rgba(46,204,113,0.12);color:#2ecc71','艺术体育类':'rgba(243,156,18,0.12);color:#f39c12','综合类':'rgba(149,165,166,0.12);color:#95a5a6'};
   var c=colors[cat]||'rgba(149,165,166,0.12);color:#95a5a6';
   return'<span class="tag-pill" style="background:'+c+'">'+esc(cat)+'</span>';
 }
@@ -1345,7 +1584,7 @@ function switchCompetitionTab(tab){
   else if(tab==='security')renderCompSecurity(container);
 }
 function renderCompAll(container){
-  var categories=['全部','理工类','创新创业类','公安安全类','文科类','艺术体育类','综合类'];
+  var categories=['全部','理工类','创新创业类','公共安全类','文科类','艺术体育类','综合类'];
   var levels=['全部','A类','B+类','B-类','C级'];
   var html='<div style="margin-bottom:12px"><input type="text" class="form-input" id="compSearchInput" placeholder="搜索竞赛名称..." oninput="filterCompetitions()"/></div>';
   html+='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">分类筛选</div><div class="club-filter-bar" id="compCatFilter">';
@@ -1506,10 +1745,10 @@ function renderCompGuide(container){
   container.innerHTML=html;
 }
 function renderCompSecurity(container){
-  var securityComps=CSUST_DATA.competitions.filter(function(c){return c.category==='公安安全类'});
+  var securityComps=CSUST_DATA.competitions.filter(function(c){return c.category==='公共安全类'});
   var html='<div style="margin-bottom:16px;padding:16px;border-radius:12px;background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.2)">';
-  html+='<h4 style="color:#9b59b6;margin-bottom:8px">公安安全类竞赛</h4>';
-  html+='<p style="font-size:13px;color:var(--text-secondary)">公安安全类竞赛聚焦网络安全、信息安全等领域，是计算机、电子信息相关专业学生展示技术能力的重要平台。长沙理工大学共有 <strong>'+securityComps.length+'</strong> 项公安安全类竞赛。</p>';
+  html+='<h4 style="color:#9b59b6;margin-bottom:8px">公共安全类竞赛</h4>';
+  html+='<p style="font-size:13px;color:var(--text-secondary)">公共安全类竞赛聚焦网络安全、信息安全等领域，是计算机、电子信息相关专业学生展示技术能力的重要平台。长沙理工大学共有 <strong>'+securityComps.length+'</strong> 项公共安全类竞赛。</p>';
   html+='</div>';
   html+='<div class="knowledge-list">';
   securityComps.forEach(function(c,idx){
@@ -1691,7 +1930,7 @@ function renderNotifList(notifs){
   var icons={system:'&#9888;',registration:'&#128203;',team:'&#128101;',review:'&#9989;'};
   notifs.forEach(function(n){
     html+='<div class="notif-item'+(n.is_read?'':' unread')+'" onclick="markNotifRead('+n.id+')">';
-    html+='<div class="notif-item-icon">'+(icons[n.type]||'&#128276;')+'</div>';
+    html+='<div class="notif-item-icon">'+(icons[n.type]||'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>')+'</div>';
     html+='<div class="notif-item-content"><div class="notif-item-title">'+esc(n.title)+'</div>';
     html+='<div class="notif-item-text">'+esc(n.content)+'</div>';
     html+='<div class="notif-item-time">'+formatTimeAgo(n.created_at)+'</div></div></div>';
@@ -1761,7 +2000,11 @@ function formatDate(d){
 
 /* --- Competition Display (Hub) --- */
 async function renderCompHub(container){
-  container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:32px;height:32px"></div><p style="margin-top:12px">加载竞赛数据...</p></div>';
+  /* 骨架屏加载占位 */
+  var skeletonHtml='<div class="skeleton-card"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line" style="width:80%"></div><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:90%"></div></div>';
+  skeletonHtml+='<div class="skeleton-card"><div class="skeleton skeleton-title" style="width:70%"></div><div class="skeleton skeleton-line" style="width:75%"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:85%"></div></div>';
+  skeletonHtml+='<div class="skeleton-card"><div class="skeleton skeleton-title" style="width:65%"></div><div class="skeleton skeleton-line" style="width:90%"></div><div class="skeleton skeleton-line" style="width:70%"></div><div class="skeleton skeleton-line" style="width:60%"></div></div>';
+  container.innerHTML=skeletonHtml;
   var comps=await fetchCompetitions();
   var counts=await fetchRegCounts();
   var categories=['全部'];comps.forEach(function(c){if(categories.indexOf(c.category)<0)categories.push(c.category)});
@@ -1873,11 +2116,12 @@ async function showRegFormForComp(compId){
   html+='<div class="auth-field"><label>指导老师</label><input type="text" id="regTeacher" placeholder="选填" /></div>';
   html+='<div class="auth-field"><label>备注</label><textarea id="regNote" rows="3" placeholder="选填"></textarea></div>';
   html+='<div class="auth-error" id="hubRegError"></div>';
-  html+='<button class="btn-primary" style="width:100%;margin-top:8px" onclick="submitHubRegistration('+compId+',null)" id="hubRegBtn">提交报名</button>';
+  html+='<div class="reg-submit-sticky"><button class="btn-primary" style="width:100%" onclick="submitHubRegistration('+compId+',null)" id="hubRegBtn">提交报名</button></div>';
   html+='</div></div>';
   showCompModal(html);
 }
 async function submitHubRegistration(compId,teamId){
+  hapticFeedback();
   var user=getCurrentUser();if(!user)return;
   var phone=document.getElementById('regPhone')?document.getElementById('regPhone').value.trim():'';
   var email=document.getElementById('regEmail')?document.getElementById('regEmail').value.trim():'';
@@ -1969,13 +2213,14 @@ async function renderMyRegistrations(){
   var container=document.getElementById('myRegsContent');
   if(!isLoggedIn()){container.innerHTML='<div class="login-required"><h3>请先登录</h3><p>登录后查看你的报名记录</p><button class="btn-primary" onclick="navigate(\'auth\')">去登录</button></div>';return}
   var user=getCurrentUser();
-  container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:24px;height:24px"></div><p style="margin-top:8px">加载中...</p></div>';
+  /* 骨架屏加载占位 - 我的报名 */
+  container.innerHTML='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:70%"></div><div class="skeleton skeleton-line" style="width:50%"></div></div></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:65%"></div><div class="skeleton skeleton-line" style="width:55%"></div></div></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:75%"></div><div class="skeleton skeleton-line" style="width:45%"></div></div></div></div>';
   try{
     var res=await fetch(HUB_URL+'/rest/v1/registrations?user_id=eq.'+user.id+'&select=*,competitions(name,status,level,category,is_team)&order=created_at.desc',{headers:HUB_HEADERS});
     if(!res.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
     var regs=await res.json();
     if(regs.length===0){
-      container.innerHTML='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div class="empty-state"><div class="empty-state-icon">&#128203;</div><p>暂无报名记录</p><p style="font-size:13px;margin-top:8px">前往学科竞赛页面报名</p><button class="btn-primary btn-sm" style="margin-top:16px" onclick="navigate(\'competition\')">浏览竞赛</button></div></div>';return;
+      container.innerHTML='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div class="empty-state"><div class="empty-state-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="14" y2="16"/></svg></div><p>暂无报名记录</p><p style="font-size:13px;margin-top:8px">前往学科竞赛页面报名</p><button class="btn-primary btn-sm" style="margin-top:16px" onclick="navigate(\'competition\')">浏览竞赛</button></div></div>';return;
     }
     var html='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">共 '+regs.length+' 条报名记录</div>';
     regs.forEach(function(r){
@@ -2025,7 +2270,7 @@ async function renderAdmin(){
     html+='</select><select id="adminFilterStatus" onchange="applyAdminFilters()"><option value="">全部状态</option><option value="pending">待审核</option><option value="approved">已通过</option><option value="rejected">已拒绝</option><option value="cancelled">已取消</option></select><input type="text" id="adminSearchInput" placeholder="搜索学号/姓名..." oninput="applyAdminFilters()" /></div>';
     html+='<div id="adminRegList">';
     if(regs.length===0){
-      html+='<div class="empty-state"><div class="empty-state-icon">&#128203;</div><p>暂无报名记录</p></div>';
+      html+='<div class="empty-state"><div class="empty-state-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="14" y2="16"/></svg></div><p>暂无报名记录</p></div>';
     }else{
       regs.forEach(function(r){
         var profile=r.profiles||{};var comp=r.competitions||{};
@@ -2065,6 +2310,7 @@ function toggleRejectForm(regId){
   if(form)form.style.display=form.style.display==='none'?'block':'none';
 }
 async function adminApprove(regId){
+  hapticFeedback();
   var user=getCurrentUser();if(!user)return;
   try{
     var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'approved',reviewed_by:user.id,reviewed_at:new Date().toISOString()})});
@@ -2073,6 +2319,7 @@ async function adminApprove(regId){
   }catch(e){showCopyToast('网络错误','warning')}
 }
 async function adminReject(regId){
+  hapticFeedback();
   var user=getCurrentUser();if(!user)return;
   var reasonEl=document.getElementById('rejectReason-'+regId);
   var reason=reasonEl?reasonEl.value.trim():'';
@@ -2087,7 +2334,50 @@ async function adminReject(regId){
 
 /* --- Override navigate to handle new pages --- */
 var _origNavigate=navigate;
+/* 页面标题映射（移动端返回导航栏） */
+var PAGE_TITLES={home:'首页',academic:'学业助手',campus:'校园生活',admission:'招生咨询',news:'校园资讯',competition:'学科竞赛',toolbox:'工具箱',profile:'个人中心',ai:'AI问答',auth:'登录注册',admin:'管理面板',myregistrations:'我的报名'};
+/* 更新移动端底部标签栏和返回导航栏 */
+function updateMobileNav(page){
+  /* 底部标签栏激活状态 */
+  var tabMap={home:'home',competition:'competition',toolbox:'toolbox',profile:'profile'};
+  var activeTab=tabMap[page]||'';
+  document.querySelectorAll('.bottom-tab-item').forEach(function(item){
+    item.classList.toggle('active',item.getAttribute('data-tab')===activeTab);
+  });
+  /* 返回导航栏 */
+  var backNav=document.getElementById('backNav');
+  var backNavTitle=document.getElementById('backNavTitle');
+  var shell=document.getElementById('main-content');
+  if(page==='home'){
+    backNav.style.display='none';
+    shell.classList.remove('on-sub-page');
+  }else{
+    backNav.style.display='';
+    backNavTitle.textContent=PAGE_TITLES[page]||'';
+    shell.classList.add('on-sub-page');
+  }
+}
+/* 回到顶部按钮：滚动监听 */
+function initBackToTop(){
+  var btn=document.getElementById('backToTop');
+  if(!btn)return;
+  var ticking=false;
+  window.addEventListener('scroll',function(){
+    if(!ticking){requestAnimationFrame(function(){ticking=false;if(window.scrollY>300){btn.classList.add('visible')}else{btn.classList.remove('visible')}});ticking=true}
+  },{passive:true});
+}
+/* 触觉反馈：关键操作振动 */
+function hapticFeedback(){if(navigator.vibrate)try{navigator.vibrate(10)}catch(e){}}
+/* 密码显示/隐藏切换 */
+function togglePwdVisibility(inputId,btn){
+  var input=document.getElementById(inputId);if(!input)return;
+  var isPassword=input.type==='password';
+  input.type=isPassword?'text':'password';
+  btn.innerHTML=isPassword?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  btn.setAttribute('aria-label',isPassword?'隐藏密码':'显示密码');
+}
 navigate=function(page,tab){
+  updateMobileNav(page);
   if(page==='auth'||page==='admin'||page==='myregistrations'){
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');p.classList.remove('fading-out')});
     document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('active')});
@@ -2136,6 +2426,449 @@ renderProfile=function(){
 document.addEventListener('DOMContentLoaded',function(){
   updateNavAuth();
 });
+
+/* ========== 校历日历数据和功能 ========== */
+
+/* 日历事件数据 - 2025-2026学年 */
+var CALENDAR_EVENTS = [
+  // 第一学期 (2025年9月-2026年1月)
+  {title:'老生返校报到',date:'2025-09-01',endDate:'2025-09-02',category:'teaching',description:'在校生返校注册报到'},
+  {title:'新生报到',date:'2025-09-03',endDate:'2025-09-04',category:'teaching',description:'2025级新生入学报到'},
+  {title:'开学典礼',date:'2025-09-05',category:'activity',description:'2025-2026学年开学典礼'},
+  {title:'正式上课',date:'2025-09-08',category:'teaching',description:'第一学期正式开始上课'},
+  {title:'教师节',date:'2025-09-10',category:'holiday',description:'教师节'},
+  {title:'社团招新',date:'2025-09-15',endDate:'2025-09-30',category:'activity',description:'各学生社团纳新活动'},
+  {title:'国庆节放假',date:'2025-10-01',endDate:'2025-10-07',category:'holiday',description:'国庆节假期'},
+  {title:'调休补课',date:'2025-10-08',category:'teaching',description:'调休补周三的课',isAdjusted:true,adjustmentNote:'补9月28日（周日）的课'},
+  {title:'校运动会',date:'2025-10-18',endDate:'2025-10-19',category:'activity',description:'校秋季田径运动会'},
+  {title:'期中考试',date:'2025-11-01',endDate:'2025-11-15',category:'teaching',description:'第一学期期中考试'},
+  {title:'元旦晚会',date:'2025-12-28',category:'activity',description:'跨年元旦晚会'},
+  {title:'元旦放假',date:'2026-01-01',category:'holiday',description:'元旦假期'},
+  {title:'期末考试',date:'2026-01-05',endDate:'2026-01-16',category:'teaching',description:'第一学期期末考试'},
+  {title:'放寒假',date:'2026-01-17',category:'teaching',description:'寒假开始'},
+  // 第二学期 (2026年2月-7月)
+  {title:'学生返校报到',date:'2026-02-21',endDate:'2026-02-22',category:'teaching',description:'在校生返校注册报到'},
+  {title:'正式上课',date:'2026-02-23',category:'teaching',description:'第二学期正式开始上课'},
+  {title:'妇女节',date:'2026-03-08',category:'holiday',description:'国际妇女节'},
+  {title:'植树节',date:'2026-03-12',category:'activity',description:'义务植树活动'},
+  {title:'清明节放假',date:'2026-04-04',endDate:'2026-04-06',category:'holiday',description:'清明节假期'},
+  {title:'科技文化节',date:'2026-04-13',endDate:'2026-04-18',category:'activity',description:'校园科技文化节'},
+  {title:'期中考试',date:'2026-04-20',endDate:'2026-04-30',category:'teaching',description:'第二学期期中考试'},
+  {title:'劳动节放假',date:'2026-05-01',endDate:'2026-05-05',category:'holiday',description:'劳动节假期'},
+  {title:'端午节放假',date:'2026-05-31',endDate:'2026-06-02',category:'holiday',description:'端午节假期'},
+  {title:'四六级考试',date:'2026-06-13',category:'competition',description:'全国大学英语四六级考试'},
+  {title:'期末考试',date:'2026-06-22',endDate:'2026-07-04',category:'teaching',description:'第二学期期末考试'},
+  {title:'放暑假',date:'2026-07-06',category:'teaching',description:'暑假开始'}
+];
+
+/* 事件类别配置 */
+var CAL_CATEGORIES = {
+  teaching:    {label:'教学安排', color:'#16a34a', icon:'\uD83D\uDFE2'},
+  holiday:     {label:'节假日',   color:'#dc2626', icon:'\uD83D\uDD34'},
+  activity:    {label:'校园活动', color:'#2563eb', icon:'\uD83D\uDD35'},
+  competition: {label:'竞赛相关', color:'#d97706', icon:'\uD83D\uDFE1'}
+};
+
+/* 日历状态 */
+var calState = {
+  semester: 1,       // 1=第一学期, 2=第二学期
+  year: 2025,
+  month: 9,          // 当前显示月份
+  viewMode: 'calendar', // 'calendar' 或 'list'
+  filterCategory: null  // null=全部, 或 'teaching'/'holiday'/'activity'/'competition'
+};
+
+/* 星期名称 */
+var CAL_WEEKDAYS = ['日','一','二','三','四','五','六'];
+
+/* 判断日期字符串是否在事件范围内 */
+function calDateInRange(dateStr, event) {
+  var d = dateStr;
+  var s = event.date;
+  var e = event.endDate || event.date;
+  return d >= s && d <= e;
+}
+
+/* 获取某天的事件列表 */
+function calGetEventsForDate(dateStr) {
+  var filtered = CALENDAR_EVENTS.filter(function(ev) {
+    if (calState.filterCategory && ev.category !== calState.filterCategory) return false;
+    return calDateInRange(dateStr, ev);
+  });
+  return filtered;
+}
+
+/* 获取某天的事件类别（用于显示彩色点） */
+function calGetCategoriesForDate(dateStr) {
+  var cats = {};
+  CALENDAR_EVENTS.forEach(function(ev) {
+    if (calState.filterCategory && ev.category !== calState.filterCategory) return;
+    if (calDateInRange(dateStr, ev)) {
+      cats[ev.category] = true;
+    }
+  });
+  return Object.keys(cats);
+}
+
+/* 格式化日期为 YYYY-MM-DD */
+function calFormatDate(y, m, d) {
+  return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
+}
+
+/* 获取月份天数 */
+function calDaysInMonth(y, m) {
+  return new Date(y, m, 0).getDate();
+}
+
+/* 获取月份第一天是星期几 (0=日) */
+function calFirstDayOfMonth(y, m) {
+  return new Date(y, m - 1, 1).getDay();
+}
+
+/* 中文星期 */
+function calChineseWeekday(dateStr) {
+  var d = new Date(dateStr);
+  return '周' + CAL_WEEKDAYS[d.getDay()];
+}
+
+/* 渲染日历主函数 */
+function renderCalendar() {
+  var container = document.getElementById('academicContent');
+  if (!container) return;
+
+  // 根据当前学期确定默认月份
+  if (calState.semester === 1) {
+    // 第一学期: 2025年9月 - 2026年1月
+    if (calState.year !== 2025 || (calState.month < 9 && calState.year === 2025) || (calState.month > 1 && calState.year === 2026)) {
+      calState.year = 2025;
+      calState.month = 9;
+    }
+  } else {
+    // 第二学期: 2026年2月 - 2026年7月
+    if (calState.year !== 2026 || calState.month < 2 || calState.month > 7) {
+      calState.year = 2026;
+      calState.month = 2;
+    }
+  }
+
+  var html = '<div class="cal-container">';
+
+  // 头部：标题 + 学期切换
+  html += '<div class="cal-header">';
+  html += '<div class="cal-title">2025-2026学年</div>';
+  html += '<div class="cal-semester-tabs">';
+  html += '<button class="cal-semester-tab' + (calState.semester === 1 ? ' active' : '') + '" onclick="calSwitchSemester(1)">第一学期</button>';
+  html += '<button class="cal-semester-tab' + (calState.semester === 2 ? ' active' : '') + '" onclick="calSwitchSemester(2)">第二学期</button>';
+  html += '</div>';
+  html += '</div>';
+
+  // 视图切换按钮
+  html += '<div class="cal-view-toggle">';
+  html += '<button class="cal-view-btn' + (calState.viewMode === 'calendar' ? ' active' : '') + '" onclick="calSwitchView(\'calendar\')">日历视图</button>';
+  html += '<button class="cal-view-btn' + (calState.viewMode === 'list' ? ' active' : '') + '" onclick="calSwitchView(\'list\')">列表视图</button>';
+  html += '</div>';
+
+  // 月份导航
+  html += '<div class="cal-month-nav" style="margin-bottom:12px">';
+  html += '<button class="cal-month-btn" onclick="calPrevMonth()">&#8249;</button>';
+  html += '<span class="cal-month-label">' + calState.year + '年' + calState.month + '月</span>';
+  html += '<button class="cal-month-btn" onclick="calNextMonth()">&#8250;</button>';
+  html += '</div>';
+
+  // 日历网格或列表视图
+  if (calState.viewMode === 'calendar') {
+    html += renderCalGrid();
+  } else {
+    html += renderCalListView();
+  }
+
+  // 图例
+  html += renderCalLegend();
+
+  // 近期事项
+  html += renderCalUpcoming();
+
+  html += '</div>';
+
+  container.innerHTML = html;
+
+  // 淡入动画
+  var wrapper = container.querySelector('.cal-grid-wrapper');
+  if (wrapper) {
+    wrapper.classList.add('cal-fade-enter');
+    requestAnimationFrame(function() {
+      wrapper.classList.add('cal-fade-active');
+    });
+  }
+}
+
+/* 渲染日历网格 */
+function renderCalGrid() {
+  var y = calState.year, m = calState.month;
+  var daysInMonth = calDaysInMonth(y, m);
+  var firstDay = calFirstDayOfMonth(y, m);
+  var today = new Date();
+  var todayStr = calFormatDate(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+  var html = '<div class="cal-grid-wrapper"><div class="cal-grid">';
+
+  // 星期标题行
+  CAL_WEEKDAYS.forEach(function(wd) {
+    html += '<div class="cal-weekday">' + wd + '</div>';
+  });
+
+  // 上月补齐
+  var prevMonth = m === 1 ? 12 : m - 1;
+  var prevYear = m === 1 ? y - 1 : y;
+  var prevDays = calDaysInMonth(prevYear, prevMonth);
+  for (var i = firstDay - 1; i >= 0; i--) {
+    var pd = prevDays - i;
+    var pDateStr = calFormatDate(prevYear, prevMonth, pd);
+    var pCats = calGetCategoriesForDate(pDateStr);
+    html += '<div class="cal-cell other-month' + (pCats.length ? ' has-events' : '') + '" onclick="calCellClick(\'' + pDateStr + '\')">';
+    html += '<span class="cal-date">' + pd + '</span>';
+    if (pCats.length) {
+      html += '<div class="cal-dots">';
+      pCats.forEach(function(c) { html += '<span class="cal-dot" style="background:' + CAL_CATEGORIES[c].color + '"></span>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 当月日期
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dateStr = calFormatDate(y, m, d);
+    var cats = calGetCategoriesForDate(dateStr);
+    var isToday = dateStr === todayStr;
+    html += '<div class="cal-cell' + (isToday ? ' today' : '') + (cats.length ? ' has-events' : '') + '" onclick="calCellClick(\'' + dateStr + '\')">';
+    html += '<span class="cal-date">' + d + '</span>';
+    if (cats.length) {
+      html += '<div class="cal-dots">';
+      cats.forEach(function(c) { html += '<span class="cal-dot" style="background:' + CAL_CATEGORIES[c].color + '"></span>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 下月补齐
+  var totalCells = firstDay + daysInMonth;
+  var remaining = (7 - totalCells % 7) % 7;
+  var nextMonth = m === 12 ? 1 : m + 1;
+  var nextYear = m === 12 ? y + 1 : y;
+  for (var j = 1; j <= remaining; j++) {
+    var nDateStr = calFormatDate(nextYear, nextMonth, j);
+    var nCats = calGetCategoriesForDate(nDateStr);
+    html += '<div class="cal-cell other-month' + (nCats.length ? ' has-events' : '') + '" onclick="calCellClick(\'' + nDateStr + '\')">';
+    html += '<span class="cal-date">' + j + '</span>';
+    if (nCats.length) {
+      html += '<div class="cal-dots">';
+      nCats.forEach(function(c) { html += '<span class="cal-dot" style="background:' + CAL_CATEGORIES[c].color + '"></span>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+/* 渲染列表视图 */
+function renderCalListView() {
+  var y = calState.year, m = calState.month;
+  var daysInMonth = calDaysInMonth(y, m);
+  var html = '<div class="cal-event-list">';
+
+  var hasEvents = false;
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dateStr = calFormatDate(y, m, d);
+    var events = calGetEventsForDate(dateStr);
+    if (events.length === 0) continue;
+    hasEvents = true;
+
+    events.forEach(function(ev) {
+      var cat = CAL_CATEGORIES[ev.category] || CAL_CATEGORIES.teaching;
+      var dateObj = new Date(dateStr);
+      html += '<div class="cal-event-list-item">';
+      html += '<div class="cal-event-list-date">';
+      html += '<div class="cal-event-list-day">' + dateObj.getDate() + '</div>';
+      html += '<div class="cal-event-list-month">' + (dateObj.getMonth() + 1) + '月</div>';
+      html += '</div>';
+      html += '<div class="cal-event-list-info">';
+      html += '<div class="cal-event-list-title">' + esc(ev.title) + '</div>';
+      html += '<div class="cal-event-list-desc">' + esc(ev.description) + '</div>';
+      html += '<span class="cal-event-list-category" style="background:' + cat.color + '18;color:' + cat.color + '">' + cat.label + '</span>';
+      html += '</div></div>';
+    });
+  }
+
+  if (!hasEvents) {
+    html += '<div class="cal-upcoming-empty">本月暂无安排</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+/* 渲染图例 */
+function renderCalLegend() {
+  var html = '<div class="cal-legend">';
+  Object.keys(CAL_CATEGORIES).forEach(function(key) {
+    var cat = CAL_CATEGORIES[key];
+    var isActive = !calState.filterCategory || calState.filterCategory === key;
+    var isFiltered = calState.filterCategory && calState.filterCategory !== key;
+    html += '<div class="cal-legend-item' + (calState.filterCategory === key ? ' active' : '') + (isFiltered ? ' inactive' : '') + '" onclick="calToggleFilter(\'' + key + '\')">';
+    html += '<span class="cal-legend-dot" style="background:' + cat.color + '"></span>';
+    html += '<span>' + cat.icon + ' ' + cat.label + '</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+/* 渲染近期事项（未来7天） */
+function renderCalUpcoming() {
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var upcoming = [];
+
+  for (var i = 0; i <= 7; i++) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + i);
+    var dateStr = calFormatDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
+    var events = calGetEventsForDate(dateStr);
+    events.forEach(function(ev) {
+      upcoming.push({event: ev, date: dateStr, dateObj: d});
+    });
+  }
+
+  var html = '<div class="cal-upcoming">';
+  html += '<div class="cal-upcoming-title">&#128197; 近期事项</div>';
+
+  if (upcoming.length === 0) {
+    html += '<div class="cal-upcoming-empty">未来7天暂无安排</div>';
+  } else {
+    upcoming.forEach(function(item) {
+      var cat = CAL_CATEGORIES[item.event.category] || CAL_CATEGORIES.teaching;
+      var dateLabel = (item.dateObj.getMonth() + 1) + '月' + item.dateObj.getDate() + '日 ' + calChineseWeekday(item.date);
+      html += '<div class="cal-upcoming-item">';
+      html += '<span class="cal-upcoming-dot" style="background:' + cat.color + '"></span>';
+      html += '<div class="cal-upcoming-info">';
+      html += '<div class="cal-upcoming-title-text">' + esc(item.event.title) + '</div>';
+      html += '<div class="cal-upcoming-date-text">' + dateLabel + ' - ' + esc(item.event.description) + '</div>';
+      html += '</div></div>';
+    });
+  }
+
+  html += '</div>';
+  return html;
+}
+
+/* 切换学期 */
+function calSwitchSemester(sem) {
+  calState.semester = sem;
+  if (sem === 1) {
+    calState.year = 2025;
+    calState.month = 9;
+  } else {
+    calState.year = 2026;
+    calState.month = 2;
+  }
+  renderCalendar();
+}
+
+/* 上一月 */
+function calPrevMonth() {
+  calState.month--;
+  if (calState.month < 1) {
+    calState.month = 12;
+    calState.year--;
+  }
+  renderCalendar();
+}
+
+/* 下一月 */
+function calNextMonth() {
+  calState.month++;
+  if (calState.month > 12) {
+    calState.month = 1;
+    calState.year++;
+  }
+  renderCalendar();
+}
+
+/* 切换视图模式 */
+function calSwitchView(mode) {
+  calState.viewMode = mode;
+  renderCalendar();
+}
+
+/* 切换类别筛选 */
+function calToggleFilter(category) {
+  if (calState.filterCategory === category) {
+    calState.filterCategory = null; // 取消筛选
+  } else {
+    calState.filterCategory = category;
+  }
+  renderCalendar();
+}
+
+/* 点击日期单元格 - 显示事件详情弹窗 */
+function calCellClick(dateStr) {
+  var events = calGetEventsForDate(dateStr);
+  if (events.length === 0) return;
+
+  var dateObj = new Date(dateStr);
+  var dateLabel = (dateObj.getMonth() + 1) + '月' + dateObj.getDate() + '日 ' + calChineseWeekday(dateStr);
+
+  var html = '<div class="cal-popup-overlay" id="calPopupOverlay" onclick="calClosePopup(event)">';
+  html += '<div class="cal-popup">';
+  html += '<button class="cal-popup-close" onclick="calClosePopup()">&times;</button>';
+  html += '<div class="cal-popup-date">' + dateLabel + '</div>';
+
+  events.forEach(function(ev) {
+    var cat = CAL_CATEGORIES[ev.category] || CAL_CATEGORIES.teaching;
+    html += '<div class="cal-popup-event">';
+    html += '<span class="cal-popup-event-dot" style="background:' + cat.color + '"></span>';
+    html += '<div>';
+    html += '<div class="cal-popup-event-title">' + esc(ev.title) + '</div>';
+    html += '<div class="cal-popup-event-desc">' + esc(ev.description) + '</div>';
+    if (ev.endDate && ev.endDate !== ev.date) {
+      html += '<div class="cal-popup-event-desc">' + ev.date + ' ~ ' + ev.endDate + '</div>';
+    }
+    if (ev.isAdjusted && ev.adjustmentNote) {
+      html += '<div class="cal-popup-event-desc" style="color:var(--accent)">' + esc(ev.adjustmentNote) + '</div>';
+    }
+    if (ev.category === 'competition') {
+      html += '<button class="cal-popup-event-btn" onclick="calClosePopup();navigate(\'competition\')">查看竞赛</button>';
+    }
+    html += '</div></div>';
+  });
+
+  html += '</div></div>';
+
+  // 移除旧弹窗
+  var old = document.getElementById('calPopupOverlay');
+  if (old) old.remove();
+
+  // 插入弹窗
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  // 触发动画
+  requestAnimationFrame(function() {
+    var overlay = document.getElementById('calPopupOverlay');
+    if (overlay) overlay.classList.add('show');
+  });
+}
+
+/* 关闭弹窗 */
+function calClosePopup(e) {
+  if (e && e.target && !e.target.classList.contains('cal-popup-overlay')) return;
+  var overlay = document.getElementById('calPopupOverlay');
+  if (overlay) {
+    overlay.classList.remove('show');
+    setTimeout(function() { overlay.remove(); }, 200);
+  }
+}
 
 </script>
 
