@@ -1,4 +1,16 @@
 /* Extracted from app.js */
+
+// API 基础地址：自动适配部署环境
+// 服务器部署（149.28.143.114）→ 相对路径 ''
+// GitHub Pages 部署 → 指向服务器后端
+var API_BASE = (function(){
+  var h = location.hostname;
+  if(h.indexOf('github.io') >= 0 || h.indexOf('localhost') >= 0) {
+    return 'http://149.28.143.114';
+  }
+  return '';
+})();
+
 /* ============================================
    SVG Icon Helper
    ============================================ */

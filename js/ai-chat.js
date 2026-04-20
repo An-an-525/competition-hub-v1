@@ -1,7 +1,7 @@
 /* Extracted from app.js */
 
-// API 配置
-var AI_API_BASE = '';  // 相对路径，部署到同服务器时自动使用同协议
+// API 配置（API_BASE 在 utils.js 中定义，自动适配部署环境）
+var AI_API_BASE = API_BASE || '';
 
 // 深度模式状态
 function isDeepMode(){return getLS('ai_deep_mode',false)}
