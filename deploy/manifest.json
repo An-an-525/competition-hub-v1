@@ -1,0 +1,16 @@
+{
+  "name": "StartupDNA - 创业DNA平台",
+  "short_name": "StartupDNA",
+  "description": "AI驱动的创业能力评估与加速平台",
+  "start_url": "./startupdna-optimized.html",
+  "display": "standalone",
+  "background_color": "#08080c",
+  "theme_color": "#c9a96e",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

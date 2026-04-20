@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fdbbcibmqaogsbasoqly.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#07070a">
+  <meta name="description" content="学科竞赛智能助手：竞赛查询、报名管理、AI问答、校园资讯一站式平台。覆盖A/B/C类学科竞赛，支持在线报名与成绩追踪。">
+  <meta name="keywords" content="学科竞赛,竞赛报名,大学生竞赛,A类竞赛,数学建模,ACM,挑战杯,互联网+">
+  <meta property="og:title" content="竞赛助手 - 学科竞赛智能查询与报名平台">
+  <meta property="og:description" content="覆盖55+项学科竞赛，AI智能问答，一站式竞赛查询与报名管理">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://an-an-525.github.io/competition-hub/">
+  <meta property="og:image" content="https://an-an-525.github.io/competition-hub/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>竞赛助手 - 学科竞赛智能查询与报名平台</title>
+
+  <!-- Google Fonts (removed for Claude style - using system fonts) -->
+
+  <!-- GSAP (removed for Claude style - no entrance animations) -->
+
+
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=20260419" />
+</head>
+<body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Particle System Background -->
+  <div id="particleContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;"></div>
+
+  <!-- Background Atmosphere -->
+  <div class="bg-atmosphere">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <div class="bg-blob bg-blob-4"></div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" aria-label="主导航">
+    <a class="nav-logo" onclick="navigate('home')">
+      <div class="nav-logo-icon">C</div>
+      <span class="nav-logo-text">竞赛助手</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <button class="nav-link" data-page="home" onclick="navigate('home')">首页</button>
+      <button class="nav-link" data-page="ai" onclick="navigate('ai')">AI问答</button>
+      <button class="nav-link" data-page="competition" onclick="navigate('competition')">竞赛</button>
+      <button class="nav-link" data-page="toolbox" onclick="navigate('toolbox')">工具箱</button>
+      <div class="nav-group">
+        <button class="nav-link nav-dropdown-trigger" onclick="toggleNavGroup(this)">更多 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style="margin-left:4px;vertical-align:middle"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-dropdown">
+          <button class="nav-link" data-page="academic" onclick="navigate('academic');closeAllNavGroups()">学业助手</button>
+          <button class="nav-link" data-page="campus" onclick="navigate('campus');closeAllNavGroups()">校园生活</button>
+          <button class="nav-link" data-page="admission" onclick="navigate('admission');closeAllNavGroups()">招生咨询</button>
+          <button class="nav-link" data-page="news" onclick="navigate('news');closeAllNavGroups()">校园资讯</button>
+          <button class="nav-link" data-page="profile" onclick="navigate('profile');closeAllNavGroups()">个人中心</button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div id="navAuthArea" style="display:flex;align-items:center;gap:8px"></div>
+      <div style="position:relative" id="notifBellWrap">
+        <button class="notif-bell" id="notifBellBtn" onclick="toggleNotifDropdown()" aria-label="通知" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+        </button>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-dropdown-header"><span>通知</span><button onclick="markAllNotifsRead()">全部已读</button></div>
+          <div class="notif-list" id="notifList"><div class="notif-empty">暂无通知</div></div>
+        </div>
+      </div>
+      <button class="theme-toggle-btn" onclick="event.stopPropagation();toggleTheme()" id="themeToggleBtn" aria-label="切换主题">
+        <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="nav-search-btn" onclick="openGlobalSearch()" aria-label="搜索">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="hamburger" id="hamburgerBtn" onclick="event.stopPropagation();toggleMobileMenu()" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <span>导航菜单</span>
+      <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="关闭菜单">&times;</button>
+    </div>
+    <button class="nav-link" data-page="home" onclick="navigate('home');closeMobileMenu()">首页</button>
+    <button class="nav-link" data-page="ai" onclick="navigate('ai');closeMobileMenu()">AI问答</button>
+    <div class="mobile-menu-label">学业助手</div>
+    <button class="nav-link" data-page="academic" onclick="navigate('academic');closeMobileMenu()">专业查询</button>
+    <button class="nav-link" data-page="academic" onclick="navigate('academic','courses');closeMobileMenu()">选课指南</button>
+    <button class="nav-link" data-page="academic" onclick="navigate('academic','exams');closeMobileMenu()">考试安排</button>
+    <div class="mobile-menu-label">校园生活</div>
+    <button class="nav-link" data-page="campus" onclick="navigate('campus');closeMobileMenu()">校区导览</button>
+    <button class="nav-link" data-page="campus" onclick="navigate('campus','canteen');closeMobileMenu()">食堂</button>
+    <button class="nav-link" data-page="campus" onclick="navigate('campus','library');closeMobileMenu()">图书馆</button>
+    <button class="nav-link" data-page="campus" onclick="navigate('campus','dorm');closeMobileMenu()">宿舍</button>
+    <button class="nav-link" data-page="campus" onclick="navigate('campus','transport');closeMobileMenu()">交通指南</button>
+    <button class="nav-link" data-page="campus" onclick="navigate('campus','card');closeMobileMenu()">校园一卡通</button>
+    <div class="mobile-menu-label">招生咨询</div>
+    <button class="nav-link" data-page="admission" onclick="navigate('admission');closeMobileMenu()">招生政策</button>
+    <button class="nav-link" data-page="admission" onclick="navigate('admission','majors');closeMobileMenu()">专业大全</button>
+    <button class="nav-link" data-page="admission" onclick="navigate('admission','scores');closeMobileMenu()">录取分数线</button>
+    <button class="nav-link" data-page="admission" onclick="navigate('admission','tuition');closeMobileMenu()">学费标准</button>
+    <button class="nav-link" data-page="admission" onclick="navigate('admission','contact');closeMobileMenu()">联系方式</button>
+    <div class="mobile-menu-label">校园资讯</div>
+    <button class="nav-link" data-page="news" onclick="navigate('news');closeMobileMenu()">通知公告</button>
+    <button class="nav-link" data-page="news" onclick="navigate('news','clubs');closeMobileMenu()">社团活动</button>
+    <button class="nav-link" data-page="news" onclick="navigate('news','flea');closeMobileMenu()">二手交易</button>
+    <button class="nav-link" data-page="news" onclick="navigate('news','lost');closeMobileMenu()">失物招领</button>
+    <div class="mobile-menu-label">学科竞赛</div>
+    <button class="nav-link" data-page="competition" onclick="navigate('competition');closeMobileMenu()">竞赛大全</button>
+    <button class="nav-link" data-page="competition" onclick="navigate('competition','calendar');closeMobileMenu()">竞赛日历</button>
+    <button class="nav-link" data-page="competition" onclick="navigate('competition','achievements');closeMobileMenu()">竞赛战绩</button>
+    <button class="nav-link" data-page="competition" onclick="navigate('competition','guide');closeMobileMenu()">竞赛指南</button>
+    <button class="nav-link" data-page="competition" onclick="navigate('competition','security');closeMobileMenu()">公共安全类</button>
+    <div class="mobile-menu-label">工具</div>
+    <button class="nav-link" data-page="toolbox" onclick="navigate('toolbox');closeMobileMenu()">工具箱</button>
+    <div class="mobile-menu-label">个人</div>
+    <button class="nav-link" data-page="profile" onclick="navigate('profile');closeMobileMenu()">个人中心</button>
+    <button class="nav-link" data-page="myregistrations" onclick="navigate('myregistrations');closeMobileMenu()" id="mobileMyRegsBtn" style="display:none">我的报名</button>
+    <button class="nav-link" data-page="admin" onclick="navigate('admin');closeMobileMenu()" id="mobileAdminBtn" style="display:none">管理面板</button>
+    <button class="nav-link" data-page="auth" onclick="navigate('auth');closeMobileMenu()" id="mobileAuthBtn">登录/注册</button>
+    <button class="nav-link" id="mobileLogoutBtn" style="display:none" onclick="doLogout();closeMobileMenu()">退出登录</button>
+  </div>
+
+  <!-- Mobile Back Navigation -->
+  <div class="back-nav" id="backNav">
+    <button class="back-nav-arrow" onclick="navigate('home')" aria-label="返回">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="back-nav-title" id="backNavTitle"></div>
+    <div class="back-nav-spacer"></div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="shell" id="main-content">
+    <!-- Home Page -->
+    <div id="page-home" class="page active">
+      <!-- Dot Grid Canvas -->
+      <canvas id="dotGridCanvas"></canvas>
+      <!-- Decorative elements -->
+      <div class="hero-deco hero-deco-circle"></div>
+      <div class="hero-deco hero-deco-dots"></div>
+      <div class="hero-deco hero-deco-ring"></div>
+
+      <div class="home-welcome">
+        <h1 class="hero-title">竞赛助手</h1>
+        <p class="hero-subtitle">学科竞赛查询与报名平台</p>
+      </div>
+      <div class="home-search">
+        <div class="search-icon" onclick="var v=document.getElementById('homeSearchInput').value.trim();openGlobalSearch(v)" style="cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <input type="text" id="homeSearchInput" placeholder="搜索竞赛、专业、校园..." onkeydown="if(event.key==='Enter'){var v=this.value.trim();if(v){navigate('ai');setTimeout(function(){document.getElementById('aiChatInput').value=v;sendAIChat()},100);this.value=''}else{showCopyToast('请输入搜索内容','warning')}}" />
+        <button class="search-btn" onclick="var inp=document.getElementById('homeSearchInput');var v=inp.value.trim();if(v){navigate('ai');setTimeout(function(){document.getElementById('aiChatInput').value=v;sendAIChat()},100);inp.value=''}else{showCopyToast('请输入搜索内容','warning')}" aria-label="AI 提问">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+        <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-muted)">
+          AI 智能问答 — 输入竞赛名、专业、DDL 等问题，AI 帮你解答 &nbsp;|&nbsp; 按 Ctrl+K 全局搜索
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number">55+</div>
+          <div class="stat-label">竞赛资源</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">8</div>
+          <div class="stat-label">大竞赛类别</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Live</div>
+          <div class="stat-label">实时报名系统</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">AI</div>
+          <div class="stat-label">智能问答</div>
+        </div>
+      </div>
+
+      <div class="daily-quote">
+        <div class="quote-card" id="quoteCard">
+          <div class="quote-bar"></div>
+          <div class="quote-body">
+            <div class="quote-text" id="quoteText"></div>
+            <div class="quote-author" id="quoteAuthor"></div>
+          </div>
+          <button class="quote-refresh" onclick="event.stopPropagation();refreshQuote()" aria-label="换一条">&#8635;</button>
+        </div>
+      </div>
+
+      <!-- Featured Competitions -->
+      <div class="featured-competitions-section">
+        <h3 class="section-label">热门竞赛</h3>
+        <div class="featured-competitions-scroll" id="featuredCompsRow">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 三条主线 -->
+      <div class="home-missions">
+        <div class="mission-card" onclick="navigate('competition')">
+          <div class="mission-icon" style="background:rgba(251,191,36,0.1);color:#fbbf24">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+          </div>
+          <div class="mission-text">
+            <h3>找竞赛</h3>
+            <p>55+ 项竞赛 · 筛选收藏 · 截止提醒</p>
+          </div>
+          <div class="mission-arrow">&#8250;</div>
+        </div>
+        <div class="mission-card" onclick="navigate('competition','calendar')">
+          <div class="mission-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="mission-text">
+            <h3>报竞赛</h3>
+            <p>在线报名 · 流程指引 · 材料清单</p>
+          </div>
+          <div class="mission-arrow">&#8250;</div>
+        </div>
+        <div class="mission-card" onclick="navigate('toolbox')">
+          <div class="mission-icon" style="background:rgba(139,92,246,0.1);color:#8b5cf6">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="mission-text">
+            <h3>提效率</h3>
+            <p>GPA计算 · 倒计时 · 番茄钟</p>
+          </div>
+          <div class="mission-arrow">&#8250;</div>
+        </div>
+      </div>
+      <div class="footer-simple">
+        <span>&copy; 2025-<script>document.write(new Date().getFullYear())</script> 学科竞赛智能助手</span>
+      </div>
+    </div>
+
+    <!-- AI Chat Page -->
+    <div id="page-ai" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">AI 问答</span></div>
+      <div class="ai-page" id="aiPage">
+        <div class="ai-empty" id="aiEmpty">
+          <div class="ai-empty-icon">AI</div>
+          <div class="ai-empty-text">有什么可以帮你的？</div>
+          <div class="ai-quick-questions">
+            <button class="ai-quick-btn" onclick="quickAsk('有哪些热门专业推荐？')">有哪些热门专业推荐？</button>
+            <button class="ai-quick-btn" onclick="quickAsk('2024年各校录取分数线是多少？')">2024年录取分数线</button>
+            <button class="ai-quick-btn" onclick="quickAsk('大学新生入学需要准备什么？')">大学新生入学需要准备什么？</button>
+            <button class="ai-quick-btn" onclick="quickAsk('大学学费一般是多少？')">大学学费一般是多少？</button>
+            <button class="ai-quick-btn" onclick="quickAsk('大学图书馆一般几点开门？')">大学图书馆一般几点开门？</button>
+            <button class="ai-quick-btn" onclick="quickAsk('大学宿舍条件一般是怎样的？')">大学宿舍条件一般是怎样的？</button>
+            <button class="ai-quick-btn" onclick="quickAsk('大学有哪些奖学金可以申请？')">大学有哪些奖学金可以申请？</button>
+            <button class="ai-quick-btn" onclick="quickAsk('大学有哪些值得加入的社团？')">大学有哪些值得加入的社团？</button>
+          </div>
+        </div>
+        <div class="ai-messages" id="aiChatContainer" style="display:none" aria-live="polite" role="log"></div>
+        <!-- 深度思考模式开关 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <button id="deepModeToggle" class="deep-mode-toggle" onclick="toggleDeepMode()" aria-label="切换深度思考模式">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </button>
+            <span id="deepModeLabel" style="font-size:12px;color:var(--text-muted)">深度思考</span>
+          </div>
+          <div id="aiLoginStatus" style="font-size:11px;color:var(--text-muted)"></div>
+        </div>
+        <div class="ai-input-bar">
+          <div class="ai-input-wrap">
+            <textarea id="aiChatInput" placeholder="输入你想了解的问题..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIChat()}"></textarea>
+            <button onclick="sendAIChat()" id="aiSendBtn" class="ai-send-btn" aria-label="发送">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div style="text-align:center;margin-top:8px">
+            <button class="ai-clear-btn" onclick="clearAIChat()">新对话</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Academic Page -->
+    <div id="page-academic" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">学业助手</span></div>
+      <div class="content-page">
+        <h2 class="content-page-title"><span class="gold">学业助手</span></h2>
+        <div class="tabs-bar" id="academicTabs">
+          <button class="tab-btn active" onclick="switchAcademicTab('majors')">专业查询</button>
+          <button class="tab-btn" onclick="switchAcademicTab('courses')">选课指南</button>
+          <button class="tab-btn" onclick="switchAcademicTab('exams')">考试安排</button>
+          <button class="tab-btn" onclick="switchAcademicTab('grades')">成绩查询</button>
+          <button class="tab-btn" onclick="switchAcademicTab('scholarship')">奖助学金</button>
+        </div>
+        <div id="academicContent"></div>
+      </div>
+    </div>
+
+    <!-- Campus Page -->
+    <div id="page-campus" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">校园生活</span></div>
+      <div class="content-page">
+        <h2 class="content-page-title"><span class="gold">校园生活</span></h2>
+        <div class="tabs-bar" id="campusTabs">
+          <button class="tab-btn active" onclick="switchCampusTab('overview')">校区导览</button>
+          <button class="tab-btn" onclick="switchCampusTab('canteen')">食堂</button>
+          <button class="tab-btn" onclick="switchCampusTab('library')">图书馆</button>
+          <button class="tab-btn" onclick="switchCampusTab('dorm')">宿舍</button>
+          <button class="tab-btn" onclick="switchCampusTab('transport')">交通指南</button>
+          <button class="tab-btn" onclick="switchCampusTab('card')">校园一卡通</button>
+          <button class="tab-btn" onclick="switchCampusTab('links')">常用链接</button>
+          <button class="tab-btn" onclick="switchCampusTab('shuttle')">校车通勤</button>
+        </div>
+        <div id="campusContent"></div>
+      </div>
+    </div>
+
+    <!-- Admission Page -->
+    <div id="page-admission" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">招生咨询</span></div>
+      <div class="content-page">
+        <h2 class="content-page-title"><span class="gold">招生咨询</span></h2>
+        <div class="tabs-bar" id="admissionTabs">
+          <button class="tab-btn active" onclick="switchAdmissionTab('policy')">招生政策</button>
+          <button class="tab-btn" onclick="switchAdmissionTab('majors')">专业大全</button>
+          <button class="tab-btn" onclick="switchAdmissionTab('scores')">录取分数线</button>
+          <button class="tab-btn" onclick="switchAdmissionTab('tuition')">学费标准</button>
+          <button class="tab-btn" onclick="switchAdmissionTab('contact')">联系方式</button>
+        </div>
+        <div id="admissionContent"></div>
+      </div>
+    </div>
+
+    <!-- News Page -->
+    <div id="page-news" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">校园资讯</span></div>
+      <div class="content-page">
+        <h2 class="content-page-title"><span class="gold">校园资讯</span></h2>
+        <div class="tabs-bar" id="newsTabs">
+          <button class="tab-btn active" onclick="switchNewsTab('notices')">通知公告</button>
+          <button class="tab-btn" onclick="switchNewsTab('clubs')">社团活动</button>
+          <button class="tab-btn" onclick="switchNewsTab('flea')">二手交易</button>
+          <button class="tab-btn" onclick="switchNewsTab('lost')">失物招领</button>
+        </div>
+        <div id="newsContent"></div>
+      </div>
+    </div>
+
+    <!-- Competition Page -->
+    <div id="page-competition" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">学科竞赛</span></div>
+      <div class="content-page">
+        <h2 class="content-page-title"><span class="gold">学科竞赛</span></h2>
+        <div class="tabs-bar" id="competitionTabs">
+          <button class="tab-btn active" onclick="switchCompetitionTab('all')">竞赛大全</button>
+          <button class="tab-btn" onclick="switchCompetitionTab('calendar')">竞赛日历</button>
+          <button class="tab-btn" onclick="switchCompetitionTab('achievements')">竞赛战绩</button>
+          <button class="tab-btn" onclick="switchCompetitionTab('guide')">竞赛指南</button>
+          <button class="tab-btn" onclick="switchCompetitionTab('security')">公共安全类</button>
+        </div>
+        <div id="competitionContent"></div>
+      </div>
+    </div>
+
+    <!-- Toolbox Page -->
+    <div id="page-toolbox" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">工具箱</span></div>
+      <div class="content-page">
+        <h2 class="content-page-title"><span class="gold">工具箱</span></h2>
+        <div class="toolbox-grid">
+          <div class="toolbox-card" onclick="switchToolboxTab('gpa')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div><div class="toolbox-card-title">GPA计算器</div><div class="toolbox-card-desc">计算你的绩点</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('credits')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div><div class="toolbox-card-title">学分统计</div><div class="toolbox-card-desc">统计已修学分</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('countdown')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toolbox-card-title">倒计时</div><div class="toolbox-card-desc">考试/放假/开学</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('schedule')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="toolbox-card-title">课程表</div><div class="toolbox-card-desc">简易课程安排</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('pomodoro')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3L2 6"/><path d="M22 6l-3-3"/><line x1="6" y1="19" x2="6.01" y2="19"/><line x1="18" y1="19" x2="18.01" y2="19"/></svg></div><div class="toolbox-card-title">番茄钟</div><div class="toolbox-card-desc">专注学习计时</div></div>
+        </div>
+        <div id="toolboxContent"></div>
+      </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="page-profile" class="page">
+      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">个人中心</span></div>
+      <div id="profileContent"></div></div>
+
+    <!-- Auth Page -->
+    <div id="page-auth" class="page">
+      <div class="auth-container">
+        <div class="card auth-card">
+          <h2>竞赛报名系统</h2>
+          <p class="auth-sub">登录以管理你的竞赛报名</p>
+          <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchAuthTab('login')">登录</button>
+            <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
+          </div>
+          <div id="authLoginForm" class="auth-form active">
+            <div class="auth-field"><label for="authLoginStudentId">学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
+            <div class="auth-field pwd-field"><label for="authLoginPassword">密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="auth-error" id="authLoginError"></div>
+            <button class="btn-primary auth-submit" onclick="doLogin()" id="authLoginBtn">登录</button>
+            <div style="margin-top:12px;text-align:center">
+              <button class="btn-secondary" style="width:100%;padding:10px;font-size:13px" onclick="demoLogin()">体验账号一键登录</button>
+              <p style="font-size:11px;color:var(--text-muted);margin-top:6px">学号 admin / 密码 admin123</p>
+            </div>
+          </div>
+          <div id="authRegisterForm" class="auth-form">
+            <div class="auth-field"><label for="authRegStudentId">学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
+            <div class="auth-field"><label for="authRegName">姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" /></div>
+            <div class="auth-field"><label for="authRegCollege">学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" /></div>
+            <div class="auth-field pwd-field"><label for="authRegPassword">密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
+            <div class="auth-field pwd-field"><label for="authRegPassword2">确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword2',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="auth-agreement"><input type="checkbox" id="authAgree" /><span>我已阅读并同意 <a onclick="showLegalModal('terms')">用户协议</a> 和 <a onclick="showLegalModal('privacy')">隐私政策</a></span></div>
+            <div class="auth-error" id="authRegError"></div>
+            <button class="btn-primary auth-submit" onclick="doRegister()" id="authRegBtn">注册</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="page-admin" class="page"><div id="adminContent"></div></div>
+
+    <!-- My Registrations Page -->
+    <div id="page-myregistrations" class="page"><div id="myRegsContent"></div></div>
+  </main>
+
+  <!-- Mobile Bottom Tab Bar -->
+  <div class="bottom-tab-bar" id="bottomTabBar">
+    <button class="bottom-tab-item active" data-tab="home" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>首页</span>
+    </button>
+    <button class="bottom-tab-item" data-tab="competition" onclick="navigate('competition')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      <span>竞赛</span>
+    </button>
+    <button class="bottom-tab-item" data-tab="toolbox" onclick="navigate('toolbox')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span>工具</span>
+    </button>
+    <button class="bottom-tab-item" data-tab="profile" onclick="navigate('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>我的</span>
+    </button>
+  </div>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Toast -->
+  <div class="copy-toast" id="copyToast">已复制到剪贴板</div>
+
+  <!-- Contact Modal -->
+  <div class="contact-modal-overlay" id="contactModal" onclick="if(event.target===this)hideContactModal()">
+    <div class="contact-modal">
+      <button class="modal-close" onclick="hideContactModal()" aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h3>联系方式</h3>
+      <p class="contact-subtitle">招生咨询</p>
+      <div class="contact-item" data-copy="0731-85834715" onclick="copyContactInfo(this)"><div class="contact-icon">招生热线</div><div class="contact-info"><div class="contact-label">招生办电话</div><div class="contact-value">0731-85834715</div><div class="contact-copy-hint">长按或点击复制</div></div></div>
+      <div class="contact-item" data-copy="cslgzb@csust.edu.cn" onclick="copyContactInfo(this)"><div class="contact-icon">邮箱</div><div class="contact-info"><div class="contact-label">招生邮箱</div><div class="contact-value">cslgzb@csust.edu.cn</div><div class="contact-copy-hint">长按或点击复制</div></div></div>
+      <div class="contact-item" data-copy="https://www.csust.edu.cn" onclick="copyContactInfo(this)"><div class="contact-icon">官网</div><div class="contact-info"><div class="contact-label">学校官网</div><div class="contact-value">https://www.csust.edu.cn</div><div class="contact-copy-hint">长按或点击复制</div></div></div>
+      <div class="contact-item" data-copy="http://zs.csust.edu.cn" onclick="copyContactInfo(this)"><div class="contact-icon">招生网</div><div class="contact-info"><div class="contact-label">本科招生网</div><div class="contact-value">http://zs.csust.edu.cn</div><div class="contact-copy-hint">长按或点击复制</div></div></div>
+    </div>
+  </div>
+
+  <!-- Legal Modal -->
+  <div class="legal-modal-overlay" id="legalModal" onclick="if(event.target===this)hideLegalModal()">
+    <div class="legal-modal">
+      <button class="modal-close" onclick="hideLegalModal()" aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h3>法律条款</h3>
+      <div class="legal-tabs">
+        <button class="legal-tab active" data-tab="terms" onclick="switchLegalTab('terms')">用户协议</button>
+        <button class="legal-tab" data-tab="privacy" onclick="switchLegalTab('privacy')">隐私政策</button>
+      </div>
+      <div class="legal-content">
+        <div class="legal-section active" id="termsSection">
+          <h4>一、服务说明</h4><p>「学科竞赛智能助手」是为高校师生提供学科竞赛信息查询和校园生活参考的工具。本工具仅供信息参考，不构成任何官方承诺。</p>
+          <h4>二、信息准确性</h4><p>我们尽力确保信息的准确性，但竞赛信息、招生政策等可能随时间变化，请以官方最新公告为准。</p>
+          <h4>三、免责声明</h4><p>本工具提供的所有信息仅供参考，不构成任何专业建议。用户因使用本工具而产生的任何直接或间接损失，我们不承担任何责任。</p>
+          <p class="legal-update">最后更新日期：2026年4月</p>
+        </div>
+        <div class="legal-section" id="privacySection">
+          <h4>一、信息收集</h4><p>本工具为纯前端应用，所有数据均在您的浏览器本地处理，我们不会收集、存储或传输您的任何个人信息。</p>
+          <h4>二、信息安全</h4><p>您的聊天记录和用户信息通过浏览器本地存储（localStorage）保存在您的设备上。您可以随时清除浏览器数据来删除所有本地存储的信息。</p>
+          <h4>三、联系我们</h4><p>如有疑问，请联系：请通过各校官方渠道咨询</p>
+          <p class="legal-update">最后更新日期：2026年4月</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div class="search-modal-overlay" id="globalSearchModal" role="dialog" aria-modal="true" aria-label="全局搜索" onclick="if(event.target===this)closeGlobalSearch()">
+    <div class="search-modal">
+      <div class="search-modal-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-modal-input" id="globalSearchInput" placeholder="搜索专业、FAQ、链接、社团..." oninput="doGlobalSearch(this.value)" onkeydown="if(event.key==='Escape')closeGlobalSearch()" />
+        <kbd style="font-size:11px;color:var(--text-muted);background:var(--bg-secondary);padding:2px 6px;border-radius:4px;border:1px solid var(--border-subtle)">ESC</kbd>
+      </div>
+      <div class="search-modal-hint" id="globalSearchHint">输入关键词开始搜索</div>
+      <div class="search-modal-results" id="globalSearchResults"></div>
+    </div>
+  </div>
+
+  <!-- Dynamic Three.js Loader (WebGL check + lazy load) -->
+  <script>
+  // 动态加载 Three.js（仅在支持 WebGL 时）
+  (function(){
+    try {
+      var c = document.createElement('canvas');
+      var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+      if (!gl) {
+        console.warn('WebGL 不可用，粒子系统已禁用');
+        var pc = document.getElementById('particleContainer');
+        if(pc) pc.style.display = 'none';
+        return;
+      }
+    } catch(e) {
+      var pc2 = document.getElementById('particleContainer');
+      if(pc2) pc2.style.display = 'none';
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    s.async = true;
+    s.onerror = function() {
+      console.warn('Three.js 加载失败，粒子系统已禁用');
+      var pc3 = document.getElementById('particleContainer');
+      if(pc3) pc3.style.display = 'none';
+    };
+    document.head.appendChild(s);
+  })();
+  </script>
+
+  <!-- Module Scripts (load order matters) -->
+  <script src="js/data.js?v=20260419"></script>
+  <script src="js/utils.js?v=20260419"></script>
+  <script src="js/animations.js?v=20260419"></script>
+  <script src="js/modals.js?v=20260419"></script>
+  <script src="js/auth.js?v=20260419"></script>
+  <script src="js/notifications.js?v=20260419"></script>
+  <script src="js/navigation.js?v=20260419"></script>
+  <script src="js/ai-chat.js?v=20260419"></script>
+  <script src="js/search.js?v=20260419"></script>
+  <script src="js/pages-academic.js?v=20260419"></script>
+  <script src="js/pages-campus.js?v=20260419"></script>
+  <script src="js/pages-admission.js?v=20260419"></script>
+  <script src="js/pages-news.js?v=20260419"></script>
+  <script src="js/pages-competition.js?v=20260419"></script>
+  <script src="js/competition-hub.js?v=20260419"></script>
+  <script src="js/registration.js?v=20260419"></script>
+  <script src="js/registration-v2.js?v=20260419"></script>
+  <script src="js/admin.js?v=20260419"></script>
+  <script src="js/admin-v2.js?v=20260419"></script>
+  <script src="js/toolbox.js?v=20260419"></script>
+  <script src="js/calendar.js?v=20260419"></script>
+  <script src="js/effects.js?v=20260419"></script>
+  <script src="js/app.js?v=20260419"></script>
+</body>
+</html>

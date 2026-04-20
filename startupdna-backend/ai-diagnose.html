@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>AI诊断测试</title>
+<style>
+body{font-family:monospace;background:#111;color:#0f0;padding:20px}
+.log{margin:8px 0;padding:8px;border-left:3px solid #333;white-space:pre-wrap;word-break:break-all}
+.ok{border-color:#0f0}.err{border-color:#f00}.info{border-color:#ff0}
+</style></head><body>
+<h2>StartupDNA AI 诊断工具</h2>
+<button onclick="runTests()" style="padding:12px 24px;font-size:16px;cursor:pointer">开始诊断</button>
+<div id="log"></div>
+<script>
+const log=document.getElementById('log');
+function addLog(msg,type='info'){
+  const d=document.createElement('div');
+  d.className='log '+type;
+  d.textContent=msg;
+  log.appendChild(d);
+}
+
+async function runTests(){
+  log.innerHTML='';
+  
+  // Test 1: MiniMax API Direct
+  addLog('[测试1] 直连MiniMax API...','info');
+  try{
+    const t0=Date.now();
+    const resp=await fetch('https://api.minimaxi.com/v1/text/chatcompletion_v2',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer sk-cp-sHnWpvPMygZhEJloWKBPQ49qOLA8FiMJIjoyWDegRumFLl4RRJvqOqMirvnkuq_gk6LmyRZcwzrTORsajL7_VlAVEpMhkiqfQxKOTvgRce6_53sy2aNZeB0'},
+      body:JSON.stringify({model:'MiniMax-M2.7',messages:[{role:'user',content:'说OK'}],max_tokens:100,temperature:0.7})
+    });
+    addLog('HTTP状态: '+resp.status,'info');
+    const data=await resp.json();
+    const content=data.choices?.[0]?.message?.content||'';
+    const time=Date.now()-t0;
+    if(content){
+      addLog('✅ MiniMax直连成功 ('+time+'ms): '+content.substring(0,100),'ok');
+    }else{
+      addLog('⚠️ MiniMax返回空content, reasoning: '+(data.choices?.[0]?.message?.reasoning_content||'').substring(0,100),'err');
+    }
+  }catch(e){
+    addLog('❌ MiniMax直连失败: '+e.message,'err');
+  }
+  
+  // Test 2: Backend proxy
+  addLog('[测试2] 后端代理 /api/ai/chat...','info');
+  try{
+    const t0=Date.now();
+    const resp=await fetch('/api/ai/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({systemPrompt:'回复OK',userMessage:'test'})
+    });
+    addLog('HTTP状态: '+resp.status,'info');
+    const data=await resp.json();
+    const time=Date.now()-t0;
+    if(data.content){
+      addLog('✅ 后端代理成功 ('+time+'ms): '+data.content.substring(0,100),'ok');
+    }else{
+      addLog('⚠️ 后端返回: '+JSON.stringify(data).substring(0,200),'err');
+    }
+  }catch(e){
+    addLog('❌ 后端代理失败: '+e.message,'err');
+  }
+  
+  // Test 3: callAI function
+  addLog('[测试3] callAI函数...','info');
+  try{
+    if(typeof callAI==='function'){
+      const result=await callAI('回复OK','test');
+      addLog('✅ callAI成功: '+result.substring(0,100),'ok');
+    }else{
+      addLog('❌ callAI函数未定义','err');
+    }
+  }catch(e){
+    addLog('❌ callAI失败: '+e.message,'err');
+  }
+  
+  addLog('[诊断完成]','info');
+}
+</script>
+</body></html>

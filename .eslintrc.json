@@ -1,0 +1,28 @@
+{
+  "env": { "browser": true, "es2020": true },
+  "globals": {
+    "app": "writable",
+    "CSUST_DATA": "readonly",
+    "QUOTES": "readonly",
+    "navigate": "writable",
+    "fetchCompetitions": "writable",
+    "_origNavigate": "writable",
+    "_origRenderCompAll": "writable",
+    "_origRenderProfile": "writable",
+    "renderCompHub": "writable",
+    "renderCompAll": "writable",
+    "renderProfile": "writable",
+    "renderFeaturedCompetitions": "writable",
+    "startApplication": "readonly",
+    "showHubCompDetail": "readonly",
+    "toggleFavorite": "readonly",
+    "toggleReminder": "readonly",
+    "showFavoritesList": "readonly"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-undef": "error",
+    "no-redeclare": "error",
+    "no-constant-condition": "warn"
+  }
+}

@@ -1961,3 +1961,50 @@ html[data-user-theme="light"]{--page-bg:#F6F5F2;--panel-bg:#FFFFFF;--bg-primary:
   51%, 100% { opacity: 0; }
 }
 
+/* 思考过程折叠区域 */
+.thinking-section {
+  margin-bottom: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle, rgba(0,0,0,0.08));
+}
+.thinking-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted, #888);
+  background: var(--bg-secondary, #f5f5f5);
+  user-select: none;
+  transition: background 0.2s ease;
+}
+.thinking-toggle:hover {
+  background: var(--bg-hover, rgba(0,0,0,0.04));
+}
+.thinking-icon {
+  font-size: 14px;
+}
+.thinking-label {
+  font-weight: 500;
+}
+.thinking-arrow {
+  margin-left: auto;
+  transition: transform 0.25s ease;
+}
+.thinking-content {
+  display: none;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted, #888);
+  background: var(--bg-secondary, #f5f5f5);
+  border-top: 1px solid var(--border-subtle, rgba(0,0,0,0.06));
+  font-style: italic;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+

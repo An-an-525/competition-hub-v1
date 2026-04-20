@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>AI测试</title></head><body>
+<h2>AI功能测试</h2>
+<button onclick="testAI()">点击测试AI</button>
+<pre id="result" style="background:#111;color:#0f0;padding:16px;margin-top:12px;white-space:pre-wrap;max-height:80vh;overflow:auto"></pre>
+<script>
+const result = document.getElementById('result');
+result.textContent = '等待点击...';
+
+async function testAI() {
+  result.textContent = '请求中...\n';
+  try {
+    const resp = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemPrompt: '你是AI助手，回复OK即可',
+        userMessage: 'test'
+      })
+    });
+    result.textContent += 'HTTP状态: ' + resp.status + '\n';
+    const data = await resp.json();
+    result.textContent += '响应: ' + JSON.stringify(data, null, 2);
+  } catch(e) {
+    result.textContent += '错误: ' + e.message + '\n' + e.stack;
+  }
+}
+</script>
+</body></html>
