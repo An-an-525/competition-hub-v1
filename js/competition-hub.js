@@ -67,11 +67,15 @@ function _refreshCompetitionsInBackground(){
 }
 async function fetchRegCounts(){
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/registrations?select=competition_id,status',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/rest/v1/applications?select=competition_id,status&status=neq.draft',{headers:HUB_HEADERS});
     if(!res.ok)return{};
-    var regs=await res.json();
+    var apps=await res.json();
     var counts={};
-    regs.forEach(function(r){counts[r.competition_id]=(counts[r.competition_id]||0)+1});
+    apps.forEach(function(a){
+      if(a.competition_id){
+        counts[a.competition_id]=(counts[a.competition_id]||0)+1;
+      }
+    });
     _cachedRegCounts=counts;return counts;
   }catch(e){return{}}
 }
@@ -364,4 +368,10 @@ async function showHubCompDetail(compId){
   }
   html+='</div></div>';
   showCompModal(html);
+}
+
+function clearCompCache(){
+  _cachedCompetitions=null;
+  _cachedRegCounts={};
+  try{localStorage.removeItem('hub_competitions')}catch(e){}
 }
