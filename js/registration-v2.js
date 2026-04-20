@@ -104,6 +104,7 @@ async function createApplication(compId, type) {
 // ==========================================
 
 async function showApplicationForm(compId, applicationId) {
+  try {
   var user = getCurrentUser();
 
   // 获取报名记录
@@ -129,6 +130,7 @@ async function showApplicationForm(compId, applicationId) {
 
   // 渲染表单
   var html = '<div style="max-width:600px;margin:0 auto;padding:20px">';
+  html += '<input type="hidden" id="appCompId" value="' + compId + '">';
   html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">';
   html += '<button onclick="startApplication(\'' + compId + '\')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px">&larr;</button>';
   html += '<h3>' + esc(comp ? comp.name : '竞赛报名') + '</h3>';
@@ -203,6 +205,10 @@ async function showApplicationForm(compId, applicationId) {
   html += '</div></div>';
 
   showCompModal(html);
+  } catch(error) {
+    console.error('showApplicationForm error:', error);
+    showCopyToast('加载报名表单失败，请重试', 'error');
+  }
 }
 
 // ==========================================
@@ -304,9 +310,9 @@ async function handleFileUpload(applicationId, requirementKey, input, allowMulti
       }
     }
     // 刷新表单
-    var compId = document.querySelector('[data-comp-id]');
-    if (compId) {
-      showApplicationForm(compId.getAttribute('data-comp-id'), applicationId);
+    var compIdEl = document.getElementById('appCompId');
+    if (compIdEl) {
+      showApplicationForm(compIdEl.value, applicationId);
     }
   } finally {
     _submitLock = false;

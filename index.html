@@ -410,8 +410,8 @@
             <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
           </div>
           <div id="authLoginForm" class="auth-form active">
-            <div class="auth-field"><label>学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
-            <div class="auth-field pwd-field"><label>密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="auth-field"><label for="authLoginStudentId">学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
+            <div class="auth-field pwd-field"><label for="authLoginPassword">密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-error" id="authLoginError"></div>
             <button class="btn-primary auth-submit" onclick="doLogin()" id="authLoginBtn">登录</button>
             <div style="margin-top:12px;text-align:center">
@@ -420,11 +420,11 @@
             </div>
           </div>
           <div id="authRegisterForm" class="auth-form">
-            <div class="auth-field"><label>学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
-            <div class="auth-field"><label>姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" /></div>
-            <div class="auth-field"><label>学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" /></div>
-            <div class="auth-field pwd-field"><label>密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
-            <div class="auth-field pwd-field"><label>确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword2',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="auth-field"><label for="authRegStudentId">学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
+            <div class="auth-field"><label for="authRegName">姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" /></div>
+            <div class="auth-field"><label for="authRegCollege">学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" /></div>
+            <div class="auth-field pwd-field"><label for="authRegPassword">密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
+            <div class="auth-field pwd-field"><label for="authRegPassword2">确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword2',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-agreement"><input type="checkbox" id="authAgree" /><span>我已阅读并同意 <a onclick="showLegalModal('terms')">用户协议</a> 和 <a onclick="showLegalModal('privacy')">隐私政策</a></span></div>
             <div class="auth-error" id="authRegError"></div>
             <button class="btn-primary auth-submit" onclick="doRegister()" id="authRegBtn">注册</button>
@@ -512,7 +512,7 @@
   </div>
 
   <!-- Global Search Modal -->
-  <div class="search-modal-overlay" id="globalSearchModal" onclick="if(event.target===this)closeGlobalSearch()">
+  <div class="search-modal-overlay" id="globalSearchModal" role="dialog" aria-modal="true" aria-label="全局搜索" onclick="if(event.target===this)closeGlobalSearch()">
     <div class="search-modal">
       <div class="search-modal-input-wrap">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

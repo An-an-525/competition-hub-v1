@@ -125,6 +125,7 @@
 
     function animate(timestamp) {
       requestAnimationFrame(animate);
+      if (document.hidden) return;
 
       var delta = timestamp - lastTime;
       if (delta < FPS_INTERVAL) return;
@@ -627,6 +628,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
+      if (document.hidden) return;
       time += 0.016; // ~60fps time step
 
       var posAttr = geometry.getAttribute('position');

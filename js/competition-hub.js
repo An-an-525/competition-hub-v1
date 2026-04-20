@@ -28,7 +28,7 @@ async function fetchCompetitions(){
         return parsed.data;
       }
     }
-  } catch(e) {}
+  } catch(e) { console.warn('读取本地缓存失败:', e.message); }
 
   // 无缓存，正常请求
   return await _fetchCompetitionsFromServer();
@@ -42,7 +42,7 @@ async function _fetchCompetitionsFromServer(){
     if(data&&data.length>0){
       _cachedCompetitions=data;
       // 存入 localStorage
-      try { localStorage.setItem('hub_competitions', JSON.stringify({data:data, ts:Date.now()})); } catch(e){}
+      try { localStorage.setItem('hub_competitions', JSON.stringify({data:data, ts:Date.now()})); } catch(e){ console.warn('写入本地缓存失败:', e.message); }
       return data;
     }
   }catch(e){console.warn('Supabase竞赛数据获取失败，使用本地数据:',e.message)}

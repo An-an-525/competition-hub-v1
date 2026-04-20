@@ -270,11 +270,15 @@ function renderCompSecurity(container){
 }
 
 /* === 收藏竞赛（本地存储） === */
+function getFavoritesKey(){
+  var user = getCurrentUser();
+  return 'app_favorites_' + (user ? user.id : 'guest');
+}
 function getFavorites() {
-  return JSON.parse(getLS('app_favorites', '[]'));
+  return JSON.parse(getLS(getFavoritesKey(), '[]'));
 }
 function saveFavorites(list) {
-  setLS('app_favorites', JSON.stringify(list));
+  setLS(getFavoritesKey(), JSON.stringify(list));
 }
 function toggleFavorite(compId) {
   if (!isLoggedIn()) {
@@ -292,7 +296,7 @@ function toggleFavorite(compId) {
   }
   saveFavorites(favs);
   // 刷新当前竞赛列表
-  if (typeof renderCompHub === 'function') renderCompHub();
+  if (typeof renderCompHub === 'function') renderCompHub(document.getElementById('competitionContent'));
   if (typeof renderFeaturedCompetitions === 'function') renderFeaturedCompetitions();
 }
 function isFavorited(compId) {

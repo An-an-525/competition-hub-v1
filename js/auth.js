@@ -9,7 +9,7 @@ function switchAuthTab(tab){
   document.getElementById('authRegError').classList.remove('show');
 }
 function checkPasswordStrength(pwd){
-  var s=0;if(pwd.length>=6)s++;if(pwd.length>=10)s++;if(/[A-Z]/.test(pwd)&&/[a-z]/.test(pwd))s++;if(/[0-9]/.test(pwd)&&/[^A-Za-z0-9]/.test(pwd))s++;
+  var s=0;if(pwd.length>=6)s++;if(pwd.length>=10)s++;if(/[A-Z]/.test(pwd)&&/[a-z]/.test(pwd))s++;s+=(/[0-9]/.test(pwd)?1:0)+(/[^A-Za-z0-9]/.test(pwd)?1:0);
   var labels=['','弱','一般','较强','强'];var cls=['','weak','medium','medium','strong'];
   for(var i=1;i<=4;i++){var bar=document.getElementById('pwdBar'+i);if(bar){bar.className='password-strength-bar'+(i<=s?' '+cls[s]:'')}}
   var txt=document.getElementById('pwdStrengthText');if(txt)txt.textContent=pwd.length>0?'密码强度：'+labels[s]:'';
@@ -87,12 +87,14 @@ async function doRegister(){
     var profile=data[0];
     setCurrentUser({id:profile.id,studentId:profile.student_id,name:profile.name,college:profile.college,role:profile.role||'student'});
     showCopyToast('注册成功，欢迎 '+name,'success');
+    // 注册成功后自动登录获取token
+    setTimeout(function(){ doLogin(); }, 500);
     updateNavAuth();navigate('home');
   }catch(e){errEl.textContent='错误：'+e.message;errEl.classList.add('show');btn.disabled=false;btn.textContent='注册'}
 }
 function doLogout(){
   showConfirm('确定要退出登录吗？',function(){
-    setCurrentUser(null);updateNavAuth();stopNotifPoll();
+    setLS('auth_token', null);setCurrentUser(null);updateNavAuth();stopNotifPoll();
     showCopyToast('已退出登录','success');navigate('home');
   });
 }

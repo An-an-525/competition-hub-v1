@@ -50,7 +50,7 @@ navigate = function(page, tab) {
     app.currentPage = page;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (page === 'auth') {}
-    if (page === 'admin') renderAdmin();
+    if (page === 'admin') renderAdminV2();
     if (page === 'myregistrations') renderMyRegistrations();
     return;
   }
