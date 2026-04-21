@@ -36,7 +36,7 @@ async function fetchCompetitions(){
 
 async function _fetchCompetitionsFromServer(){
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/competitions?order=sort_order.desc,created_at.desc',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/rest/v1/competitions?select=*&order=sort_order.desc,created_at.desc',{headers:HUB_HEADERS});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
     if(data&&data.length>0){
@@ -348,17 +348,44 @@ async function showHubCompDetail(compId){
   html+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px">';
   if(c.level)html+='<span class="tag-pill">'+esc(c.level)+'</span>';
   if(c.category)html+='<span class="tag-pill" style="background:var(--surface-gold-subtle);color:var(--gold)">'+esc(c.category)+'</span>';
+  if(c.tracks)html+='<span class="tag-pill" style="background:rgba(155,89,182,0.12);color:#9b59b6">'+esc(c.tracks)+'</span>';
   if(c.is_team)html+='<span class="tag-pill" style="background:rgba(52,152,219,0.12);color:#3498db">团队赛 ('+esc(c.team_min||'?')+'-'+esc(c.team_max||'?')+'人)</span>';
   else html+='<span class="tag-pill" style="background:rgba(46,204,113,0.12);color:#2ecc71">个人赛</span>';
   html+='</div>';
-  html+='<div class="info-row"><div class="info-label">主办单位</div><div class="info-value" style="max-width:70%">'+esc(c.organizer||'')+'</div></div>';
+  html+='<div class="info-row"><div class="info-label">主办单位</div><div class="info-value" style="max-width:70%">'+esc(c.organizer_name||c.organizer||'')+'</div></div>';
+  if(c.tracks)html+='<div class="info-row"><div class="info-label">赛道/组别</div><div class="info-value" style="max-width:70%">'+esc(c.tracks)+'</div></div>';
   if(c.reg_start)html+='<div class="info-row"><div class="info-label">报名时间</div><div class="info-value">'+esc(formatDate(c.reg_start))+' ~ '+(c.reg_end?esc(formatDate(c.reg_end)):'待定')+'</div></div>';
+  else if(c.registration_notes)html+='<div class="info-row"><div class="info-label">报名时间</div><div class="info-value">'+esc(c.registration_notes)+'</div></div>';
   if(c.comp_date)html+='<div class="info-row"><div class="info-label">比赛时间</div><div class="info-value">'+esc(formatDate(c.comp_date))+'</div></div>';
+  if(c.deadline_note)html+='<div class="info-row"><div class="info-label">关键截止日</div><div class="info-value" style="color:#e74c3c">'+esc(c.deadline_note)+'</div></div>';
   if(c.location)html+='<div class="info-row"><div class="info-label">比赛地点</div><div class="info-value">'+esc(c.location)+'</div></div>';
   if(c.max_registrations)html+='<div class="info-row"><div class="info-label">名额限制</div><div class="info-value">'+esc(c.max_registrations)+'人</div></div>';
   html+='<div class="info-row"><div class="info-label">已报名</div><div class="info-value" style="color:var(--accent)">'+regCount+'人</div></div>';
+  if(c.contact_teacher)html+='<div class="info-row"><div class="info-label">联系方式</div><div class="info-value">'+esc(c.contact_teacher)+'</div></div>';
+  if(c.qq_group)html+='<div class="info-row"><div class="info-label">QQ群</div><div class="info-value">'+esc(c.qq_group)+'</div></div>';
   if(c.requirements)html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">参赛要求</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.requirements)+'</p></div>';
   if(c.description)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
+  if(c.awards)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">\u{1F3C6} 奖项设置</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.awards)+'</p></div>';
+  if(c.notes)html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(241,196,15,0.06);border:1px solid rgba(241,196,15,0.2)"><h4 style="font-size:14px;color:#f39c12;margin-bottom:8px">\u{1F4DD} 备注</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.notes)+'</p></div>';
+  // 官方来源链接
+  var sourceLinks = [];
+  if(c.source_url)sourceLinks.push({title:c.source_name||'信息来源',url:c.source_url});
+  if(c.official_url)sourceLinks.push({title:'官方网站',url:c.official_url});
+  if(c.related_links && typeof c.related_links === 'object'){
+    var rl = c.related_links;
+    if(!Array.isArray(rl)){
+      Object.keys(rl).forEach(function(k){if(rl[k])sourceLinks.push({title:k,url:rl[k]})});
+    }else{
+      rl.forEach(function(l){if(l)sourceLinks.push({title:l.title||l.url||'链接',url:l.url||l})});
+    }
+  }
+  if(sourceLinks.length>0){
+    html+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-subtle)"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">\u{1F310} 官方链接</h4>';
+    sourceLinks.forEach(function(link){
+      html+='<div style="margin-bottom:6px"><a href="'+esc(link.url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(link.title)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
+    });
+    html+='</div>';
+  }
   html+='<div style="margin-top:20px">';
   if(c.status==='open'){
     if(!user){html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();navigate(\'auth\')">登录后报名</button>'}

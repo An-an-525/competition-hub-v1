@@ -172,6 +172,13 @@ function showCompDetail(idx){
   if(c.csust_status)html+='<div class="info-row"><div class="info-label">长理参赛</div><div class="info-value" style="color:var(--accent);max-width:70%">'+esc(c.csust_status)+'</div></div>';
   html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
   if(c.official_website)html+='<div style="margin-top:12px"><a href="'+esc(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
+  // 信息来源链接
+  if(c.source_url){
+    html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(52,152,219,0.06);border:1px solid rgba(52,152,219,0.15)">';
+    html+='<h4 style="font-size:14px;color:#2980b9;margin-bottom:8px">\u{1F4C4} 信息来源</h4>';
+    html+='<a href="'+esc(c.source_url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(c.source_name||c.source_url)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>';
+    html+='</div>';
+  }
   // 校赛信息
   if(c.school_level_info){
     html+='<div style="margin-top:16px;padding:14px;border-radius:12px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2)">';
@@ -366,6 +373,13 @@ function renderCompSecurity(container){
     }
     html+='</p></div>';
     if(c.official_website)html+='<div style="margin-top:12px"><a href="'+esc(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
+  // 信息来源链接
+  if(c.source_url){
+    html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(52,152,219,0.06);border:1px solid rgba(52,152,219,0.15)">';
+    html+='<h4 style="font-size:14px;color:#2980b9;margin-bottom:8px">\u{1F4C4} 信息来源</h4>';
+    html+='<a href="'+esc(c.source_url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(c.source_name||c.source_url)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>';
+    html+='</div>';
+  }
     html+='</div>';
   });
   html+='</div>';
