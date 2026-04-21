@@ -1,15 +1,13 @@
 /* Extracted from app.js - Upgraded to MiniMax M2.7 SSE Streaming */
 
-// MiniMax API 配置
-var MINIMAX_API_KEY = 'sk-cp-sHnWpvPMygZhEJloWKBPQ49qOLA8FiMJIjoyWDegRumFLl4RRJvqOqMirvnkuq_gk6LmyRZcwzrTORsajL7_VlAVEpMhkiqfQxKOTvgRce6_53sy2aNZeB0';
-var MINIMAX_API_URL = 'https://api.minimax.chat/v1/text/chatcompletion_v2';
+// MiniMax API 配置（API 密钥由服务端 Edge Function 管理，不暴露在前端）
 var MINIMAX_MODEL = 'MiniMax-M2.7';
 
-// Supabase 配置
-var HUB_URL = 'https://fdbbcibmqaogsbasoqly.supabase.co';
-var HUB_HEADERS = {
-  'apikey': 'sb_publishable_Vc1DwX3BjKjbeRq-tdvQqQ_m8Cm-6mZ',
-  'Authorization': 'Bearer sb_publishable_Vc1DwX3BjKjbeRq-tdvQqQ_m8Cm-6mZ',
+// Supabase 配置（与 competition-hub.js 共享，条件声明避免重复）
+if(typeof HUB_URL === 'undefined') var HUB_URL = 'https://fdbbcibmqaogsbasoqly.supabase.co';
+if(typeof HUB_HEADERS === 'undefined') var HUB_HEADERS = {
+  'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmJjaWJtcWFvZ3NiYXNvcWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MTc1NzUsImV4cCI6MjA5MjE5MzU3NX0.6vudhdijK3Dcy7aoM1qvGWbIJzE8aUVfTK7CdyrO3SM',
+  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmJjaWJtcWFvZ3NiYXNvcWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MTc1NzUsImV4cCI6MjA5MjE5MzU3NX0.6vudhdijK3Dcy7aoM1qvGWbIJzE8aUVfTK7CdyrO3SM',
   'Content-Type': 'application/json',
   'Prefer': 'return=representation'
 };
@@ -111,20 +109,21 @@ var thinkingContent=msgEl.querySelector('#thinkingContent');var thinkingText=thi
 var _fu=getCurrentUser();var _fuid=_fu?_fu.id:'guest';var messages=getLS('ai_messages_'+_fuid,[]);messages.push({role:'assistant',content:finalContent,time:new Date().toISOString(),thinking:thinkingText||undefined});if(messages.length>200)messages=messages.slice(-200);setLS('ai_messages_'+_fuid,messages);aiSaveMessageToDB('assistant',finalContent,thinkingText||undefined)}var container=document.getElementById('aiChatContainer');if(container){container.scrollTop=container.scrollHeight}}
 
 // 加载聊天历史（不自动滚动到底部，保留用户当前滚动位置）
+var _loadChatHistoryRunning = false;
 function loadChatHistory(){var container=document.getElementById('aiChatContainer');if(!container)return;var _u=getCurrentUser();var _uid=_u?_u.id:'guest';// 尝试从数据库加载（异步，不阻塞渲染）
-aiLoadHistoryFromDB().then(function(dbMessages){if(dbMessages&&dbMessages.length>0){setLS('ai_messages_'+_uid,dbMessages);loadChatHistory();}}).catch(function(){});var messages=getLS('ai_messages_'+_uid,[]);if(!messages||messages.length===0)return;var savedScrollTop=container.scrollTop;var savedScrollHeight=container.scrollHeight;container.innerHTML='';for(var i=0;i<messages.length;i++){var m=messages[i];if(!m.role||!m.content)continue;var msg=document.createElement('div');msg.className='msg '+(m.role==='assistant'?'msg-ai':'msg-user');var msgTime=m.time?new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var formatted=esc(m.content).replace(/\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^(\d+)\.\s/gm,'<span style="display:inline-block;margin-left:1.2em;text-indent:-1.2em">$1. </span>').replace(/^- (.+)$/gm,'<span style="display:block;padding-left:1em;position:relative">• $1</span>');if(m.role==='assistant'){var thinkingHtml='';if(m.thinking){thinkingHtml='<div class="thinking-section" id="thinkingSection" style="display:none"><div class="thinking-toggle" onclick="toggleThinkingSection()"><span class="thinking-icon">&#128173;</span><span class="thinking-label">思考过程</span><svg class="thinking-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="thinking-content" id="thinkingContent">'+esc(m.thinking)+'</div></div>'}msg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;min-width:0"><div>'+formatted+'</div>'+thinkingHtml+'<div class="msg-time">'+msgTime+'</div></div></div>'}else{msg.innerHTML='<div>'+formatted+'</div><div class="msg-time" style="text-align:right">'+msgTime+'</div>'}container.appendChild(msg)}container.scrollTop=savedScrollTop+(container.scrollHeight-savedScrollHeight);updateAIView()}
+aiLoadHistoryFromDB().then(function(dbMessages){if(dbMessages&&dbMessages.length>0&&!_loadChatHistoryRunning){_loadChatHistoryRunning=true;setLS('ai_messages_'+_uid,dbMessages);loadChatHistory();_loadChatHistoryRunning=false;}}).catch(function(){});var messages=getLS('ai_messages_'+_uid,[]);if(!messages||messages.length===0)return;var savedScrollTop=container.scrollTop;var savedScrollHeight=container.scrollHeight;container.innerHTML='';for(var i=0;i<messages.length;i++){var m=messages[i];if(!m.role||!m.content)continue;var msg=document.createElement('div');msg.className='msg '+(m.role==='assistant'?'msg-ai':'msg-user');var msgTime=m.time?new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var formatted=esc(m.content).replace(/\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^(\d+)\.\s/gm,'<span style="display:inline-block;margin-left:1.2em;text-indent:-1.2em">$1. </span>').replace(/^- (.+)$/gm,'<span style="display:block;padding-left:1em;position:relative">• $1</span>');if(m.role==='assistant'){var thinkingHtml='';if(m.thinking){thinkingHtml='<div class="thinking-section" id="thinkingSection" style="display:none"><div class="thinking-toggle" onclick="toggleThinkingSection()"><span class="thinking-icon">&#128173;</span><span class="thinking-label">思考过程</span><svg class="thinking-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="thinking-content" id="thinkingContent">'+esc(m.thinking)+'</div></div>'}msg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;min-width:0"><div>'+formatted+'</div>'+thinkingHtml+'<div class="msg-time">'+msgTime+'</div></div></div>'}else{msg.innerHTML='<div>'+formatted+'</div><div class="msg-time" style="text-align:right">'+msgTime+'</div>'}container.appendChild(msg)}container.scrollTop=savedScrollTop+(container.scrollHeight-savedScrollHeight);updateAIView()}
 
-// MiniMax M2.7 SSE 流式请求
+// MiniMax M2.7 SSE 流式请求（通过 Supabase Edge Function 代理，API 密钥不暴露在前端）
 async function sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode) {
   var controller = new AbortController();
   var timeoutId = setTimeout(function(){ controller.abort(); }, 30000); // 30s timeout for streaming
 
   try {
-    var response = await fetch(MINIMAX_API_URL, {
+    var response = await fetch(HUB_URL + '/functions/v1/competition-api/api/ai-chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + MINIMAX_API_KEY
+        'Authorization': 'Bearer ' + (HUB_HEADERS['Authorization'] || '').replace('Bearer ', '')
       },
       body: JSON.stringify({
         model: MINIMAX_MODEL,

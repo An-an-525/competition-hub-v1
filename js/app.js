@@ -31,9 +31,24 @@ var PAGE_META = {
   profile: { title: '个人中心 - 竞赛助手', desc: '管理你的竞赛报名和个人信息' }
 };
 
-/* --- Override navigate() for auth/admin/myregistrations guard --- */
+/* --- Hash-based SPA Routing --- */
+function handleHashRoute() {
+  var hash = window.location.hash.replace('#/', '').replace('#', '');
+  if (hash && hash !== 'home') {
+    navigate(hash);
+  }
+}
+window.addEventListener('hashchange', handleHashRoute);
+
+/* --- Override navigate() for auth/admin/myregistrations guard + hash sync --- */
 _origNavigate = navigate;
 navigate = function(page, tab) {
+  /* Sync hash so browser back/forward and direct URLs work */
+  if (page && page !== 'home') {
+    history.replaceState(null, '', '#/' + page);
+  } else {
+    history.replaceState(null, '', window.location.pathname);
+  }
   updateMobileNav(page);
   /* SEO: 动态 Title 和 Description */
   var meta = PAGE_META[page];
@@ -100,4 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof initDotGrid === 'function') initDotGrid();
   if (typeof initCardTilt === 'function') initCardTilt();
   if (typeof initParticleSystem === 'function') initParticleSystem();
+  /* Handle initial hash route on page load */
+  handleHashRoute();
 });

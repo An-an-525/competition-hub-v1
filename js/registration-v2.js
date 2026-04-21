@@ -88,7 +88,7 @@ async function showCompetitionLevelInfo(compId) {
 
     // 校赛级别信息
     if (comp.school_level_info) {
-      var info = typeof comp.school_level_info === 'string' ? JSON.parse(comp.school_level_info) : comp.school_level_info;
+      var info = typeof comp.school_level_info === 'string' ? (function(){try{return JSON.parse(comp.school_level_info)}catch(e){console.warn('JSON.parse school_level_info failed:',e);return comp.school_level_info}})() : comp.school_level_info;
       html += '<div style="margin-bottom:16px;padding:16px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border-subtle)">';
       html += '<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-secondary)">校赛信息</div>';
       if (info.organizer) {
@@ -116,7 +116,7 @@ async function showCompetitionLevelInfo(compId) {
 
     // 相关链接
     if (comp.related_links) {
-      var links = typeof comp.related_links === 'string' ? JSON.parse(comp.related_links) : comp.related_links;
+      var links = typeof comp.related_links === 'string' ? (function(){try{return JSON.parse(comp.related_links)}catch(e){console.warn('JSON.parse related_links failed:',e);return null}})() : comp.related_links;
       if (Array.isArray(links) && links.length > 0) {
         html += '<div style="margin-bottom:16px">';
         html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text-secondary)">相关链接</div>';
@@ -430,47 +430,53 @@ async function submitApplication(applicationId, compId) {
       var missing = formData.schema.filter(function(f) { return f.required && !data[f.key]; });
       if (missing.length > 0) {
         showCopyToast('请填写必填项：' + missing.map(function(f) { return f.label; }).join('、'), 'error');
+        _submitLock = false;
         return;
       }
     }
     showConfirm('确认提交报名？提交后将无法修改。', async function() {
-      var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
-        method: 'PATCH',
-        headers: HUB_HEADERS,
-        body: JSON.stringify({
-          data: data,
-          status: 'submitted',
-          submitted_at: new Date().toISOString()
-        })
-      });
-      if (res.ok) {
-        showCopyToast('报名已提交！', 'success');
-        // 尝试创建通知给竞赛管理员（best-effort，失败不影响主流程）
-        try {
-          var user = getCurrentUser();
-          var comps = await fetchCompetitions();
-          var comp = comps.find(function(c) { return c.id === compId; });
-          var compName = comp ? comp.name : '未知竞赛';
-          await fetch(HUB_URL + '/rest/v1/notifications', {
-            method: 'POST',
-            headers: HUB_HEADERS,
-            body: JSON.stringify({
-              title: '新报名待审核',
-              content: user.name + ' 报名了 ' + compName,
-              notification_type: 'registration_submitted',
-              action_url: '/admin'
-            })
-          });
-        } catch (notifyErr) {
-          console.warn('创建通知失败（不影响报名）:', notifyErr);
+      try {
+        var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
+          method: 'PATCH',
+          headers: HUB_HEADERS,
+          body: JSON.stringify({
+            data: data,
+            status: 'submitted',
+            submitted_at: new Date().toISOString()
+          })
+        });
+        if (res.ok) {
+          showCopyToast('报名已提交！', 'success');
+          // 尝试创建通知给竞赛管理员（best-effort，失败不影响主流程）
+          try {
+            var user = getCurrentUser();
+            var comps = await fetchCompetitions();
+            var comp = comps.find(function(c) { return c.id === compId; });
+            var compName = comp ? comp.name : '未知竞赛';
+            await fetch(HUB_URL + '/rest/v1/notifications', {
+              method: 'POST',
+              headers: HUB_HEADERS,
+              body: JSON.stringify({
+                title: '新报名待审核',
+                content: user.name + ' 报名了 ' + compName,
+                notification_type: 'registration_submitted',
+                action_url: '/admin'
+              })
+            });
+          } catch (notifyErr) {
+            console.warn('创建通知失败（不影响报名）:', notifyErr);
+          }
+          showApplicationForm(compId, applicationId);
+        } else {
+          showCopyToast('提交失败', 'error');
         }
-        showApplicationForm(compId, applicationId);
-      } else {
-        showCopyToast('提交失败', 'error');
+      } finally {
+        _submitLock = false;
       }
     });
-  } finally {
+  } catch (e) {
     _submitLock = false;
+    console.error('submitApplication error:', e);
   }
 }
 

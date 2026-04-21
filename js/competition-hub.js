@@ -1,6 +1,6 @@
 /* Extracted from app.js */
 var HUB_URL='https://fdbbcibmqaogsbasoqly.supabase.co';
-var HUB_KEY='sb_publishable_Vc1DwX3BjKjbeRq-tdvQqQ_m8Cm-6mZ';
+var HUB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmJjaWJtcWFvZ3NiYXNvcWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MTc1NzUsImV4cCI6MjA5MjE5MzU3NX0.6vudhdijK3Dcy7aoM1qvGWbIJzE8aUVfTK7CdyrO3SM';
 var HUB_HEADERS={'apikey':HUB_KEY,'Authorization':'Bearer '+HUB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 var _cachedCompetitions=null;
 var _cachedRegCounts={};
@@ -74,7 +74,7 @@ function _refreshCompetitionsInBackground(){
 }
 async function fetchRegCounts(){
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/applications?select=competition_id,status&status=neq.draft',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/rest/v1/registrations?select=competition_id,status&status=neq.draft',{headers:HUB_HEADERS});
     if(!res.ok)return{};
     var apps=await res.json();
     var counts={};

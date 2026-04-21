@@ -215,7 +215,7 @@ function showCompDetail(idx){
   }
   // 学习资源
   if(typeof renderCompetitionResources==='function'){
-    html+='<div style="margin-top:12px" id="compDetailResources"></div>';
+    html+='<div style="margin-top:12px" id="compResourcesList"></div>';
   }
     // 报名 CTA
     var regDeadline = c.registration_period || '';
@@ -233,7 +233,7 @@ function showCompDetail(idx){
   // 异步渲染学习资源
   if(typeof renderCompetitionResources==='function'){
     var compId=c.id||String(1000+idx);
-    var resEl=document.getElementById('compDetailResources');
+    var resEl=document.getElementById('compResourcesList');
     if(resEl)renderCompetitionResources(compId,resEl);
   }
 }
@@ -263,10 +263,12 @@ function showCompModal(contentHtml){
   // 先清理可能残留的弹窗
   var existing=document.querySelector('div[style*="z-index:1000"]');
   if(existing){try{document.body.removeChild(existing)}catch(e){}}
-  document.body.style.overflow='';
+  // 保存当前 overflow 值，以便关闭时恢复
+  var _savedOverflow=document.body.style.overflow;
+  document.body.style.overflow='hidden';
   var overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:1000;display:flex;justify-content:center;align-items:center;padding:20px';
-  function closeModal(){try{document.body.removeChild(overlay)}catch(e){}document.body.style.overflow='';}
+  function closeModal(){try{document.body.removeChild(overlay)}catch(e){}document.body.style.overflow=_savedOverflow||'auto';}
   overlay.onclick=function(e){if(e.target===overlay)closeModal()};
   var modal=document.createElement('div');
   modal.style.cssText='background:var(--bg-card,#FFFFFF);border:1px solid var(--border-subtle,rgba(0,0,0,0.1));border-radius:20px;padding:28px;max-width:560px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.12);position:relative;max-height:85vh;overflow-y:auto';
@@ -278,7 +280,6 @@ function showCompModal(contentHtml){
   modal.insertBefore(closeBtn,modal.firstChild);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
-  document.body.style.overflow='hidden';
   // ESC关闭
   var escHandler=function(e){if(e.key==='Escape'){closeModal();document.removeEventListener('keydown',escHandler)}};
   document.addEventListener('keydown',escHandler);

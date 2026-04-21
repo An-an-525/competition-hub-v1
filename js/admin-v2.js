@@ -22,7 +22,7 @@ async function fetchAdminScope() {
       { headers: HUB_HEADERS }
     );
     if (!res.ok) {
-      adminScope.role = 'super_admin'; // 查询失败时降级为超级管理员
+      adminScope.role = null; // 查询失败时不授予任何权限
       return;
     }
     var roles = await res.json();
@@ -59,12 +59,12 @@ async function fetchAdminScope() {
       adminScope.role = 'college_admin';
       adminScope.college = collegeName;
     } else {
-      // 有 user_roles 记录但无匹配角色，降级
-      adminScope.role = 'super_admin';
+      // 有 user_roles 记录但无匹配角色，不授予任何权限
+      adminScope.role = null;
     }
   } catch (e) {
     console.error('fetchAdminScope error:', e);
-    adminScope.role = 'super_admin';
+    adminScope.role = null;
   }
 }
 
