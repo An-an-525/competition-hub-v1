@@ -41,14 +41,31 @@ function renderCompAll(container){
   html+='</div></div><div style="margin-bottom:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">级别筛选</div><div class="club-filter-bar" id="compLevelFilter">';
   levels.forEach(function(l,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterCompByLevel(\''+l+'\')">'+esc(l)+'</button>'});
   html+='</div></div><div id="compList" class="knowledge-list"><div id="compCount" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">共 '+CSUST_DATA.competitions.length+' 项竞赛</div>';
+  // "只看可报" 筛选按钮
+  var _myCollegeOnly = getLS('filter_my_college_only','')==='true';
+  html+='<div style="margin-bottom:10px"><button id="btnFilterMyCollege" class="club-filter-btn'+(_myCollegeOnly?' active':'')+'" onclick="filterByMyCollege()" style="'+(_myCollegeOnly?'background:var(--accent);color:#fff;border-color:var(--accent)':'')+'">&#127919; 只看可报</button></div>';
   CSUST_DATA.competitions.forEach(function(c,idx){
     var csustLvl=getCSUSTLevel(c.csust_status);
-    html+='<div class="knowledge-card comp-card" data-name="'+esc(c.name.toLowerCase())+'" data-category="'+esc(c.category)+'" data-csust-level="'+esc(csustLvl)+'">';
+    html+='<div class="knowledge-card comp-card" data-name="'+esc(c.name.toLowerCase())+'" data-category="'+esc(c.category)+'" data-csust-level="'+esc(csustLvl)+'" data-idx="'+idx+'">';
     html+='<h4>'+esc(c.name)+'</h4>';
     html+='<div style="margin:8px 0;display:flex;flex-wrap:wrap;gap:4px">';
     html+=getCompCategoryColor(c.category);
     if(c.ministry_recognized)html+='<span class="tag-pill" style="background:rgba(217,119,6,0.12);color:var(--accent)">教育部认可</span>';
     if(csustLvl)html+=getCompLevelTag(csustLvl);
+    // 学院可报名标签
+    var _user=getCurrentUser();
+    var _userCollege=_user?(_user.college||''):'';
+    if(c.allowed_colleges&&c.allowed_colleges.length>0){
+      if(_userCollege&&c.allowed_colleges.indexOf(_userCollege)>=0){
+        html+='<span class="tag-pill" style="background:rgba(46,204,113,0.15);color:#27ae60">&#9989; 可报名</span>';
+      }else if(_userCollege){
+        html+='<span class="tag-pill" style="background:rgba(243,156,18,0.15);color:#e67e22" title="'+esc(c.college_restriction_note||'该竞赛仅限指定学院报名')+'">&#9888;&#65039; 限制报名</span>';
+      }
+    }
+    // 企业合作标签
+    if(c.enterprises&&c.enterprises.length>0){
+      html+='<span class="tag-pill" style="background:rgba(52,152,219,0.12);color:#3498db">&#127970; 企业合作</span>';
+    }
     html+='</div>';
     html+='<div class="info-row"><div class="info-label">主办单位</div><div class="info-value" style="max-width:70%">'+esc(c.organizer)+'</div></div>';
     html+='<div class="info-row"><div class="info-label">比赛时间</div><div class="info-value">'+esc(c.competition_period)+'</div></div>';
@@ -96,6 +113,48 @@ function applyCompFilters(){
   var countEl=document.getElementById('compCount');
   if(countEl)countEl.textContent='显示 '+visibleCount+' / '+CSUST_DATA.competitions.length+' 项';
 }
+/* === 学院筛选：只看可报 === */
+function filterByMyCollege(){
+  var btn=document.getElementById('btnFilterMyCollege');
+  var current=getLS('filter_my_college_only','')==='true';
+  var newVal=!current;
+  setLS('filter_my_college_only',newVal?'true':'');
+  if(btn){
+    btn.classList.toggle('active',newVal);
+    btn.style.background=newVal?'var(--accent)':'';
+    btn.style.color=newVal?'#fff':'';
+    btn.style.borderColor=newVal?'var(--accent)':'';
+  }
+  applyCompFilters();
+}
+/* 重写 applyCompFilters 以支持学院筛选 */
+(function(){
+  var _origApplyCompFilters=applyCompFilters;
+  applyCompFilters=function(){
+    _origApplyCompFilters();
+    var myCollegeOnly=getLS('filter_my_college_only','')==='true';
+    if(!myCollegeOnly)return;
+    var user=getCurrentUser();
+    var userCollege=user?(user.college||''):'';
+    if(!userCollege)return;
+    var visibleCount=0;
+    document.querySelectorAll('.comp-card').forEach(function(card){
+      if(card.style.display==='none')return;
+      var idx=parseInt(card.getAttribute('data-idx'));
+      if(isNaN(idx))return;
+      var c=CSUST_DATA.competitions[idx];
+      if(!c)return;
+      var allowed=c.allowed_colleges;
+      if(allowed&&allowed.length>0&&allowed.indexOf(userCollege)<0){
+        card.style.display='none';
+      }else{
+        visibleCount++;
+      }
+    });
+    var countEl=document.getElementById('compCount');
+    if(countEl)countEl.textContent='显示 '+visibleCount+' / '+CSUST_DATA.competitions.length+' 项（仅可报）';
+  };
+})();
 function showCompDetail(idx){
   var c=CSUST_DATA.competitions[idx];
   if(!c)return;
@@ -113,6 +172,44 @@ function showCompDetail(idx){
   if(c.csust_status)html+='<div class="info-row"><div class="info-label">长理参赛</div><div class="info-value" style="color:var(--accent);max-width:70%">'+esc(c.csust_status)+'</div></div>';
   html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
   if(c.official_website)html+='<div style="margin-top:12px"><a href="'+esc(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
+  // 校赛信息
+  if(c.school_level_info){
+    html+='<div style="margin-top:16px;padding:14px;border-radius:12px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2)">';
+    html+='<h4 style="font-size:14px;color:#d97706;margin-bottom:8px">&#127891; 校赛信息</h4>';
+    html+='<p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.school_level_info)+'</p>';
+    html+='</div>';
+  }
+  // 注意事项
+  if(c.registration_notes){
+    html+='<div style="margin-top:12px;padding:14px;border-radius:12px;background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.15)">';
+    html+='<h4 style="font-size:14px;color:#e74c3c;margin-bottom:8px">&#9888;&#65039; 注意事项</h4>';
+    html+='<p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.registration_notes)+'</p>';
+    html+='</div>';
+  }
+  // 相关链接
+  if(c.related_links&&c.related_links.length>0){
+    html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">&#128279; 相关链接</h4>';
+    c.related_links.forEach(function(link){
+      var linkTitle=link.title||link.url||'链接';
+      var linkUrl=link.url||link;
+      html+='<div style="margin-bottom:6px"><a href="'+esc(linkUrl)+'" target="_blank" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(linkTitle)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
+    });
+    html+='</div>';
+  }
+  // 合作企业
+  if(c.enterprises&&c.enterprises.length>0){
+    html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">&#127970; 合作企业</h4>';
+    html+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    c.enterprises.forEach(function(ent){
+      var entName=typeof ent==='string'?ent:(ent.name||'');
+      html+='<span class="tag-pill" style="background:rgba(52,152,219,0.1);color:#2980b9;padding:6px 12px;font-size:13px">'+esc(entName)+'</span>';
+    });
+    html+='</div></div>';
+  }
+  // 学习资源
+  if(typeof renderCompetitionResources==='function'){
+    html+='<div style="margin-top:12px" id="compDetailResources"></div>';
+  }
     // 报名 CTA
     var regDeadline = c.registration_period || '';
     var hasDeadline = regDeadline.length > 0;
@@ -126,6 +223,12 @@ function showCompDetail(idx){
     html += '</div>';
   html+='</div>';
   showCompModal(html);
+  // 异步渲染学习资源
+  if(typeof renderCompetitionResources==='function'){
+    var compId=c.id||String(1000+idx);
+    var resEl=document.getElementById('compDetailResources');
+    if(resEl)renderCompetitionResources(compId,resEl);
+  }
 }
 function handleCompRegister(idx) {
   var c = CSUST_DATA.competitions[idx];

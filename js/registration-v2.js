@@ -44,51 +44,230 @@ async function checkExistingDraft(compId) {
     }
     return;
   }
-  // 选择报名类型
-  showApplicationTypeSelector(compId);
+  // 显示竞赛信息，进入分级报名流程
+  showCompetitionLevelInfo(compId);
 }
 
 // ==========================================
-// 3. 报名类型选择（个人/团队）
+// 3. 竞赛信息展示（分级报名流程）
 // ==========================================
 
-function showApplicationTypeSelector(compId) {
-  var html = '<div style="max-width:500px;margin:0 auto;padding:20px">';
-  html += '<h3 style="margin-bottom:20px">选择报名方式</h3>';
-  html += '<div style="display:flex;gap:12px">';
-  html += '<div class="card" style="flex:1;padding:24px;text-align:center;cursor:pointer" onclick="createApplication(\'' + compId + '\',\'individual\')">';
-  html += '<div style="font-size:32px;margin-bottom:12px">' + svgIcon('user', 40) + '</div>';
-  html += '<div style="font-weight:600;font-size:16px">个人报名</div>';
-  html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">以个人身份参赛</div>';
-  html += '</div>';
-  html += '<div class="card" style="flex:1;padding:24px;text-align:center;cursor:pointer" onclick="createApplication(\'' + compId + '\',\'team\')">';
-  html += '<div style="font-size:32px;margin-bottom:12px">' + svgIcon('users', 40) + '</div>';
-  html += '<div style="font-weight:600;font-size:16px">团队报名</div>';
-  html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">组建或加入团队</div>';
-  html += '</div>';
-  html += '</div></div>';
-  showCompModal(html);
+async function showCompetitionLevelInfo(compId) {
+  try {
+    showCopyToast('正在加载竞赛信息...', 'info');
+    var res = await fetch(HUB_URL + '/rest/v1/competitions?competition_id=eq.' + compId + '&select=name,school_level_info,registration_notes,related_links,level,registration_start,registration_end', { headers: HUB_HEADERS });
+    if (!res.ok) { showCopyToast('加载竞赛信息失败', 'error'); return; }
+    var comps = await res.json();
+    if (comps.length === 0) { showCopyToast('未找到竞赛信息', 'error'); return; }
+    var comp = comps[0];
+
+    var html = '<div style="max-width:600px;margin:0 auto;padding:20px">';
+
+    // 竞赛名称标题
+    html += '<h3 style="margin-bottom:20px;text-align:center">' + esc(comp.name || '竞赛报名') + '</h3>';
+
+    // 流程图：校赛报名 → 校赛 → 省赛报名 → 省赛 → 国赛报名 → 国赛
+    html += '<div style="margin-bottom:24px;padding:16px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border-subtle)">';
+    html += '<div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text-secondary)">竞赛晋级流程</div>';
+    html += '<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;font-size:12px">';
+    var flowSteps = [
+      { label: '校赛报名', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+      { label: '校赛', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+      { label: '省赛报名', color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+      { label: '省赛', color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+      { label: '国赛报名', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
+      { label: '国赛', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' }
+    ];
+    flowSteps.forEach(function(step, idx) {
+      html += '<span style="padding:6px 12px;border-radius:8px;background:' + step.bg + ';color:' + step.color + ';font-weight:500;white-space:nowrap">' + step.label + '</span>';
+      if (idx < flowSteps.length - 1) {
+        html += '<span style="color:var(--text-muted);font-size:16px">&rarr;</span>';
+      }
+    });
+    html += '</div></div>';
+
+    // 校赛级别信息
+    if (comp.school_level_info) {
+      var info = typeof comp.school_level_info === 'string' ? JSON.parse(comp.school_level_info) : comp.school_level_info;
+      html += '<div style="margin-bottom:16px;padding:16px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border-subtle)">';
+      html += '<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-secondary)">校赛信息</div>';
+      if (info.organizer) {
+        html += '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px"><span style="color:var(--text-muted)">主办方：</span>' + esc(info.organizer) + '</div>';
+      }
+      if (info.contact) {
+        html += '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px"><span style="color:var(--text-muted)">联系方式：</span>' + esc(info.contact) + '</div>';
+      }
+      if (info.location) {
+        html += '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px"><span style="color:var(--text-muted)">地点：</span>' + esc(info.location) + '</div>';
+      }
+      if (info.notice_url) {
+        html += '<div style="font-size:12px;margin-top:8px"><a href="' + esc(info.notice_url) + '" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:500">查看校赛通知 &rarr;</a></div>';
+      }
+      html += '</div>';
+    }
+
+    // 报名须知
+    if (comp.registration_notes) {
+      html += '<div style="margin-bottom:16px;padding:14px 16px;border-radius:10px;background:rgba(255,200,74,0.08);border:1px solid rgba(255,200,74,0.2)">';
+      html += '<div style="font-size:13px;font-weight:600;margin-bottom:6px;color:#FFC84A">报名须知</div>';
+      html += '<div style="font-size:12px;color:var(--text-secondary);line-height:1.6;white-space:pre-wrap">' + esc(comp.registration_notes) + '</div>';
+      html += '</div>';
+    }
+
+    // 相关链接
+    if (comp.related_links) {
+      var links = typeof comp.related_links === 'string' ? JSON.parse(comp.related_links) : comp.related_links;
+      if (Array.isArray(links) && links.length > 0) {
+        html += '<div style="margin-bottom:16px">';
+        html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text-secondary)">相关链接</div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
+        links.forEach(function(link) {
+          var url = typeof link === 'string' ? link : link.url;
+          var label = typeof link === 'string' ? link : (link.label || link.url);
+          html += '<a href="' + esc(url) + '" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:8px;background:var(--bg-card);border:1px solid var(--border-subtle);color:var(--accent);font-size:12px;text-decoration:none;font-weight:500">' + esc(label) + ' &nearr;</a>';
+        });
+        html += '</div></div>';
+      }
+    }
+
+    // 报名时间
+    if (comp.registration_start || comp.registration_end) {
+      html += '<div style="margin-bottom:20px;padding:12px 16px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-subtle);font-size:12px;color:var(--text-secondary)">';
+      if (comp.registration_start) {
+        html += '<div style="margin-bottom:4px"><span style="color:var(--text-muted)">报名开始：</span>' + new Date(comp.registration_start).toLocaleString() + '</div>';
+      }
+      if (comp.registration_end) {
+        html += '<div><span style="color:var(--text-muted)">报名截止：</span>' + new Date(comp.registration_end).toLocaleString() + '</div>';
+      }
+      html += '</div>';
+    }
+
+    // 下一步按钮
+    html += '<button class="btn-primary" style="width:100%;padding:12px;font-size:15px;font-weight:600;border-radius:10px" onclick="showApplicationTypeSelector(\'' + compId + '\')">下一步：选择报名方式</button>';
+
+    html += '</div>';
+    showCompModal(html);
+  } catch (error) {
+    console.error('showCompetitionLevelInfo error:', error);
+    showCopyToast('加载竞赛信息失败，请重试', 'error');
+  }
+}
+
+// ==========================================
+// 4. 报名类型选择（级别 + 个人/团队）
+// ==========================================
+
+async function showApplicationTypeSelector(compId) {
+  try {
+    var user = getCurrentUser();
+
+    // 查询用户在此竞赛的已有报名记录，判断各级别是否可用
+    var appRes = await fetch(HUB_URL + '/rest/v1/applications?competition_id=eq.' + compId + '&applicant_user_id=eq.' + user.id + '&select=id,status,registration_level', { headers: HUB_HEADERS });
+    var existingApps = appRes.ok ? await appRes.json() : [];
+    var hasSchoolPassed = existingApps.some(function(a) { return a.registration_level === 'school' && (a.status === 'approved' || a.status === 'school_passed'); });
+    var hasProvincialPassed = existingApps.some(function(a) { return a.registration_level === 'provincial' && (a.status === 'approved' || a.status === 'provincial_passed'); });
+
+    var html = '<div style="max-width:500px;margin:0 auto;padding:20px">';
+    html += '<h3 style="margin-bottom:20px">选择报名方式</h3>';
+
+    // 报名级别选择
+    html += '<div style="margin-bottom:20px">';
+    html += '<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-secondary)">报名级别</div>';
+    html += '<div style="display:flex;gap:10px">';
+
+    // 校赛报名（始终可用）
+    html += '<div id="levelSchool" style="flex:1;padding:14px 8px;text-align:center;border-radius:10px;background:rgba(34,197,94,0.1);border:2px solid #22c55e;cursor:pointer;transition:all .2s" onclick="selectRegistrationLevel(\'school\')">';
+    html += '<div style="font-weight:600;font-size:14px;color:#22c55e">校赛报名</div>';
+    html += '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">校级选拔</div>';
+    html += '</div>';
+
+    // 省赛报名（需通过校赛）
+    var provEnabled = hasSchoolPassed;
+    html += '<div id="levelProvincial" style="flex:1;padding:14px 8px;text-align:center;border-radius:10px;background:' + (provEnabled ? 'rgba(249,115,22,0.1)' : 'rgba(255,255,255,0.03)') + ';border:2px solid ' + (provEnabled ? '#f97316' : 'var(--border-subtle)') + ';cursor:' + (provEnabled ? 'pointer' : 'not-allowed') + ';opacity:' + (provEnabled ? '1' : '0.5') + ';transition:all .2s;position:relative"' + (provEnabled ? ' onclick="selectRegistrationLevel(\'provincial\')"' : '') + ' title="' + (provEnabled ? '' : '需先通过校赛') + '">';
+    html += '<div style="font-weight:600;font-size:14px;color:' + (provEnabled ? '#f97316' : 'var(--text-muted)') + '">省赛报名</div>';
+    html += '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + (provEnabled ? '省级竞赛' : '需先通过校赛') + '</div>';
+    html += '</div>';
+
+    // 国赛报名（需通过省赛）
+    var natEnabled = hasProvincialPassed;
+    html += '<div id="levelNational" style="flex:1;padding:14px 8px;text-align:center;border-radius:10px;background:' + (natEnabled ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.03)') + ';border:2px solid ' + (natEnabled ? '#ef4444' : 'var(--border-subtle)') + ';cursor:' + (natEnabled ? 'pointer' : 'not-allowed') + ';opacity:' + (natEnabled ? '1' : '0.5') + ';transition:all .2s;position:relative"' + (natEnabled ? ' onclick="selectRegistrationLevel(\'national\')"' : '') + ' title="' + (natEnabled ? '' : '需先通过省赛') + '">';
+    html += '<div style="font-weight:600;font-size:14px;color:' + (natEnabled ? '#ef4444' : 'var(--text-muted)') + '">国赛报名</div>';
+    html += '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + (natEnabled ? '国家级竞赛' : '需先通过省赛') + '</div>';
+    html += '</div>';
+
+    html += '</div></div>';
+
+    // 个人/团队选择（初始隐藏）
+    html += '<div id="typeSelectorArea" style="display:none">';
+    html += '<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-secondary)">参赛形式</div>';
+    html += '<div style="display:flex;gap:12px">';
+    html += '<div class="card" style="flex:1;padding:24px;text-align:center;cursor:pointer" onclick="createApplication(\'' + compId + '\',\'individual\',_selectedLevel)">';
+    html += '<div style="font-size:32px;margin-bottom:12px">' + svgIcon('user', 40) + '</div>';
+    html += '<div style="font-weight:600;font-size:16px">个人报名</div>';
+    html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">以个人身份参赛</div>';
+    html += '</div>';
+    html += '<div class="card" style="flex:1;padding:24px;text-align:center;cursor:pointer" onclick="createApplication(\'' + compId + '\',\'team\',_selectedLevel)">';
+    html += '<div style="font-size:32px;margin-bottom:12px">' + svgIcon('users', 40) + '</div>';
+    html += '<div style="font-weight:600;font-size:16px">团队报名</div>';
+    html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">组建或加入团队</div>';
+    html += '</div>';
+    html += '</div></div>';
+
+    html += '</div>';
+    showCompModal(html);
+  } catch (error) {
+    console.error('showApplicationTypeSelector error:', error);
+    showCopyToast('加载报名选项失败', 'error');
+  }
+}
+
+// 选中的报名级别（全局临时变量）
+var _selectedLevel = 'school';
+
+function selectRegistrationLevel(level) {
+  _selectedLevel = level;
+  // 更新级别按钮高亮
+  var levels = ['school', 'provincial', 'national'];
+  var colors = { school: '#22c55e', provincial: '#f97316', national: '#ef4444' };
+  var bgs = { school: 'rgba(34,197,94,0.1)', provincial: 'rgba(249,115,22,0.1)', national: 'rgba(239,68,68,0.1)' };
+  var ids = { school: 'levelSchool', provincial: 'levelProvincial', national: 'levelNational' };
+  levels.forEach(function(lv) {
+    var el = document.getElementById(ids[lv]);
+    if (!el) return;
+    if (lv === level) {
+      el.style.boxShadow = '0 0 0 3px ' + colors[lv] + '33';
+    } else {
+      el.style.boxShadow = 'none';
+    }
+  });
+  // 显示个人/团队选择
+  var typeArea = document.getElementById('typeSelectorArea');
+  if (typeArea) typeArea.style.display = 'block';
 }
 
 // ==========================================
 // 4. 创建报名记录
 // ==========================================
 
-async function createApplication(compId, type) {
+async function createApplication(compId, type, level) {
   if (_submitLock) { showCopyToast('请勿重复提交', 'warning'); return; }
   _submitLock = true;
   try {
     var user = getCurrentUser();
+    var body = {
+      competition_id: compId,
+      applicant_user_id: user.id,
+      type: type,
+      status: 'draft',
+      data: {}
+    };
+    if (level) {
+      body.registration_level = level;
+    }
     var res = await fetch(HUB_URL + '/rest/v1/applications', {
       method: 'POST',
       headers: HUB_HEADERS,
-      body: JSON.stringify({
-        competition_id: compId,
-        applicant_user_id: user.id,
-        type: type,
-        status: 'draft',
-        data: {}
-      })
+      body: JSON.stringify(body)
     });
     if (!res.ok) { showCopyToast('创建报名失败', 'error'); return; }
     var app = await res.json();
@@ -266,6 +445,25 @@ async function submitApplication(applicationId, compId) {
       });
       if (res.ok) {
         showCopyToast('报名已提交！', 'success');
+        // 尝试创建通知给竞赛管理员（best-effort，失败不影响主流程）
+        try {
+          var user = getCurrentUser();
+          var comps = await fetchCompetitions();
+          var comp = comps.find(function(c) { return c.id === compId; });
+          var compName = comp ? comp.name : '未知竞赛';
+          await fetch(HUB_URL + '/rest/v1/notifications', {
+            method: 'POST',
+            headers: HUB_HEADERS,
+            body: JSON.stringify({
+              title: '新报名待审核',
+              content: user.name + ' 报名了 ' + compName,
+              notification_type: 'registration_submitted',
+              action_url: '/admin'
+            })
+          });
+        } catch (notifyErr) {
+          console.warn('创建通知失败（不影响报名）:', notifyErr);
+        }
         showApplicationForm(compId, applicationId);
       } else {
         showCopyToast('提交失败', 'error');
