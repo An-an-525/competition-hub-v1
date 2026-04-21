@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: csust-competition-api
+    runtime: node
+    plan: free
+    buildCommand: cd render-backend && npm install
+    startCommand: cd render-backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_ENDPOINT
+        value: https://api.minimaxi.com/v1/text/chatcompletion_v2
+      - key: LLM_MODEL
+        value: MiniMax-M2.7
+      - key: SUPABASE_URL
+        value: https://fdbbcibmqaogsbasoqly.supabase.co
+      - key: SUPABASE_KEY
+        sync: false
+    region: singapore
