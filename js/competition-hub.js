@@ -6,11 +6,15 @@ var _cachedCompetitions=null;
 var _cachedRegCounts={};
 var _notifPollTimer=null;
 var _cacheTimestamp = 0;
-var _CACHE_TTL = 5 * 60 * 1000; // 5分钟
+var _CACHE_TTL = 30 * 1000; // 30秒
 
-async function fetchCompetitions(){
-  // 先返回缓存（如果有）
-  if(_cachedCompetitions) return _cachedCompetitions;
+async function fetchCompetitions(forceRefresh){
+  // 强制刷新
+  if(forceRefresh){_cachedCompetitions=null;try{localStorage.removeItem('hub_competitions')}catch(e){}}
+  // 先返回缓存（如果有且未过期）
+  if(_cachedCompetitions && (Date.now()-_cacheTimestamp < _CACHE_TTL)) return _cachedCompetitions;
+  // 内存缓存过期，清除
+  if(_cachedCompetitions){_cachedCompetitions=null;}
 
   // 尝试从 localStorage 读取
   try {
@@ -19,11 +23,13 @@ async function fetchCompetitions(){
       var parsed = JSON.parse(cached);
       if(parsed.data && parsed.ts && (Date.now() - parsed.ts < _CACHE_TTL)) {
         _cachedCompetitions = parsed.data;
+        _cacheTimestamp = Date.now();
         return parsed.data;
       }
       // 缓存过期但有数据，先返回旧数据，后台刷新
       if(parsed.data) {
         _cachedCompetitions = parsed.data;
+        _cacheTimestamp = parsed.ts;
         _refreshCompetitionsInBackground();
         return parsed.data;
       }
@@ -41,6 +47,7 @@ async function _fetchCompetitionsFromServer(){
     var data=await res.json();
     if(data&&data.length>0){
       _cachedCompetitions=data;
+      _cacheTimestamp=Date.now();
       // 存入 localStorage
       try { localStorage.setItem('hub_competitions', JSON.stringify({data:data, ts:Date.now()})); } catch(e){ console.warn('写入本地缓存失败:', e.message); }
       return data;
@@ -49,7 +56,7 @@ async function _fetchCompetitionsFromServer(){
   // Fallback to local CSUST_DATA
   if(typeof CSUST_DATA!=='undefined'&&CSUST_DATA.competitions&&CSUST_DATA.competitions.length>0){
     _cachedCompetitions=CSUST_DATA.competitions.map(function(c,i){
-      return{id:c.id||(1000+i),name:c.name,level:c.level||'校级',category:c.category||'',organizer:c.organizer||'',description:c.description||c.detail||'',requirements:c.requirements||'',reg_start:null,reg_end:null,comp_date:c.time||'',is_team:c.isTeam||false,team_min:c.teamMin||1,team_max:c.teamMax||5,status:'open',sort_order:100-i};
+      return{id:c.id||(1000+i),name:c.name,level:c.level||'校级',category:c.category||'',organizer:c.organizer||'',description:c.description||c.detail||'',requirements:c.requirements||'',reg_start:null,reg_end:null,comp_date:c.time||'',is_team:c.isTeam||false,team_min:c.teamMin||1,team_max:c.teamMax||5,status:'upcoming',sort_order:100-i};
     });
     return _cachedCompetitions;
   }
@@ -397,6 +404,20 @@ async function showHubCompDetail(compId){
   showCompModal(html);
 }
 
+function refreshCompData(){
+  _cachedCompetitions=null;_cacheTimestamp=0;
+  try{localStorage.removeItem('hub_competitions')}catch(e){}
+  var hubList=document.getElementById('hubCompList');
+  if(hubList){
+    hubList.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted)"><div style="font-size:24px;margin-bottom:8px">&#x21bb;</div>刷新中...</div>';
+  }
+  fetchCompetitions(true).then(function(data){
+    if(data&&data.length>0){
+      var container=document.getElementById('competitionContent');
+      if(container)renderCompHub(container);
+    }
+  });
+}
 function clearCompCache(){
   _cachedCompetitions=null;
   _cachedRegCounts={};

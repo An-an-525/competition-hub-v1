@@ -260,20 +260,28 @@ function handleCompRegister(idx) {
   }
 }
 function showCompModal(contentHtml){
+  // 先清理可能残留的弹窗
+  var existing=document.querySelector('div[style*="z-index:1000"]');
+  if(existing){try{document.body.removeChild(existing)}catch(e){}}
+  document.body.style.overflow='';
   var overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:1000;display:flex;justify-content:center;align-items:center;padding:20px';
-  overlay.onclick=function(e){if(e.target===overlay){document.body.removeChild(overlay);document.body.style.overflow=''}};
+  function closeModal(){try{document.body.removeChild(overlay)}catch(e){}document.body.style.overflow='';}
+  overlay.onclick=function(e){if(e.target===overlay)closeModal()};
   var modal=document.createElement('div');
   modal.style.cssText='background:var(--bg-card,#FFFFFF);border:1px solid var(--border-subtle,rgba(0,0,0,0.1));border-radius:20px;padding:28px;max-width:560px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.12);position:relative;max-height:85vh;overflow-y:auto';
   var closeBtn=document.createElement('button');
   closeBtn.style.cssText='position:absolute;top:16px;right:16px;background:none;border:1px solid var(--border-subtle,rgba(0,0,0,0.1));color:var(--text-muted,#6B7280);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center';
   closeBtn.innerHTML=svgIcon('x',18);
-  closeBtn.onclick=function(){document.body.removeChild(overlay);document.body.style.overflow=''};
+  closeBtn.onclick=closeModal;
   modal.innerHTML=contentHtml;
   modal.insertBefore(closeBtn,modal.firstChild);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
   document.body.style.overflow='hidden';
+  // ESC关闭
+  var escHandler=function(e){if(e.key==='Escape'){closeModal();document.removeEventListener('keydown',escHandler)}};
+  document.addEventListener('keydown',escHandler);
 }
 function renderCompCalendar(container){
   var months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];

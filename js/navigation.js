@@ -1,6 +1,12 @@
 /* Extracted from app.js */
 
 function navigate(page,tab){
+  // 修复：导航时确保滚动不被锁定
+  document.body.style.overflow='';
+  // 清理可能残留的弹窗
+  var stuckOverlays=document.querySelectorAll('div[style*="z-index:1000"]');
+  stuckOverlays.forEach(function(o){try{document.body.removeChild(o)}catch(e){}});
+  closeMobileMenu();
   var activePage=document.querySelector('.page.active');
   if(activePage&&activePage.id!=='page-'+page){
     activePage.style.transition='opacity 0.25s ease';
