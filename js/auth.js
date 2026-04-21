@@ -50,7 +50,7 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='登录中...';
   try{
     var hash=await hashPassword(pwd);
-    var res=await fetch(HUB_URL+'/rest/v1/profiles?student_id=eq.'+encodeURIComponent(sid),{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/profiles?student_id=eq.'+encodeURIComponent(sid),{headers:HUB_HEADERS});
     if(!res.ok){errEl.textContent='登录失败，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
     var data=await res.json();
     if(data.length===0){errEl.textContent='该学号未注册';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
@@ -82,7 +82,7 @@ async function doRegister(){
   btn.disabled=true;btn.textContent='注册中...';
   try{
     var hash=await hashPassword(pwd);
-    var res=await fetch(HUB_URL+'/rest/v1/profiles',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({student_id:sid,name:name,college:college,password_hash:hash,role:'student'})});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/profiles',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({student_id:sid,name:name,college:college,password_hash:hash,role:'student'})});
     if(!res.ok){var errData={};try{errData=await res.json()}catch(e){}if(errData.message&&errData.message.indexOf('duplicate')>=0){errEl.textContent='该学号已注册，请直接登录'}else{errEl.textContent='注册失败，请重试'}errEl.classList.add('show');btn.disabled=false;btn.textContent='注册';return}
     var data=await res.json();
     var profile=data[0];

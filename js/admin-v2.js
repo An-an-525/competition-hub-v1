@@ -18,7 +18,7 @@ async function fetchAdminScope() {
 
   try {
     var res = await fetch(
-      HUB_URL + '/rest/v1/user_roles?user_id=eq.' + user.id + '&is_active=eq.true&select=*,roles(role_name,permissions),competitions(competition_id,name)',
+      HUB_URL + '/functions/v1/competition-api/rest/v1/user_roles?user_id=eq.' + user.id + '&is_active=eq.true&select=*,roles(role_name,permissions),competitions(competition_id,name)',
       { headers: HUB_HEADERS }
     );
     if (!res.ok) {
@@ -188,7 +188,7 @@ async function loadAdminStats() {
   var statuses = ['submitted', 'under_review', 'approved', 'rejected', 'request_changes'];
 
   for (var i = 0; i < statuses.length; i++) {
-    var res = await fetch(HUB_URL + '/rest/v1/applications?status=eq.' + statuses[i] + '&select=id', { headers: HUB_HEADERS });
+    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?status=eq.' + statuses[i] + '&select=id', { headers: HUB_HEADERS });
     if (res.ok) {
       var data = await res.json();
       counts.total += data.length;
@@ -213,23 +213,23 @@ async function loadAdminApplications() {
   var typeFilter = document.getElementById('adminFilterType') ? document.getElementById('adminFilterType').value : '';
   var searchName = document.getElementById('adminSearchName') ? document.getElementById('adminSearchName').value.trim() : '';
 
-  var url = HUB_URL + '/rest/v1/applications?select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)&order=created_at.desc&limit=50';
+  var url = HUB_URL + '/functions/v1/competition-api/rest/v1/applications?select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)&order=created_at.desc&limit=50';
 
   // 根据管理员权限范围过滤
   if (adminScope.role === 'competition_admin' && adminScope.competitionIds.length > 0) {
     var compFilter = adminScope.competitionIds.map(function(id) { return 'competition_id.eq.' + id; }).join(',');
-    url = HUB_URL + '/rest/v1/applications?select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)&or=(' + compFilter + ')&order=created_at.desc&limit=50';
+    url = HUB_URL + '/functions/v1/competition-api/rest/v1/applications?select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)&or=(' + compFilter + ')&order=created_at.desc&limit=50';
   } else if (adminScope.role === 'college_admin' && adminScope.college) {
     // college_admin 通过 profiles 的 college 字段过滤
     // 先查询该院学生 ID 列表，再过滤报名
     try {
-      var profileRes = await fetch(HUB_URL + '/rest/v1/profiles?college=eq.' + encodeURIComponent(adminScope.college) + '&select=user_id', { headers: HUB_HEADERS });
+      var profileRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/profiles?college=eq.' + encodeURIComponent(adminScope.college) + '&select=user_id', { headers: HUB_HEADERS });
       if (profileRes.ok) {
         var profiles = await profileRes.json();
         var userIds = profiles.map(function(p) { return 'applicant_user_id.eq.' + p.user_id; });
         if (userIds.length > 0) {
           var userFilter = userIds.join(',');
-          url = HUB_URL + '/rest/v1/applications?select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)&or=(' + userFilter + ')&order=created_at.desc&limit=50';
+          url = HUB_URL + '/functions/v1/competition-api/rest/v1/applications?select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)&or=(' + userFilter + ')&order=created_at.desc&limit=50';
         } else {
           el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">本院暂无报名记录</div>';
           return;
@@ -277,17 +277,17 @@ async function loadAdminApplications() {
 
 async function showAdminAppDetail(applicationId) {
   // 获取报名
-  var res = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId + '&select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)', { headers: HUB_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId + '&select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)', { headers: HUB_HEADERS });
   var apps = await res.json();
   var app = apps[0];
   if (!app) return;
 
   // 获取审核记录
-  var revRes = await fetch(HUB_URL + '/rest/v1/application_reviews?application_id=eq.' + applicationId + '&select=*,profiles!application_reviews_reviewer_user_id_fkey(name)&order=created_at.desc', { headers: HUB_HEADERS });
+  var revRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_reviews?application_id=eq.' + applicationId + '&select=*,profiles!application_reviews_reviewer_user_id_fkey(name)&order=created_at.desc', { headers: HUB_HEADERS });
   var reviews = await revRes.json();
 
   // 获取材料
-  var filesRes = await fetch(HUB_URL + '/rest/v1/application_files?application_id=eq.' + applicationId + '&status=eq.uploaded&order=uploaded_at.desc', { headers: HUB_HEADERS });
+  var filesRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files?application_id=eq.' + applicationId + '&status=eq.uploaded&order=uploaded_at.desc', { headers: HUB_HEADERS });
   var files = await filesRes.json();
 
   var comp = app.competitions || {};
@@ -375,7 +375,7 @@ async function reviewApplication(applicationId, action) {
   var newStatus = { approve: 'approved', reject: 'rejected', request_changes: 'request_changes' };
 
   // 写入审核记录
-  var revRes = await fetch(HUB_URL + '/rest/v1/application_reviews', {
+  var revRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_reviews', {
     method: 'POST',
     headers: HUB_HEADERS,
     body: JSON.stringify({
@@ -389,7 +389,7 @@ async function reviewApplication(applicationId, action) {
   if (!revRes.ok) { showCopyToast('审核操作失败', 'error'); return; }
 
   // 更新报名状态
-  var appRes = await fetch(HUB_URL + '/rest/v1/applications?id=eq.' + applicationId, {
+  var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId, {
     method: 'PATCH',
     headers: HUB_HEADERS,
     body: JSON.stringify({ status: newStatus[action] })
@@ -414,7 +414,7 @@ async function renderAdminEnterprises() {
 
   contentEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted)">加载企业列表...</div>';
 
-  var res = await fetch(HUB_URL + '/rest/v1/enterprises?select=*&order=created_at.desc', { headers: HUB_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?select=*&order=created_at.desc', { headers: HUB_HEADERS });
   if (!res.ok) {
     contentEl.innerHTML = '<div style="text-align:center;padding:40px;color:#e74c3c">加载企业列表失败</div>';
     return;
@@ -490,7 +490,7 @@ async function showEnterpriseForm(enterpriseId) {
   var ent = {};
 
   if (isEdit) {
-    var res = await fetch(HUB_URL + '/rest/v1/enterprises?id=eq.' + enterpriseId + '&select=*', { headers: HUB_HEADERS });
+    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId + '&select=*', { headers: HUB_HEADERS });
     if (res.ok) {
       var data = await res.json();
       ent = data[0] || {};
@@ -594,10 +594,10 @@ async function saveEnterprise(enterpriseId) {
 
   var url, method;
   if (enterpriseId) {
-    url = HUB_URL + '/rest/v1/enterprises?id=eq.' + enterpriseId;
+    url = HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId;
     method = 'PATCH';
   } else {
-    url = HUB_URL + '/rest/v1/enterprises';
+    url = HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises';
     method = 'POST';
   }
 
@@ -622,7 +622,7 @@ async function saveEnterprise(enterpriseId) {
 async function deleteEnterprise(enterpriseId) {
   if (!confirm('确定要删除该企业吗？此操作不可撤销。')) return;
 
-  var res = await fetch(HUB_URL + '/rest/v1/enterprises?id=eq.' + enterpriseId, {
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId, {
     method: 'DELETE',
     headers: HUB_HEADERS
   });
@@ -675,7 +675,7 @@ async function renderAdminDashboard() {
 
   // 尝试从 competition_admin_dashboard 视图获取统计数据
   try {
-    var dashRes = await fetch(HUB_URL + '/rest/v1/competition_admin_dashboard?select=*', { headers: HUB_HEADERS });
+    var dashRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competition_admin_dashboard?select=*', { headers: HUB_HEADERS });
     if (dashRes.ok) {
       var dashData = await dashRes.json();
 
@@ -757,10 +757,10 @@ async function buildFallbackDashboard() {
   html += '<div style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-primary)">全局概览</div>';
 
   // 获取基本统计
-  var compRes = await fetch(HUB_URL + '/rest/v1/competitions?select=id', { headers: HUB_HEADERS });
+  var compRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competitions?select=id', { headers: HUB_HEADERS });
   var compCount = compRes.ok ? (await compRes.json()).length : 0;
 
-  var appRes = await fetch(HUB_URL + '/rest/v1/applications?select=id,status', { headers: HUB_HEADERS });
+  var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?select=id,status', { headers: HUB_HEADERS });
   var apps = appRes.ok ? await appRes.json() : [];
   var pendingCount = apps.filter(function(a) { return a.status === 'submitted' || a.status === 'under_review'; }).length;
   var approvedCount = apps.filter(function(a) { return a.status === 'approved'; }).length;

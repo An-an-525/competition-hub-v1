@@ -30,7 +30,7 @@ async function renderLearningResources() {
 
   try {
     var res = await fetchWithTimeout(
-      HUB_URL + '/rest/v1/learning_resources?is_active=eq.true&order=sort_order.desc,created_at.desc&select=*',
+      HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?is_active=eq.true&order=sort_order.desc,created_at.desc&select=*',
       { headers: HUB_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -184,7 +184,7 @@ async function showResourceDetail(resourceId) {
 
   try {
     var res = await fetchWithTimeout(
-      HUB_URL + '/rest/v1/learning_resources?id=eq.' + resourceId + '&select=*',
+      HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId + '&select=*',
       { headers: HUB_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -196,7 +196,7 @@ async function showResourceDetail(resourceId) {
     }
 
     // 增加浏览量（异步，不阻塞）
-    fetch(HUB_URL + '/rest/v1/learning_resources?id=eq.' + resourceId, {
+    fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId, {
       method: 'PATCH',
       headers: HUB_HEADERS,
       body: JSON.stringify({ view_count: (resource.view_count || 0) + 1 })
@@ -204,7 +204,7 @@ async function showResourceDetail(resourceId) {
 
     // 获取相关资源（同分类，排除当前，限制3条）
     var relatedRes = await fetchWithTimeout(
-      HUB_URL + '/rest/v1/learning_resources?category=eq.' + encodeURIComponent(resource.category || '') + '&is_active=eq.true&id=neq.' + resourceId + '&order=sort_order.desc,created_at.desc&select=id,title,resource_type,category,cover_image&limit=3',
+      HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?category=eq.' + encodeURIComponent(resource.category || '') + '&is_active=eq.true&id=neq.' + resourceId + '&order=sort_order.desc,created_at.desc&select=id,title,resource_type,category,cover_image&limit=3',
       { headers: HUB_HEADERS }
     );
     var related = relatedRes.ok ? await relatedRes.json() : [];
@@ -400,7 +400,7 @@ async function renderCompetitionResources(competitionId) {
 
   try {
     var res = await fetchWithTimeout(
-      HUB_URL + '/rest/v1/learning_resources?competition_id=eq.' + competitionId + '&is_active=eq.true&order=sort_order.desc,created_at.desc&select=id,title,resource_type,category,description,author&view_count',
+      HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?competition_id=eq.' + competitionId + '&is_active=eq.true&order=sort_order.desc,created_at.desc&select=id,title,resource_type,category,description,author&view_count',
       { headers: HUB_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -449,7 +449,7 @@ async function renderAdminLearningResources() {
 
   try {
     var res = await fetchWithTimeout(
-      HUB_URL + '/rest/v1/learning_resources?order=sort_order.desc,created_at.desc&select=*',
+      HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?order=sort_order.desc,created_at.desc&select=*',
       { headers: HUB_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -518,7 +518,7 @@ async function showAdminResourceForm(resourceId) {
   if (isEdit) {
     try {
       var res = await fetchWithTimeout(
-        HUB_URL + '/rest/v1/learning_resources?id=eq.' + resourceId + '&select=*',
+        HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId + '&select=*',
         { headers: HUB_HEADERS }
       );
       if (res.ok) {
@@ -673,10 +673,10 @@ async function saveAdminResource(resourceId) {
   var url, method;
 
   if (isEdit) {
-    url = HUB_URL + '/rest/v1/learning_resources?id=eq.' + resourceId;
+    url = HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId;
     method = 'PATCH';
   } else {
-    url = HUB_URL + '/rest/v1/learning_resources';
+    url = HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources';
     method = 'POST';
   }
 
@@ -710,7 +710,7 @@ function deleteAdminResource(resourceId, title) {
   showConfirm('确定要删除资源"' + title + '"吗？此操作不可撤销。', async function() {
     try {
       var res = await fetchWithTimeout(
-        HUB_URL + '/rest/v1/learning_resources?id=eq.' + resourceId,
+        HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId,
         { method: 'DELETE', headers: HUB_HEADERS }
       );
       if (res.ok) {

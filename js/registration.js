@@ -48,7 +48,7 @@ async function submitHubRegistration(compId,teamId){
   try{
     var payload={user_id:user.id,competition_id:compId,status:'pending',note:note};
     if(teamId)payload.team_id=teamId;
-    var res=await fetch(HUB_URL+'/rest/v1/registrations',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify(payload)});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify(payload)});
     if(!res.ok){
       var errData={};try{errData=await res.json()}catch(e){}
       if(errData.message&&errData.message.indexOf('duplicate')>=0&&(errEl)){errEl.textContent='你已经报名过该竞赛';errEl.classList.add('show');btn.disabled=false;btn.textContent='提交报名';return}
@@ -81,10 +81,10 @@ async function doCreateTeam(compId){
   if(!name){errEl.textContent='请输入队伍名称';errEl.classList.add('show');return}
   var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/teams',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({competition_id:compId,name:name,captain_id:user.id,max_members:comp?comp.team_max:5,status:'forming'})});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/teams',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({competition_id:compId,name:name,captain_id:user.id,max_members:comp?comp.team_max:5,status:'forming'})});
     if(!res.ok){errEl.textContent='创建队伍失败';errEl.classList.add('show');return}
     var teamData=await res.json();var team=teamData[0];
-    await fetch(HUB_URL+'/rest/v1/team_members',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({team_id:team.id,user_id:user.id,role:'captain',status:'approved'})});
+    await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/team_members',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({team_id:team.id,user_id:user.id,role:'captain',status:'approved'})});
     showCopyToast('队伍创建成功！','success');
     document.body.style.overflow='';
     var modals=document.querySelectorAll('div[style*="position:fixed"]');modals.forEach(function(m){if(m.style.zIndex==='1000'||m.style.zIndex==='10000')m.remove()});
@@ -96,7 +96,7 @@ async function showJoinTeamList(compId){
   var html='<div style="max-width:500px"><h3 style="margin-bottom:16px">加入队伍</h3><div id="joinTeamListContent" class="loading-overlay"><div class="loading-spinner" style="width:24px;height:24px"></div><p style="margin-top:8px">加载中...</p></div></div>';
   showCompModal(html);
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/teams?competition_id=eq.'+compId+'&status=eq.forming&select=*,team_members(*)',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/teams?competition_id=eq.'+compId+'&status=eq.forming&select=*,team_members(*)',{headers:HUB_HEADERS});
     if(!res.ok){document.getElementById('joinTeamListContent').innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
     var teams=await res.json();
     var content=document.getElementById('joinTeamListContent');if(!content)return;
@@ -114,7 +114,7 @@ async function showJoinTeamList(compId){
 async function requestJoinTeam(teamId,compId){
   var user=getCurrentUser();if(!user)return;
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/team_members',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({team_id:teamId,user_id:user.id,role:'member',status:'pending'})});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/team_members',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({team_id:teamId,user_id:user.id,role:'member',status:'pending'})});
     if(!res.ok){showCopyToast('申请失败，可能已申请过','warning');return}
     showCopyToast('已发送入队申请，请等待队长审核','success');
     document.body.style.overflow='';
@@ -130,7 +130,7 @@ async function renderMyRegistrations(){
   /* 骨架屏加载占位 - 我的报名 */
   container.innerHTML='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:70%"></div><div class="skeleton skeleton-line" style="width:50%"></div></div></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:65%"></div><div class="skeleton skeleton-line" style="width:55%"></div></div></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:75%"></div><div class="skeleton skeleton-line" style="width:45%"></div></div></div></div>';
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/registrations?user_id=eq.'+user.id+'&select=*,competitions(name,status,level,category,is_team)&order=created_at.desc',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?user_id=eq.'+user.id+'&select=*,competitions(name,status,level,category,is_team)&order=created_at.desc',{headers:HUB_HEADERS});
     if(!res.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
     var regs=await res.json();
     if(regs.length===0){
@@ -155,7 +155,7 @@ async function renderMyRegistrations(){
 async function cancelMyReg(regId){
   showConfirm('确定要取消该报名吗？',async function(){
     try{
-      var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'cancelled'})});
+      var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'cancelled'})});
       if(res.ok){showCopyToast('已取消报名','success');renderMyRegistrations()}
       else showCopyToast('操作失败','warning');
     }catch(e){showCopyToast('网络错误','warning')}

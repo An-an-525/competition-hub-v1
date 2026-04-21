@@ -4,8 +4,8 @@ async function renderAdmin(){
   if(!isAdmin()){container.innerHTML='<div class="login-required"><h3>无权限</h3><p>仅管理员可访问此页面</p><button class="btn-primary" onclick="navigate(\'home\')">返回首页</button></div>';return}
   container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:32px;height:32px"></div><p style="margin-top:12px">加载管理数据...</p></div>';
   try{
-    var regsRes=await fetch(HUB_URL+'/rest/v1/registrations?select=*,profiles!registrations_user_id_fkey(name,student_id,college),competitions(name,level,category)&order=created_at.desc',{headers:HUB_HEADERS});
-    var compsRes=await fetch(HUB_URL+'/rest/v1/competitions?select=id,name',{headers:HUB_HEADERS});
+    var regsRes=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?select=*,profiles!registrations_user_id_fkey(name,student_id,college),competitions(name,level,category)&order=created_at.desc',{headers:HUB_HEADERS});
+    var compsRes=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=id,name',{headers:HUB_HEADERS});
     if(!regsRes.ok||!compsRes.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
     var regs=await regsRes.json();
     var comps=await compsRes.json();
@@ -63,7 +63,7 @@ async function adminApprove(regId){
   hapticFeedback();
   var user=getCurrentUser();if(!user)return;
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'approved',reviewed_by:user.id,reviewed_at:new Date().toISOString()})});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({status:'approved',reviewed_by:user.id,reviewed_at:new Date().toISOString()})});
     if(res.ok){showCopyToast('已通过','success');renderAdmin()}
     else showCopyToast('操作失败','warning');
   }catch(e){showCopyToast('网络错误','warning')}
@@ -76,7 +76,7 @@ async function adminReject(regId){
   try{
     var payload={status:'rejected',reviewed_by:user.id,reviewed_at:new Date().toISOString()};
     if(reason)payload.reject_reason=reason;
-    var res=await fetch(HUB_URL+'/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify(payload)});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?id=eq.'+regId,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify(payload)});
     if(res.ok){showCopyToast('已拒绝','success');renderAdmin()}
     else showCopyToast('操作失败','warning');
   }catch(e){showCopyToast('网络错误','warning')}

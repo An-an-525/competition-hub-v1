@@ -8,7 +8,7 @@ async function loadNotifications(){
   if(!isLoggedIn())return;
   var user=getCurrentUser();
   try{
-    var res=await fetch(HUB_URL+'/rest/v1/notifications?user_id=eq.'+user.id+'&order=created_at.desc&limit=20',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/notifications?user_id=eq.'+user.id+'&order=created_at.desc&limit=20',{headers:HUB_HEADERS});
     if(!res.ok)return;
     var notifs=await res.json();
     renderNotifList(notifs);
@@ -33,7 +33,7 @@ function renderNotifList(notifs){
 }
 async function markNotifRead(id){
   try{
-    await fetch(HUB_URL+'/rest/v1/notifications?id=eq.'+id,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({is_read:true})});
+    await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/notifications?id=eq.'+id,{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({is_read:true})});
     loadNotifications();
   }catch(e){}
 }
@@ -41,7 +41,7 @@ async function markAllNotifsRead(){
   if(!isLoggedIn())return;
   var user=getCurrentUser();
   try{
-    await fetch(HUB_URL+'/rest/v1/notifications?user_id=eq.'+user.id+'&is_read=eq.false',{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({is_read:true})});
+    await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/notifications?user_id=eq.'+user.id+'&is_read=eq.false',{method:'PATCH',headers:HUB_HEADERS,body:JSON.stringify({is_read:true})});
     loadNotifications();showCopyToast('已全部标为已读','success');
   }catch(e){}
 }

@@ -22,13 +22,13 @@ async function aiGetOrCreateConversation() {
   if (!userId) return null;
   try {
     var thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
-    var resp = await fetch(HUB_URL + '/rest/v1/ai_conversations?user_id=eq.' + userId + '&created_at=gte.' + thirtyMinAgo + '&select=conversation_id,created_at&order=created_at.desc&limit=1', { headers: HUB_HEADERS });
+    var resp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations?user_id=eq.' + userId + '&created_at=gte.' + thirtyMinAgo + '&select=conversation_id,created_at&order=created_at.desc&limit=1', { headers: HUB_HEADERS });
     if (resp.ok) {
       var convs = await resp.json();
       if (convs && convs.length > 0) { _aiConvId = convs[0].conversation_id; return _aiConvId; }
     }
     var title = 'AI 对话 ' + new Date().toLocaleString('zh-CN');
-    var createResp = await fetch(HUB_URL + '/rest/v1/ai_conversations', {
+    var createResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations', {
       method: 'POST', headers: HUB_HEADERS,
       body: JSON.stringify({ user_id: userId, title: title })
     });
@@ -46,7 +46,7 @@ async function aiSaveMessageToDB(role, content, thinkingContent) {
   try {
     var msgData = { conversation_id: convId, role: role, content: content, model_name: MINIMAX_MODEL };
     if (thinkingContent) { msgData.is_deep_thinking = true; msgData.token_count = content.length + thinkingContent.length; }
-    await fetch(HUB_URL + '/rest/v1/ai_messages', { method: 'POST', headers: HUB_HEADERS, body: JSON.stringify(msgData) });
+    await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_messages', { method: 'POST', headers: HUB_HEADERS, body: JSON.stringify(msgData) });
   } catch (e) { console.warn('[AI DB] 保存消息失败:', e.message); }
 }
 
@@ -55,12 +55,12 @@ async function aiLoadHistoryFromDB() {
   var userId = user ? (user.user_id || user.id) : null;
   if (!userId) return null;
   try {
-    var convResp = await fetch(HUB_URL + '/rest/v1/ai_conversations?user_id=eq.' + userId + '&select=conversation_id,title&order=created_at.desc&limit=1', { headers: HUB_HEADERS });
+    var convResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations?user_id=eq.' + userId + '&select=conversation_id,title&order=created_at.desc&limit=1', { headers: HUB_HEADERS });
     if (!convResp.ok) return null;
     var convs = await convResp.json();
     if (!convs || convs.length === 0) return null;
     _aiConvId = convs[0].conversation_id;
-    var msgResp = await fetch(HUB_URL + '/rest/v1/ai_messages?conversation_id=eq.' + _aiConvId + '&select=role,content,is_deep_thinking,created_at&order=created_at.asc&limit=100', { headers: HUB_HEADERS });
+    var msgResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_messages?conversation_id=eq.' + _aiConvId + '&select=role,content,is_deep_thinking,created_at&order=created_at.asc&limit=100', { headers: HUB_HEADERS });
     if (!msgResp.ok) return null;
     var msgs = await msgResp.json();
     if (!msgs || msgs.length === 0) return null;
