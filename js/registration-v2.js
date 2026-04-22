@@ -289,6 +289,7 @@ async function showApplicationForm(compId, applicationId) {
   // 获取报名记录
   var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId, { headers: HUB_HEADERS });
   var appData = (await appRes.json())[0];
+  if (!appData) { showCopyToast('报名信息不存在'); return; }
 
   // 获取表单定义
   var formRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_HEADERS });
@@ -426,7 +427,7 @@ async function submitApplication(applicationId, compId) {
     // 验证必填字段
     var formRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_HEADERS });
     var formData = (await formRes.json())[0];
-    if (formData) {
+    if (formData && formData.schema) {
       var missing = formData.schema.filter(function(f) { return f.required && !data[f.key]; });
       if (missing.length > 0) {
         showCopyToast('请填写必填项：' + missing.map(function(f) { return f.label; }).join('、'), 'error');
@@ -473,6 +474,9 @@ async function submitApplication(applicationId, compId) {
       } finally {
         _submitLock = false;
       }
+    }, function() {
+      // cancel callback - release the lock
+      _submitLock = false;
     });
   } catch (e) {
     _submitLock = false;

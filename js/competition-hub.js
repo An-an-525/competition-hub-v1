@@ -66,9 +66,9 @@ async function _fetchCompetitionsFromServer(){
 function _refreshCompetitionsInBackground(){
   _fetchCompetitionsFromServer().then(function(data){
     if(data && data.length > 0) {
-      // 静默刷新成功，更新页面（如果当前在竞赛页面）
-      var hubList = document.getElementById('hubCompList');
-      if(hubList) renderCompHub(document.getElementById('competitionContent'));
+      _cachedCompetitions = data;
+      _cacheTimestamp = Date.now();
+      // Don't re-render - just update cache for next filter/pagination
     }
   });
 }
@@ -179,7 +179,7 @@ async function renderCompHub(container){
   var categories=['全部'];comps.forEach(function(c){if(categories.indexOf(c.category)<0)categories.push(c.category)});
   var statuses=['全部','open','upcoming','closed','ended'];
   var statusLabels={'全部':'全部','open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
-  var html='<div style="margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="applyHubFilters()" style='flex:1'/><button class="btn-secondary btn-sm" onclick="refreshCompData()" title="刷新数据" style="flex-shrink:0;padding:8px 14px">&#x21bb; 刷新</button></div>';
+  var html+='<div style="margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="_hubPage=1;applyHubFilters()" style=\'flex:1\'/><button class="btn-secondary btn-sm" onclick="refreshCompData()" title="刷新数据" style="flex-shrink:0;padding:8px 14px">&#x21bb; 刷新</button></div>';
   html+='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">分类</div><div class="club-filter-bar" id="hubCatFilter">';
   categories.forEach(function(c,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'cat\',\''+esc(c)+'\')">'+esc(c)+'</button>'});
   html+='</div></div><div style="margin-bottom:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">状态</div><div class="club-filter-bar" id="hubStatusFilter">';
@@ -292,6 +292,24 @@ function applyHubFilters(){
   updateHubActiveFilters(cat,statusVal,q);
   var countEl=document.getElementById('hubCompCount');
   if(countEl)countEl.textContent='显示 '+visibleCount+' 项竞赛';
+  // Show empty state if no results
+  if(visibleCount===0){
+    var list=document.getElementById('hubCompList');
+    if(list){
+      var emptyMsg=document.getElementById('hubEmptyState');
+      if(!emptyMsg){
+        emptyMsg=document.createElement('div');
+        emptyMsg.id='hubEmptyState';
+        emptyMsg.style.cssText='text-align:center;padding:40px 20px;color:var(--text-muted)';
+        emptyMsg.innerHTML='<div style="font-size:32px;margin-bottom:12px">&#128269;</div><p>没有找到匹配的竞赛</p><p style="font-size:13px;margin-top:8px">尝试调整筛选条件或搜索关键词</p>';
+        list.appendChild(emptyMsg);
+      }
+      emptyMsg.style.display='block';
+    }
+  }else{
+    var emptyMsg=document.getElementById('hubEmptyState');
+    if(emptyMsg)emptyMsg.style.display='none';
+  }
 }
 
 var _hubPage = 1;

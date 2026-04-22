@@ -34,11 +34,28 @@ var PAGE_META = {
 /* --- Hash-based SPA Routing --- */
 function handleHashRoute() {
   var hash = window.location.hash.replace('#/', '').replace('#', '');
-  if (hash && hash !== 'home') {
-    navigate(hash);
-  }
+  var validPages = ['home','competition','ai','toolbox','profile','auth','myregistrations','admin'];
+  if(!hash || validPages.indexOf(hash) === -1) hash = 'home';
+  navigate(hash);
 }
 window.addEventListener('hashchange', handleHashRoute);
+
+/* --- Offline/Online Banner --- */
+function showOfflineBanner(){
+  var banner=document.getElementById('offlineBanner');
+  if(banner){banner.style.display='block';return;}
+  banner=document.createElement('div');
+  banner.id='offlineBanner';
+  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;text-align:center;padding:8px 16px;font-size:13px;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.15);display:block';
+  banner.textContent='网络已断开，部分功能不可用';
+  document.body.appendChild(banner);
+}
+function hideOfflineBanner(){
+  var banner=document.getElementById('offlineBanner');
+  if(banner)banner.style.display='none';
+}
+window.addEventListener('offline', function(){showOfflineBanner();});
+window.addEventListener('online', function(){hideOfflineBanner();});
 
 /* --- Override navigate() for auth/admin/myregistrations guard + hash sync --- */
 _origNavigate = navigate;

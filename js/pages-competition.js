@@ -259,16 +259,21 @@ function handleCompRegister(idx) {
     showCopyToast('该竞赛暂未开放在线报名，请关注官方通知', 'info');
   }
 }
+/* === Modal stacking counter === */
+var _modalCount = 0;
+var _originalOverflow = document.body.style.overflow || '';
+
 function showCompModal(contentHtml){
   // 先清理可能残留的弹窗
   var existing=document.querySelector('div[style*="z-index:1000"]');
   if(existing){try{document.body.removeChild(existing)}catch(e){}}
-  // 保存当前 overflow 值，以便关闭时恢复
-  var _savedOverflow=document.body.style.overflow;
+  // Track modal count for proper scroll state management
+  if(_modalCount === 0) _originalOverflow = document.body.style.overflow || '';
+  _modalCount++;
   document.body.style.overflow='hidden';
   var overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:1000;display:flex;justify-content:center;align-items:center;padding:20px';
-  function closeModal(){try{document.body.removeChild(overlay)}catch(e){}document.body.style.overflow=_savedOverflow||'auto';}
+  function closeModal(){try{document.body.removeChild(overlay)}catch(e){}_modalCount--;if(_modalCount<=0){_modalCount=0;document.body.style.overflow=_originalOverflow||'auto';}}
   overlay.onclick=function(e){if(e.target===overlay)closeModal()};
   var modal=document.createElement('div');
   modal.style.cssText='background:var(--bg-card,#FFFFFF);border:1px solid var(--border-subtle,rgba(0,0,0,0.1));border-radius:20px;padding:28px;max-width:560px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.12);position:relative;max-height:85vh;overflow-y:auto';
@@ -401,10 +406,10 @@ function getFavoritesKey(){
   return 'app_favorites_' + (user ? user.id : 'guest');
 }
 function getFavorites() {
-  return JSON.parse(getLS(getFavoritesKey(), '[]'));
+  return getLS(getFavoritesKey(), []);
 }
 function saveFavorites(list) {
-  setLS(getFavoritesKey(), JSON.stringify(list));
+  setLS(getFavoritesKey(), list);
 }
 function toggleFavorite(compId) {
   if (!isLoggedIn()) {

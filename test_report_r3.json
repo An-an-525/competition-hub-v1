@@ -1,0 +1,477 @@
+{
+  "run_timestamp": "2026-04-22T02:26:20.996360",
+  "project": "fdbbcibmqaogsbasoqly",
+  "summary": {
+    "total": 58,
+    "passed": 56,
+    "failed": 0,
+    "warnings": 2,
+    "errors": 0
+  },
+  "results": [
+    {
+      "category": "Data Integrity",
+      "test": "A1. Duplicate competition names",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "No duplicates among 135 records",
+      "timestamp": "2026-04-22T02:25:05.988012"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A2. NULL required fields",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "No NULL values in name, level, or status",
+      "timestamp": "2026-04-22T02:25:07.143247"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A3. Empty descriptions",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All competitions have non-empty descriptions",
+      "timestamp": "2026-04-22T02:25:08.256146"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A4. Invalid URLs",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All source_url and official_url values are valid HTTP(S) URLs",
+      "timestamp": "2026-04-22T02:25:08.875964"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A5. Orphaned registrations",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "No orphaned registrations found",
+      "timestamp": "2026-04-22T02:25:09.382134"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A6. Orphaned ai_messages",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "No orphaned ai_messages found",
+      "timestamp": "2026-04-22T02:25:09.887024"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: competitions",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "competitions: 135 rows",
+      "timestamp": "2026-04-22T02:25:10.973781"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: registrations",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "registrations: 0 rows",
+      "timestamp": "2026-04-22T02:25:12.004662"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: ai_messages",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "ai_messages: 0 rows",
+      "timestamp": "2026-04-22T02:25:12.998197"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: ai_conversations",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "ai_conversations: 0 rows",
+      "timestamp": "2026-04-22T02:25:14.088957"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: users",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "users: 0 rows",
+      "timestamp": "2026-04-22T02:25:15.161372"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: colleges",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "colleges: 25 rows",
+      "timestamp": "2026-04-22T02:25:16.260858"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: roles",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "roles: 4 rows",
+      "timestamp": "2026-04-22T02:25:17.403793"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: user_roles",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "user_roles: 0 rows",
+      "timestamp": "2026-04-22T02:25:18.430923"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: team_members",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "team_members: 0 rows",
+      "timestamp": "2026-04-22T02:25:19.480756"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: teams",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "teams: 0 rows",
+      "timestamp": "2026-04-22T02:25:20.475688"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: notifications",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "notifications: 0 rows",
+      "timestamp": "2026-04-22T02:25:21.506354"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: audit_logs",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "audit_logs: 0 rows",
+      "timestamp": "2026-04-22T02:25:22.541509"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: community_posts",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "community_posts: 0 rows",
+      "timestamp": "2026-04-22T02:25:23.607771"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: competition_milestones",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "competition_milestones: 0 rows",
+      "timestamp": "2026-04-22T02:25:24.640086"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: learning_resources",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "learning_resources: 0 rows",
+      "timestamp": "2026-04-22T02:25:25.762953"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: point_records",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "point_records: 0 rows",
+      "timestamp": "2026-04-22T02:25:26.818004"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: majors",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "majors: 68 rows",
+      "timestamp": "2026-04-22T02:25:27.983972"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: enterprises",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "enterprises: 0 rows",
+      "timestamp": "2026-04-22T02:25:29.009027"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: competition_admin_dashboard",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "competition_admin_dashboard: 98 rows",
+      "timestamp": "2026-04-22T02:25:30.140154"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A7. Row count: competition_categories",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "competition_categories: 7 rows",
+      "timestamp": "2026-04-22T02:25:31.319758"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A8. Schema: competitions",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All 9 expected columns present. Total: 44 (+ 35 extra columns: ['allowed_colleges', 'avg_prep_weeks', 'awards', 'category_id', 'college_restriction_note']...)",
+      "timestamp": "2026-04-22T02:25:31.859674"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A8. Schema: registrations",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All 5 expected columns present. Total: 25 (+ 20 extra columns: ['applied_at', 'award_certificate_url', 'award_level', 'credit_earned', 'documents_json']...)",
+      "timestamp": "2026-04-22T02:25:33.292456"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A8. Schema: ai_conversations",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All 4 expected columns present. Total: 6 (+ 2 extra columns: ['title', 'updated_at']...)",
+      "timestamp": "2026-04-22T02:25:34.611814"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A8. Schema: ai_messages",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All 5 expected columns present. Total: 11 (+ 6 extra columns: ['is_deep_thinking', 'latency_ms', 'model_name', 'source_doc_ids', 'source_refs']...)",
+      "timestamp": "2026-04-22T02:25:35.932805"
+    },
+    {
+      "category": "Data Integrity",
+      "test": "A8. Schema: users",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All 6 expected columns present. Total: 25 (+ 19 extra columns: ['avatar_url', 'bio', 'class_name', 'email', 'enrollment_year']...)",
+      "timestamp": "2026-04-22T02:25:37.310376"
+    },
+    {
+      "category": "Edge Function",
+      "test": "B1. Malformed JSON handling",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Returned 400 for malformed JSON",
+      "timestamp": "2026-04-22T02:25:37.823195"
+    },
+    {
+      "category": "Edge Function",
+      "test": "B2. Invalid path handling",
+      "status": "WARN",
+      "severity": "MEDIUM",
+      "details": "Status 200 for invalid path (returns API info page instead of 404). Body: {\"name\":\"CSUST Competition API\",\"version\":\"2.0\",\"status\":\"active\",\"endpoints\":{\"login\":\"POST /api/login\",\"register\":\"POST /api/register\",\"rest\":\"/rest",
+      "timestamp": "2026-04-22T02:25:38.399669"
+    },
+    {
+      "category": "Edge Function",
+      "test": "B3. Long query string handling",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Returned 200 for 10K char query string (0.61s)",
+      "timestamp": "2026-04-22T02:25:39.055714"
+    },
+    {
+      "category": "Edge Function",
+      "test": "B4. Concurrent requests",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "All 10 requests succeeded. Successes: 10, Total time: 0.86s, Avg: 0.09s",
+      "timestamp": "2026-04-22T02:25:39.912520"
+    },
+    {
+      "category": "Edge Function",
+      "test": "B5. Competitions list response time",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.599s, P50: 0.581s (threshold: 2s). Records: 135. Times: ['0.814', '0.505', '0.581', '0.480', '0.614']",
+      "timestamp": "2026-04-22T02:25:43.060378"
+    },
+    {
+      "category": "Edge Function",
+      "test": "B6. Single competition response time",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.645s. Times: ['0.682', '0.604', '0.658', '0.604', '0.677']",
+      "timestamp": "2026-04-22T02:25:47.073774"
+    },
+    {
+      "category": "Security",
+      "test": "C1. SQL injection: ''; DROP TABLE competitions; --...'",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Payload stored as literal data (parameterized). Table intact.",
+      "timestamp": "2026-04-22T02:25:48.733074"
+    },
+    {
+      "category": "Security",
+      "test": "C1. SQL injection: '1 OR 1=1...'",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Payload stored as literal data (parameterized). Table intact.",
+      "timestamp": "2026-04-22T02:25:50.347054"
+    },
+    {
+      "category": "Security",
+      "test": "C1. SQL injection: 'Robert'); DROP TABLE students;--...'",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Payload stored as literal data (parameterized). Table intact.",
+      "timestamp": "2026-04-22T02:25:52.005004"
+    },
+    {
+      "category": "Security",
+      "test": "C1. SQL injection: '<script>alert('xss')</script>...'",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Payload stored as literal data (parameterized). Table intact.",
+      "timestamp": "2026-04-22T02:25:53.708725"
+    },
+    {
+      "category": "Security",
+      "test": "C1. SQL injection: '{{constructor.constructor('return t...'",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Payload stored as literal data (parameterized). Table intact.",
+      "timestamp": "2026-04-22T02:25:55.264985"
+    },
+    {
+      "category": "Security",
+      "test": "C2. UPDATE blocked for anon",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Correctly blocked with status 401",
+      "timestamp": "2026-04-22T02:25:55.763769"
+    },
+    {
+      "category": "Security",
+      "test": "C3. DELETE blocked for anon",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Correctly blocked with status 401",
+      "timestamp": "2026-04-22T02:25:56.217621"
+    },
+    {
+      "category": "Security",
+      "test": "C4. Data access blocked for invalid anon key",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Correctly blocked with status 401",
+      "timestamp": "2026-04-22T02:25:56.668665"
+    },
+    {
+      "category": "Security",
+      "test": "C5. INSERT blocked for anon",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Correctly blocked with status 401",
+      "timestamp": "2026-04-22T02:25:57.090074"
+    },
+    {
+      "category": "Security",
+      "test": "C6. Service role access",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Service role can access data (expected behavior)",
+      "timestamp": "2026-04-22T02:25:57.684033"
+    },
+    {
+      "category": "Security",
+      "test": "C7. Edge Function blocks unauthenticated",
+      "status": "WARN",
+      "severity": "HIGH",
+      "details": "Edge Function allows unauthenticated access! Body: [{\"competition_id\":39}, \n {\"competition_id\":40}, \n {\"competition_id\":56}, \n {\"competition_id\":47}, \n {\"competition_id\":38}]",
+      "timestamp": "2026-04-22T02:25:58.424119"
+    },
+    {
+      "category": "Security",
+      "test": "C8. Password hash exposure",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "No user records to check",
+      "timestamp": "2026-04-22T02:25:58.945221"
+    },
+    {
+      "category": "Performance",
+      "test": "D1a. List all competitions (REST)",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.454s, P50: 0.419s, Max: 0.545s, Records: 135",
+      "timestamp": "2026-04-22T02:26:01.399994"
+    },
+    {
+      "category": "Performance",
+      "test": "D1b. Filter level=national",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.389s, Records: 74",
+      "timestamp": "2026-04-22T02:26:02.612476"
+    },
+    {
+      "category": "Performance",
+      "test": "D1b. Filter level=provincial",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.423s, Records: 26",
+      "timestamp": "2026-04-22T02:26:03.923763"
+    },
+    {
+      "category": "Performance",
+      "test": "D1b. Filter level=school",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.477s, Records: 21",
+      "timestamp": "2026-04-22T02:26:05.399720"
+    },
+    {
+      "category": "Performance",
+      "test": "D1c. Search by name (ilike '*design*')",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.511s, Records: 0",
+      "timestamp": "2026-04-22T02:26:06.936361"
+    },
+    {
+      "category": "Performance",
+      "test": "D2. Edge Function overhead",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "EF: 0.606s, REST: 0.477s, Overhead: 0.129s (27.1%)",
+      "timestamp": "2026-04-22T02:26:12.719804"
+    },
+    {
+      "category": "Performance",
+      "test": "D3. All columns, all records (REST)",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.621s, Avg payload: 153.5KB, Times: ['0.599', '0.663', '0.600']",
+      "timestamp": "2026-04-22T02:26:15.217965"
+    },
+    {
+      "category": "Performance",
+      "test": "D3b. All columns, all records (Edge Function)",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.769s, Avg payload: 153.5KB, Times: ['0.714', '0.871', '0.722']",
+      "timestamp": "2026-04-22T02:26:18.176830"
+    },
+    {
+      "category": "Performance",
+      "test": "D4. Health endpoint",
+      "status": "PASS",
+      "severity": "INFO",
+      "details": "Avg: 0.554s. Times: ['0.531', '0.539', '0.557', '0.577', '0.567']",
+      "timestamp": "2026-04-22T02:26:20.996093"
+    }
+  ]
+}

@@ -116,7 +116,7 @@ aiLoadHistoryFromDB().then(function(dbMessages){if(dbMessages&&dbMessages.length
 // MiniMax M2.7 SSE 流式请求（通过 Supabase Edge Function 代理，API 密钥不暴露在前端）
 async function sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode) {
   var controller = new AbortController();
-  var timeoutId = setTimeout(function(){ controller.abort(); }, 30000); // 30s timeout for streaming
+  var timeoutId = setTimeout(function(){ controller.abort(); }, 120000); // 120s timeout for deep thinking support
 
   try {
     var response = await fetch(HUB_URL + '/functions/v1/competition-api/api/ai-chat', {

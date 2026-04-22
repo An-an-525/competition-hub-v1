@@ -35,11 +35,7 @@ function getCurrentUser(){
 function setCurrentUser(u){if(u){localStorage.setItem('app_user',JSON.stringify(u))}else{localStorage.removeItem('app_user')}}
 function isLoggedIn(){return!!getCurrentUser()}
 function isAdmin(){var u=getCurrentUser();return u&&u.role==='admin'}
-function demoLogin(){
-  document.getElementById('authLoginStudentId').value='admin';
-  document.getElementById('authLoginPassword').value='admin123';
-  doLogin();
-}
+/* demoLogin removed for security */
 async function doLogin(){
   var sid=document.getElementById('authLoginStudentId').value.trim();
   var pwd=document.getElementById('authLoginPassword').value;
@@ -47,6 +43,9 @@ async function doLogin(){
   var btn=document.getElementById('authLoginBtn');
   errEl.classList.remove('show');
   if(!sid||!pwd){errEl.textContent='请输入学号和密码';errEl.classList.add('show');return}
+  // Input validation
+  if(!/^[a-zA-Z0-9]{6,20}$/.test(sid)){errEl.textContent='学号必须为6-20位字母或数字';errEl.classList.add('show');return}
+  if(pwd.length<6||pwd.length>20){errEl.textContent='密码必须为6-20个字符';errEl.classList.add('show');return}
   btn.disabled=true;btn.textContent='登录中...';
   try{
     var hash=await hashPassword(pwd);
