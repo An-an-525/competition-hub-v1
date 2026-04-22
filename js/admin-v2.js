@@ -1,5 +1,15 @@
 /* Admin Review System v2 */
 
+/* 搜索防抖 */
+var _adminSearchTimer = null;
+function debouncedAdminSearch() {
+  if (_adminSearchTimer) clearTimeout(_adminSearchTimer);
+  _adminSearchTimer = setTimeout(function() {
+    _adminSearchTimer = null;
+    loadAdminApplications();
+  }, 300);
+}
+
 /* 全局管理员权限范围 */
 var adminScope = {
   role: null,           // 'super_admin' | 'competition_admin' | 'college_admin'
@@ -123,7 +133,7 @@ function renderAdminApplicationsTab() {
   html += '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">';
   html += '<select id="adminFilterStatus" onchange="loadAdminApplications()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-primary);font-size:13px"><option value="">全部状态</option><option value="submitted">待审核</option><option value="under_review">审核中</option><option value="approved">已通过</option><option value="rejected">已驳回</option><option value="request_changes">需补充</option></select>';
   html += '<select id="adminFilterType" onchange="loadAdminApplications()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-primary);font-size:13px"><option value="">全部类型</option><option value="individual">个人</option><option value="team">团队</option></select>';
-  html += '<input type="text" id="adminSearchName" placeholder="搜索竞赛名..." oninput="loadAdminApplications()" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-primary);font-size:13px;min-width:150px">';
+  html += '<input type="text" id="adminSearchName" placeholder="搜索竞赛名..." oninput="debouncedAdminSearch()" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-primary);font-size:13px;min-width:150px">';
   html += '</div>';
 
   // 报名列表
@@ -187,16 +197,20 @@ async function loadAdminStats() {
   var counts = { total: 0, pending: 0, approved: 0, rejected: 0 };
   var statuses = ['submitted', 'under_review', 'approved', 'rejected', 'request_changes'];
 
-  for (var i = 0; i < statuses.length; i++) {
-    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?status=eq.' + statuses[i] + '&select=id', { headers: HUB_HEADERS });
-    if (res.ok) {
-      var data = await res.json();
-      counts.total += data.length;
-      if (statuses[i] === 'submitted' || statuses[i] === 'under_review') counts.pending += data.length;
-      if (statuses[i] === 'approved') counts.approved += data.length;
-      if (statuses[i] === 'rejected') counts.rejected += data.length;
-    }
-  }
+  // 并行请求所有状态计数
+  var promises = statuses.map(function(status) {
+    return fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?status=eq.' + status + '&select=id', { headers: HUB_HEADERS })
+      .then(function(res) { return res.ok ? res.json() : []; })
+      .then(function(data) { return { status: status, count: data.length }; })
+      .catch(function() { return { status: status, count: 0 }; });
+  });
+  var results = await Promise.all(promises);
+  results.forEach(function(r) {
+    counts.total += r.count;
+    if (r.status === 'submitted' || r.status === 'under_review') counts.pending += r.count;
+    if (r.status === 'approved') counts.approved += r.count;
+    if (r.status === 'rejected') counts.rejected += r.count;
+  });
 
   el.innerHTML = '<div class="card" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--text-primary)">' + counts.total + '</div><div style="font-size:12px;color:var(--text-muted)">总报名</div></div>' +
     '<div class="card" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:#FFC84A">' + counts.pending + '</div><div style="font-size:12px;color:var(--text-muted)">待审核</div></div>' +
@@ -620,7 +634,11 @@ async function saveEnterprise(enterpriseId) {
  * 删除企业
  */
 async function deleteEnterprise(enterpriseId) {
-  if (!confirm('确定要删除该企业吗？此操作不可撤销。')) return;
+  showConfirm('确定要删除该企业吗？此操作不可撤销。', async function() {
+    // proceed with deletion
+  }, function() {
+    return; // cancelled
+  });
 
   var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId, {
     method: 'DELETE',

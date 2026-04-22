@@ -307,9 +307,15 @@ function showCompModal(contentHtml){
   });
   // Focus the close button when modal opens
   setTimeout(function() { closeBtn.focus(); }, 100);
-  // ESC关闭
-  var escHandler=function(e){if(e.key==='Escape'){closeModal();document.removeEventListener('keydown',escHandler)}};
+  // ESC关闭 — 统一在 closeModal 中移除监听器
+  var escHandler=function(e){if(e.key==='Escape'){closeModal()}};
   document.addEventListener('keydown',escHandler);
+  // 修改 closeModal 以同时移除 ESC 监听器
+  var _origClose = closeModal;
+  closeModal = function() {
+    document.removeEventListener('keydown', escHandler);
+    _origClose();
+  };
 }
 function renderCompCalendar(container){
   var months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];

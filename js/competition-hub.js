@@ -413,13 +413,18 @@ async function showHubCompDetail(compId){
   }
   html+='<div style="margin-top:20px">';
   if(c.status==='open'){
-    if(!user){html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();navigate(\'auth\')">登录后报名</button>'}
-    else{html+='<button class="btn-primary" onclick="document.body.style.overflow=\'\';this.closest(\'div[style]\').parentElement.remove();startApplication('+c.id+')">立即报名</button>'}
+    if(!user){html+='<button class="btn-primary" onclick="closeHubDetailModal();navigate(\'auth\')">登录后报名</button>'}
+    else{html+='<button class="btn-primary" onclick="closeHubDetailModal();startApplication('+c.id+')">立即报名</button>'}
   }else{
     html+='<button class="btn-primary" disabled>当前不可报名</button>';
   }
   html+='</div></div>';
   showCompModal(html);
+}
+function closeHubDetailModal(){
+  var overlay=document.querySelector('div[style*="z-index:1000"]');
+  if(overlay){try{document.body.removeChild(overlay)}catch(e){}}
+  if(typeof _modalCount!=='undefined'&&_modalCount>0){_modalCount--;if(_modalCount<=0){_modalCount=0;document.body.style.overflow=_originalOverflow||'auto';}}
 }
 
 function refreshCompData(){

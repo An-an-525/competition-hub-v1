@@ -12,12 +12,15 @@ function navigate(page,tab){
   var stuckOverlays=document.querySelectorAll('div[style*="z-index:1000"]');
   stuckOverlays.forEach(function(o){try{document.body.removeChild(o)}catch(e){}});
   closeMobileMenu();
+  // 防止导航竞态：取消之前的过渡
+  if(navigation._transitionTimer){clearTimeout(navigation._transitionTimer);navigation._transitionTimer=null;}
   var activePage=document.querySelector('.page.active');
   if(activePage&&activePage.id!=='page-'+page){
     activePage.style.transition='opacity 0.25s ease';
     activePage.style.opacity='0';
     var pageRef=page,tabRef=tab;
-    setTimeout(function(){
+    navigation._transitionTimer=setTimeout(function(){
+      navigation._transitionTimer=null;
       activePage.classList.remove('active');
       activePage.style.opacity='';
       activePage.style.transition='';

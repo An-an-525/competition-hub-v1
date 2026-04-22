@@ -435,6 +435,7 @@ async function submitApplication(applicationId, compId) {
         return;
       }
     }
+    // 注意：_submitLock 在 confirm 回调中释放，不在外层 try/catch 中释放
     showConfirm('确认提交报名？提交后将无法修改。', async function() {
       try {
         var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId, {
@@ -471,6 +472,9 @@ async function submitApplication(applicationId, compId) {
         } else {
           showCopyToast('提交失败', 'error');
         }
+      } catch (submitErr) {
+        console.error('submitApplication error:', submitErr);
+        showCopyToast('提交失败: ' + submitErr.message, 'error');
       } finally {
         _submitLock = false;
       }
@@ -480,7 +484,7 @@ async function submitApplication(applicationId, compId) {
     });
   } catch (e) {
     _submitLock = false;
-    console.error('submitApplication error:', e);
+    console.error('submitApplication validation error:', e);
   }
 }
 
@@ -586,7 +590,7 @@ function getStatusColor(status) {
 // ==========================================
 
 async function renderMyApplications() {
-  var container = document.getElementById('myregistrationsContent') || document.getElementById('profileContent');
+  var container = document.getElementById('myRegsContent') || document.getElementById('myregistrationsContent') || document.getElementById('profileContent');
   if (!container) return;
   if (!isLoggedIn()) {
     container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)"><p>请先登录查看报名记录</p><button class="btn-primary" style="margin-top:16px" onclick="navigate(\'auth\')">去登录</button></div>';

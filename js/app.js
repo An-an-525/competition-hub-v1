@@ -34,7 +34,7 @@ var PAGE_META = {
 /* --- Hash-based SPA Routing --- */
 function handleHashRoute() {
   var hash = window.location.hash.replace('#/', '').replace('#', '');
-  var validPages = ['home','competition','ai','toolbox','profile','auth','myregistrations','admin'];
+  var validPages = ['home','competition','ai','toolbox','profile','auth','myregistrations','admin','learning','guide','academic','campus','admission','news'];
   if(!hash || validPages.indexOf(hash) === -1) hash = 'home';
   navigate(hash);
 }
@@ -75,6 +75,7 @@ navigate = function(page, tab) {
     if (descEl) descEl.setAttribute('content', meta.desc);
   }
   if (page === 'auth' || page === 'admin' || page === 'myregistrations') {
+    closeMobileMenu();
     document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); p.classList.remove('fading-out'); });
     document.querySelectorAll('.nav-link').forEach(function(l) { l.classList.remove('active'); });
     var target = document.getElementById('page-' + page);
@@ -104,7 +105,7 @@ renderProfile = function() {
     return;
   }
   var user = getCurrentUser();
-  var chatCount = getLS('ai_messages', []).length;
+  var chatCount = getLS('ai_messages_' + user.id, []).length;
   var html = '<div style="max-width:600px;margin:0 auto">';
   html += '<div class="profile-header"><div class="profile-avatar">' + esc(user.name.charAt(0)) + '</div><div class="profile-name">' + esc(user.name) + '</div><div class="profile-meta">' + esc(user.studentId) + ' | ' + esc(user.college) + (user.role === 'admin' ? ' | 管理员' : '') + '</div></div>';
   html += '<div class="settings-group"><div class="settings-item" onclick="navigate(\'myregistrations\')"><div class="si-icon" style="background:var(--surface-gold-subtle);color:var(--accent)">' + svgIcon('clipboard', 18) + '</div><div class="si-label">我的报名</div><div class="si-arrow">&#8250;</div></div>';
@@ -140,8 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('storage', function(e) {
   if (e.key === 'app_user') {
     if (!e.newValue) {
-      // User logged out in another tab
-      window.location.reload();
+      // User logged out in another tab — show notification instead of force reload
+      showCopyToast('已在其他标签页退出登录', 'warning');
+      setTimeout(function() { window.location.reload(); }, 1500);
     } else {
       // User changed in another tab
       updateNavAuth();

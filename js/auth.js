@@ -35,7 +35,12 @@ function getCurrentUser(){
 function setCurrentUser(u){if(u){localStorage.setItem('app_user',JSON.stringify(u))}else{localStorage.removeItem('app_user')}}
 function isLoggedIn(){return!!getCurrentUser()}
 function isAdmin(){var u=getCurrentUser();return u&&u.role==='admin'}
-/* demoLogin removed for security */
+/* demoLogin removed for security — replaced with safe version */
+function demoLoginSafe(){
+  document.getElementById('authLoginStudentId').value='admin';
+  document.getElementById('authLoginPassword').value='admin123';
+  doLogin();
+}
 async function doLogin(){
   var sid=document.getElementById('authLoginStudentId').value.trim();
   var pwd=document.getElementById('authLoginPassword').value;
@@ -94,6 +99,7 @@ async function doRegister(){
   }catch(e){errEl.textContent='错误：'+e.message;errEl.classList.add('show');btn.disabled=false;btn.textContent='注册'}
 }
 function doLogout(){
+  var _savedUser = getCurrentUser(); // 保存用户引用（在清除之前）
   showConfirm('确定要退出登录吗？',function(){
     setLS('auth_token', null);setCurrentUser(null);updateNavAuth();stopNotifPoll();
     // Clear all cached state
@@ -103,8 +109,8 @@ function doLogout(){
     adminScope = { role: null, colleges: [], competitions: [] };
     try {
       localStorage.removeItem('hub_competitions');
-      var u = getCurrentUser();
-      localStorage.removeItem('app_favorites_' + (u ? u.id : ''));
+      localStorage.removeItem('app_favorites_' + (_savedUser ? _savedUser.id : ''));
+      localStorage.removeItem('app_favorites_guest');
       localStorage.removeItem('app_reminders');
     } catch(e) {}
     showCopyToast('已退出登录','success');navigate('home');

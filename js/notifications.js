@@ -45,7 +45,7 @@ async function markAllNotifsRead(){
     loadNotifications();showCopyToast('已全部标为已读','success');
   }catch(e){}
 }
-function startNotifPoll(){stopNotifPoll();if(!isLoggedIn())return;_notifPollTimer=setInterval(function(){loadNotifications()},30000)}
+function startNotifPoll(){stopNotifPoll();if(!isLoggedIn())return;_notifPollTimer=setInterval(function(){if(!document.hidden)loadNotifications()},30000)}
 function stopNotifPoll(){if(_notifPollTimer){clearInterval(_notifPollTimer);_notifPollTimer=null}}
 function formatTimeAgo(dateStr){
   if(!dateStr)return'';var d=new Date(dateStr);var now=new Date();var diff=Math.floor((now-d)/1000);
