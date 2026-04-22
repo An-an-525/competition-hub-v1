@@ -135,3 +135,16 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Handle initial hash route on page load */
   handleHashRoute();
 });
+
+// Cross-tab state synchronization
+window.addEventListener('storage', function(e) {
+  if (e.key === 'app_user') {
+    if (!e.newValue) {
+      // User logged out in another tab
+      window.location.reload();
+    } else {
+      // User changed in another tab
+      updateNavAuth();
+    }
+  }
+});

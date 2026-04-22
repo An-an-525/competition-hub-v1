@@ -96,6 +96,17 @@ async function doRegister(){
 function doLogout(){
   showConfirm('确定要退出登录吗？',function(){
     setLS('auth_token', null);setCurrentUser(null);updateNavAuth();stopNotifPoll();
+    // Clear all cached state
+    _cachedCompetitions = null;
+    _cachedRegCounts = {};
+    _aiConvId = null;
+    adminScope = { role: null, colleges: [], competitions: [] };
+    try {
+      localStorage.removeItem('hub_competitions');
+      var u = getCurrentUser();
+      localStorage.removeItem('app_favorites_' + (u ? u.id : ''));
+      localStorage.removeItem('app_reminders');
+    } catch(e) {}
     showCopyToast('已退出登录','success');navigate('home');
   });
 }

@@ -1,6 +1,9 @@
 /* Extracted from app.js */
 
 function navigate(page,tab){
+  // Clear any running timers
+  if (window._cdInterval) { clearInterval(window._cdInterval); window._cdInterval = null; }
+  if (window.app && window.app.pomodoroTimer) { clearInterval(window.app.pomodoroTimer); window.app.pomodoroTimer = null; }
   // 修复：导航时确保滚动不被锁定
   document.body.style.overflow='';
   // Reset modal counter on navigation
@@ -56,8 +59,8 @@ function handlePageInit(page,tab){
   if(page==='learning'){if(typeof renderLearningResources==='function')renderLearningResources()}
   if(page==='guide'){renderGuidePage()}
 }
-function toggleNavGroup(btn){var dropdown=btn.nextElementSibling;var isOpen=dropdown.classList.contains('show');closeAllNavGroups();if(!isOpen)dropdown.classList.add('show');btn.classList.toggle('active',!isOpen)}
-function closeAllNavGroups(){document.querySelectorAll('.nav-dropdown').forEach(function(d){d.classList.remove('show')});document.querySelectorAll('.nav-group-trigger,.nav-dropdown-trigger').forEach(function(t){t.classList.remove('active')})}
+function toggleNavGroup(btn){var dropdown=btn.nextElementSibling;var isOpen=dropdown.classList.contains('show');closeAllNavGroups();if(!isOpen){dropdown.classList.add('show');btn.setAttribute('aria-expanded','true')}else{btn.setAttribute('aria-expanded','false')}btn.classList.toggle('active',!isOpen)}
+function closeAllNavGroups(){document.querySelectorAll('.nav-dropdown').forEach(function(d){d.classList.remove('show')});document.querySelectorAll('.nav-group-trigger,.nav-dropdown-trigger').forEach(function(t){t.classList.remove('active');t.setAttribute('aria-expanded','false')})}
 function toggleMobileMenu(){document.body.style.overflow='hidden';document.getElementById('mobileMenu').classList.toggle('open');document.getElementById('hamburgerBtn').classList.toggle('open')}
 function closeMobileMenu(){document.body.style.overflow='';document.getElementById('mobileMenu').classList.remove('open');document.getElementById('hamburgerBtn').classList.remove('open')}
 document.addEventListener('click',function(e){if(!e.target.closest('.nav-group'))closeAllNavGroups()});

@@ -407,7 +407,7 @@ async function showHubCompDetail(compId){
   if(sourceLinks.length>0){
     html+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-subtle)"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">\u{1F310} 官方链接</h4>';
     sourceLinks.forEach(function(link){
-      html+='<div style="margin-bottom:6px"><a href="'+esc(link.url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(link.title)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
+      html+='<div style="margin-bottom:6px"><a href="'+safeUrl(link.url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(link.title)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
     });
     html+='</div>';
   }

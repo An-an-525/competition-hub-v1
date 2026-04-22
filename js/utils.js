@@ -55,6 +55,18 @@ function svgIcon(name, size) {
 function getLS(k,d){try{var v=localStorage.getItem('app_'+k);return v?JSON.parse(v):d}catch(e){return d}}
 function setLS(k,v){try{localStorage.setItem('app_'+k,JSON.stringify(v))}catch(e){showCopyToast('存储空间不足','error')}}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function safeUrl(url) {
+  if (!url) return '#';
+  var s = String(url).trim();
+  // Only allow http, https, mailto protocols
+  if (/^(https?:|mailto:)/i.test(s)) return s;
+  // Block javascript:, data:, vbscript: etc
+  if (/^(javascript:|data:|vbscript:|file:)/i.test(s)) return '#';
+  // Relative URLs are OK
+  if (s.startsWith('/') || s.startsWith('./') || s.startsWith('../')) return s;
+  // Default to https for unknown protocols
+  return 'https://' + s;
+}
 function showCopyToast(msg,type){var toast=document.getElementById('copyToast');if(!toast)return;toast.textContent=msg;toast.style.borderLeft='3px solid '+(type==='success'?'#10B981':type==='error'?'#EF4444':type==='warning'?'#f59e0b':type==='info'?'#3b82f6':'var(--gold)');toast.classList.remove('active');void toast.offsetWidth;toast.classList.add('active');clearTimeout(toast._timer);toast._timer=setTimeout(function(){toast.classList.remove('active')},3000)}
 function showConfirm(msg,onConfirm,onCancel){var overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';var box=document.createElement('div');box.style.cssText='background:var(--bg-card,#FFFFFF);border:1px solid var(--border-subtle,rgba(0,0,0,0.1));border-radius:16px;padding:28px;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.12)';box.innerHTML='<div style="font-size:15px;color:var(--text-primary,#1A1A1A);margin-bottom:24px;line-height:1.6" id="cfm-msg"></div><div style="display:flex;gap:12px;justify-content:center"><button id="cfm-cancel" style="padding:10px 24px;border-radius:10px;border:1px solid var(--border-subtle,rgba(0,0,0,0.1));background:transparent;color:var(--text-secondary,#6B7280);cursor:pointer;font-size:14px">取消</button><button id="cfm-ok" style="padding:10px 24px;border-radius:10px;border:none;background:var(--accent,#d97706);color:#fff;cursor:pointer;font-size:14px;font-weight:600">确定</button></div>';box.querySelector('#cfm-msg').textContent=msg;overlay.appendChild(box);document.body.appendChild(overlay);document.body.style.overflow='hidden';var okBtn=box.querySelector('#cfm-ok');okBtn.setAttribute('autofocus','');overlay.addEventListener('keydown',function(e){if(e.key==='Escape'){document.body.removeChild(overlay);document.body.style.overflow='';if(onCancel)onCancel()}if(e.key==='Enter'&&document.activeElement===okBtn){document.body.removeChild(overlay);document.body.style.overflow='';if(onConfirm)onConfirm()}});okBtn.onclick=function(){document.body.removeChild(overlay);document.body.style.overflow='';if(onConfirm)onConfirm()};box.querySelector('#cfm-cancel').onclick=function(){document.body.removeChild(overlay);document.body.style.overflow='';if(onCancel)onCancel()};overlay.onclick=function(e){if(e.target===overlay){document.body.removeChild(overlay);document.body.style.overflow='';if(onCancel)onCancel()}}}
 /* 触觉反馈：关键操作振动 */

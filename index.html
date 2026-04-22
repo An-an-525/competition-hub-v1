@@ -34,6 +34,12 @@
   <link rel="stylesheet" href="css/style.css?v=20260419" />
 </head>
 <body>
+  <noscript>
+    <div style="padding:40px;text-align:center;font-family:system-ui">
+      <h1>JavaScript Required</h1>
+      <p>本网站需要启用JavaScript才能正常运行。请在浏览器设置中启用JavaScript后刷新页面。</p>
+    </div>
+  </noscript>
   <!-- Scroll Progress Bar -->
   <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -60,7 +66,7 @@
       <button class="nav-link" data-page="competition" onclick="navigate('competition')">竞赛</button>
       <button class="nav-link" data-page="toolbox" onclick="navigate('toolbox')">工具箱</button>
       <div class="nav-group">
-        <button class="nav-link nav-dropdown-trigger" onclick="toggleNavGroup(this)">更多 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style="margin-left:4px;vertical-align:middle"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="nav-link nav-dropdown-trigger" onclick="toggleNavGroup(this)" aria-expanded="false" aria-haspopup="true">更多 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style="margin-left:4px;vertical-align:middle" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="nav-dropdown">
           <button class="nav-link" data-page="academic" onclick="navigate('academic');closeAllNavGroups()">学业助手</button>
           <button class="nav-link" data-page="campus" onclick="navigate('campus');closeAllNavGroups()">校园生活</button>
@@ -76,7 +82,7 @@
       <div id="navAuthArea" style="display:flex;align-items:center;gap:8px"></div>
       <div style="position:relative" id="notifBellWrap">
         <button class="notif-bell" id="notifBellBtn" onclick="toggleNotifDropdown()" aria-label="通知" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-badge" id="notifBadge" style="display:none">0</span>
         </button>
         <div class="notif-dropdown" id="notifDropdown">
@@ -85,11 +91,11 @@
         </div>
       </div>
       <button class="theme-toggle-btn" onclick="event.stopPropagation();toggleTheme()" id="themeToggleBtn" aria-label="切换主题">
-        <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
       <button class="nav-search-btn" onclick="openGlobalSearch()" aria-label="搜索">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
       <button class="hamburger" id="hamburgerBtn" onclick="event.stopPropagation();toggleMobileMenu()" aria-label="菜单"><span></span><span></span><span></span></button>
     </div>
@@ -144,7 +150,7 @@
   <!-- Mobile Back Navigation -->
   <div class="back-nav" id="backNav">
     <button class="back-nav-arrow" onclick="navigate('home')" aria-label="返回">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <div class="back-nav-title" id="backNavTitle"></div>
     <div class="back-nav-spacer"></div>
@@ -167,11 +173,11 @@
       </div>
       <div class="home-search">
         <div class="search-icon" onclick="var v=document.getElementById('homeSearchInput').value.trim();openGlobalSearch(v)" style="cursor:pointer">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <input type="text" id="homeSearchInput" placeholder="搜索竞赛、专业、校园..." onkeydown="if(event.key==='Enter'){var v=this.value.trim();if(v){navigate('ai');setTimeout(function(){document.getElementById('aiChatInput').value=v;sendAIChat()},100);this.value=''}else{showCopyToast('请输入搜索内容','warning')}}" />
         <button class="search-btn" onclick="var inp=document.getElementById('homeSearchInput');var v=inp.value.trim();if(v){navigate('ai');setTimeout(function(){document.getElementById('aiChatInput').value=v;sendAIChat()},100);inp.value=''}else{showCopyToast('请输入搜索内容','warning')}" aria-label="AI 提问">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
         <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-muted)">
           AI 智能问答 — 输入竞赛名、专业、DDL 等问题，AI 帮你解答 &nbsp;|&nbsp; 按 Ctrl+K 全局搜索
@@ -221,7 +227,7 @@
       <div class="home-missions">
         <div class="mission-card" onclick="navigate('competition')">
           <div class="mission-icon" style="background:rgba(251,191,36,0.1);color:#fbbf24">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
           </div>
           <div class="mission-text">
             <h3>找竞赛</h3>
@@ -231,7 +237,7 @@
         </div>
         <div class="mission-card" onclick="navigate('competition','calendar')">
           <div class="mission-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </div>
           <div class="mission-text">
             <h3>报竞赛</h3>
@@ -241,7 +247,7 @@
         </div>
         <div class="mission-card" onclick="navigate('toolbox')">
           <div class="mission-icon" style="background:rgba(139,92,246,0.1);color:#8b5cf6">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
           </div>
           <div class="mission-text">
             <h3>提效率</h3>
@@ -254,7 +260,7 @@
       <div class="home-missions" style="margin-top:8px">
         <div class="mission-card" onclick="navigate('guide')">
           <div class="mission-icon" style="background:rgba(46,204,113,0.1);color:#2ecc71">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           </div>
           <div class="mission-text">
             <h3>校赛流程</h3>
@@ -264,7 +270,7 @@
         </div>
         <div class="mission-card" onclick="navigate('guide')">
           <div class="mission-icon" style="background:rgba(155,89,182,0.1);color:#9b59b6">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </div>
           <div class="mission-text">
             <h3>报名流程</h3>
@@ -274,7 +280,7 @@
         </div>
         <div class="mission-card" onclick="navigate('competition','all')">
           <div class="mission-icon" style="background:rgba(251,191,36,0.1);color:#fbbf24">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
           <div class="mission-text">
             <h3>查看校赛</h3>
@@ -284,7 +290,7 @@
         </div>
         <div class="mission-card" onclick="navigate('learning')">
           <div class="mission-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
           <div class="mission-text">
             <h3>学习资源</h3>
@@ -321,7 +327,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:4px">
           <div style="display:flex;align-items:center;gap:8px">
             <button id="deepModeToggle" class="deep-mode-toggle" onclick="toggleDeepMode()" aria-label="切换深度思考模式">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             </button>
             <span id="deepModeLabel" style="font-size:12px;color:var(--text-muted)">深度思考</span>
           </div>
@@ -331,7 +337,7 @@
           <div class="ai-input-wrap">
             <textarea id="aiChatInput" placeholder="输入你想了解的问题..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIChat()}"></textarea>
             <button onclick="sendAIChat()" id="aiSendBtn" class="ai-send-btn" aria-label="发送">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
           </div>
           <div style="text-align:center;margin-top:8px">
@@ -429,11 +435,11 @@
       <div class="content-page">
         <h2 class="content-page-title"><span class="gold">工具箱</span></h2>
         <div class="toolbox-grid">
-          <div class="toolbox-card" onclick="switchToolboxTab('gpa')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div><div class="toolbox-card-title">GPA计算器</div><div class="toolbox-card-desc">计算你的绩点</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('credits')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div><div class="toolbox-card-title">学分统计</div><div class="toolbox-card-desc">统计已修学分</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('countdown')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toolbox-card-title">倒计时</div><div class="toolbox-card-desc">考试/放假/开学</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('schedule')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="toolbox-card-title">课程表</div><div class="toolbox-card-desc">简易课程安排</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('pomodoro')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3L2 6"/><path d="M22 6l-3-3"/><line x1="6" y1="19" x2="6.01" y2="19"/><line x1="18" y1="19" x2="18.01" y2="19"/></svg></div><div class="toolbox-card-title">番茄钟</div><div class="toolbox-card-desc">专注学习计时</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('gpa')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div><div class="toolbox-card-title">GPA计算器</div><div class="toolbox-card-desc">计算你的绩点</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('credits')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div><div class="toolbox-card-title">学分统计</div><div class="toolbox-card-desc">统计已修学分</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('countdown')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toolbox-card-title">倒计时</div><div class="toolbox-card-desc">考试/放假/开学</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('schedule')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="toolbox-card-title">课程表</div><div class="toolbox-card-desc">简易课程安排</div></div>
+          <div class="toolbox-card" onclick="switchToolboxTab('pomodoro')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3L2 6"/><path d="M22 6l-3-3"/><line x1="6" y1="19" x2="6.01" y2="19"/><line x1="18" y1="19" x2="18.01" y2="19"/></svg></div><div class="toolbox-card-title">番茄钟</div><div class="toolbox-card-desc">专注学习计时</div></div>
         </div>
         <div id="toolboxContent"></div>
       </div>
@@ -455,8 +461,8 @@
             <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
           </div>
           <div id="authLoginForm" class="auth-form active">
-            <div class="auth-field"><label for="authLoginStudentId">学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
-            <div class="auth-field pwd-field"><label for="authLoginPassword">密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="auth-field"><label for="authLoginStudentId">学号 *</label><input type="text" id="authLoginStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" aria-label="学号" /></div>
+            <div class="auth-field pwd-field"><label for="authLoginPassword">密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" aria-label="密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-error" id="authLoginError"></div>
             <button class="btn-primary auth-submit" onclick="doLogin()" id="authLoginBtn">登录</button>
             <div style="margin-top:12px;text-align:center">
@@ -465,11 +471,11 @@
             </div>
           </div>
           <div id="authRegisterForm" class="auth-form">
-            <div class="auth-field"><label for="authRegStudentId">学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" /></div>
-            <div class="auth-field"><label for="authRegName">姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" /></div>
-            <div class="auth-field"><label for="authRegCollege">学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" /></div>
-            <div class="auth-field pwd-field"><label for="authRegPassword">密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
-            <div class="auth-field pwd-field"><label for="authRegPassword2">确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword2',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="auth-field"><label for="authRegStudentId">学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" aria-label="学号" /></div>
+            <div class="auth-field"><label for="authRegName">姓名 *</label><input type="text" id="authRegName" placeholder="请输入真实姓名" aria-label="姓名" /></div>
+            <div class="auth-field"><label for="authRegCollege">学院 *</label><input type="text" id="authRegCollege" placeholder="请输入所在学院" aria-label="学院" /></div>
+            <div class="auth-field pwd-field"><label for="authRegPassword">密码 *</label><input type="password" id="authRegPassword" placeholder="至少6位密码" oninput="checkPasswordStrength(this.value)" aria-label="密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="password-strength" id="pwdStrength"><div class="password-strength-bar" id="pwdBar1"></div><div class="password-strength-bar" id="pwdBar2"></div><div class="password-strength-bar" id="pwdBar3"></div><div class="password-strength-bar" id="pwdBar4"></div></div><div class="password-strength-text" id="pwdStrengthText"></div></div>
+            <div class="auth-field pwd-field"><label for="authRegPassword2">确认密码 *</label><input type="password" id="authRegPassword2" placeholder="再次输入密码" aria-label="确认密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authRegPassword2',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-agreement"><input type="checkbox" id="authAgree" /><span>我已阅读并同意 <a onclick="showLegalModal('terms')">用户协议</a> 和 <a onclick="showLegalModal('privacy')">隐私政策</a></span></div>
             <div class="auth-error" id="authRegError"></div>
             <button class="btn-primary auth-submit" onclick="doRegister()" id="authRegBtn">注册</button>
@@ -488,26 +494,26 @@
   <!-- Mobile Bottom Tab Bar -->
   <div class="bottom-tab-bar" id="bottomTabBar">
     <button class="bottom-tab-item active" data-tab="home" onclick="navigate('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>首页</span>
     </button>
     <button class="bottom-tab-item" data-tab="competition" onclick="navigate('competition')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
       <span>竞赛</span>
     </button>
     <button class="bottom-tab-item" data-tab="toolbox" onclick="navigate('toolbox')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
       <span>工具</span>
     </button>
     <button class="bottom-tab-item" data-tab="profile" onclick="navigate('profile')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>我的</span>
     </button>
   </div>
 
   <!-- Back to Top -->
   <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
   </button>
 
   <!-- Toast -->
@@ -517,7 +523,7 @@
   <div class="contact-modal-overlay" id="contactModal" onclick="if(event.target===this)hideContactModal()">
     <div class="contact-modal">
       <button class="modal-close" onclick="hideContactModal()" aria-label="关闭">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <h3>联系方式</h3>
       <p class="contact-subtitle">招生咨询</p>
@@ -532,7 +538,7 @@
   <div class="legal-modal-overlay" id="legalModal" onclick="if(event.target===this)hideLegalModal()">
     <div class="legal-modal">
       <button class="modal-close" onclick="hideLegalModal()" aria-label="关闭">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <h3>法律条款</h3>
       <div class="legal-tabs">
@@ -560,7 +566,7 @@
   <div class="search-modal-overlay" id="globalSearchModal" role="dialog" aria-modal="true" aria-label="全局搜索" onclick="if(event.target===this)closeGlobalSearch()">
     <div class="search-modal">
       <div class="search-modal-input-wrap">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="search-modal-input" id="globalSearchInput" placeholder="搜索专业、FAQ、链接、社团..." oninput="doGlobalSearch(this.value)" onkeydown="if(event.key==='Escape')closeGlobalSearch()" />
         <kbd style="font-size:11px;color:var(--text-muted);background:var(--bg-secondary);padding:2px 6px;border-radius:4px;border:1px solid var(--border-subtle)">ESC</kbd>
       </div>

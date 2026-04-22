@@ -75,7 +75,7 @@ function renderCompAll(container){
     }
     if(c.csust_status)html+='<div class="info-row"><div class="info-label">长理参赛</div><div class="info-value" style="color:var(--accent)">'+esc(c.csust_status)+'</div></div>';
     html+='<div style="margin-top:10px"><button class="btn-secondary btn-sm" onclick="showCompDetail('+idx+')">查看详情</button>';
-    if(c.official_website)html+=' <a href="'+esc(c.official_website)+'" target="_blank" class="btn-secondary btn-sm" style="text-decoration:none;margin-left:6px">官网</a>';
+    if(c.official_website)html+=' <a href="'+safeUrl(c.official_website)+'" target="_blank" class="btn-secondary btn-sm" style="text-decoration:none;margin-left:6px">官网</a>';
     html+='</div></div>';
   });
   html+='</div>';
@@ -159,7 +159,7 @@ function showCompDetail(idx){
   var c=CSUST_DATA.competitions[idx];
   if(!c)return;
   var html='<div style="max-height:70vh;overflow-y:auto;padding-right:8px">';
-  html+='<h3 style="font-size:18px;color:var(--text-primary);margin-bottom:12px">'+esc(c.name)+'</h3>';
+  html+='<h3 id="modal-title" style="font-size:18px;color:var(--text-primary);margin-bottom:12px">'+esc(c.name)+'</h3>';
   html+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px">';
   html+=getCompCategoryColor(c.category);
   if(c.ministry_recognized)html+='<span class="tag-pill" style="background:rgba(217,119,6,0.12);color:var(--accent)">教育部认可</span>';
@@ -171,7 +171,7 @@ function showCompDetail(idx){
   html+='<div class="info-row"><div class="info-label">奖项设置</div><div class="info-value" style="max-width:70%">'+esc(c.awards)+'</div></div>';
   if(c.csust_status)html+='<div class="info-row"><div class="info-label">长理参赛</div><div class="info-value" style="color:var(--accent);max-width:70%">'+esc(c.csust_status)+'</div></div>';
   html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
-  if(c.official_website)html+='<div style="margin-top:12px"><a href="'+esc(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
+  if(c.official_website)html+='<div style="margin-top:12px"><a href="'+safeUrl(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
   // 信息来源链接
   if(c.source_url){
     html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(52,152,219,0.06);border:1px solid rgba(52,152,219,0.15)">';
@@ -225,7 +225,7 @@ function showCompDetail(idx){
     html += hasDeadline ? '立即报名（截止：' + esc(regDeadline) + '）' : '立即报名';
     html += '</button>';
     if (c.official_website) {
-      html += '<p style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">也可前往 <a href="' + esc(c.official_website) + '" target="_blank" style="color:var(--accent)">官方网站</a> 报名</p>';
+      html += '<p style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">也可前往 <a href="' + safeUrl(c.official_website) + '" target="_blank" style="color:var(--accent)">官方网站</a> 报名</p>';
     }
     html += '</div>';
   html+='</div>';
@@ -276,15 +276,37 @@ function showCompModal(contentHtml){
   function closeModal(){try{document.body.removeChild(overlay)}catch(e){}_modalCount--;if(_modalCount<=0){_modalCount=0;document.body.style.overflow=_originalOverflow||'auto';}}
   overlay.onclick=function(e){if(e.target===overlay)closeModal()};
   var modal=document.createElement('div');
+  // Add ARIA attributes for accessibility
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'modal-title');
   modal.style.cssText='background:var(--bg-card,#FFFFFF);border:1px solid var(--border-subtle,rgba(0,0,0,0.1));border-radius:20px;padding:28px;max-width:560px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.12);position:relative;max-height:85vh;overflow-y:auto';
   var closeBtn=document.createElement('button');
   closeBtn.style.cssText='position:absolute;top:16px;right:16px;background:none;border:1px solid var(--border-subtle,rgba(0,0,0,0.1));color:var(--text-muted,#6B7280);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center';
   closeBtn.innerHTML=svgIcon('x',18);
+  closeBtn.setAttribute('aria-label', '关闭');
   closeBtn.onclick=closeModal;
   modal.innerHTML=contentHtml;
   modal.insertBefore(closeBtn,modal.firstChild);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
+  // Focus trap for accessibility
+  var focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  var firstFocusable = focusableElements[0];
+  var lastFocusable = focusableElements[focusableElements.length - 1];
+  modal.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      if (e.shiftKey && document.activeElement === firstFocusable) {
+        e.preventDefault();
+        lastFocusable.focus();
+      } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+        e.preventDefault();
+        firstFocusable.focus();
+      }
+    }
+  });
+  // Focus the close button when modal opens
+  setTimeout(function() { closeBtn.focus(); }, 100);
   // ESC关闭
   var escHandler=function(e){if(e.key==='Escape'){closeModal();document.removeEventListener('keydown',escHandler)}};
   document.addEventListener('keydown',escHandler);
@@ -386,7 +408,7 @@ function renderCompSecurity(container){
       html+='<strong>强网杯参赛指南：</strong><br/>1. 通过qiangwangbei.com在线报名<br/>2. 采用CTF赛制<br/>3. 涵盖Web安全、逆向工程、密码学、Pwn、移动安全等<br/>4. 国家网信办指导的权威赛事<br/>5. 建议有一定CTF基础后再参加<br/>6. 可通过各高校CTF训练平台练习';
     }
     html+='</p></div>';
-    if(c.official_website)html+='<div style="margin-top:12px"><a href="'+esc(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
+    if(c.official_website)html+='<div style="margin-top:12px"><a href="'+safeUrl(c.official_website)+'" target="_blank" class="btn-primary btn-sm" style="text-decoration:none;display:inline-block">访问官方网站</a></div>';
   // 信息来源链接
   if(c.source_url){
     html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(52,152,219,0.06);border:1px solid rgba(52,152,219,0.15)">';

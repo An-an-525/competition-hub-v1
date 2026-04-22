@@ -495,8 +495,25 @@ async function handleFileUpload(applicationId, requirementKey, input, allowMulti
     var user = getCurrentUser();
     if (!input.files || input.files.length === 0) return;
 
+    // File validation constants
+    var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    var ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
     for (var i = 0; i < input.files.length; i++) {
       var file = input.files[i];
+      
+      // Check file type
+      if (ALLOWED_TYPES.indexOf(file.type) === -1) {
+        showCopyToast('不支持的文件类型，仅支持图片、PDF、Word文档');
+        continue;
+      }
+
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        showCopyToast('文件大小不能超过10MB');
+        continue;
+      }
+
       // 模拟上传（实际应使用 Supabase Storage）
       // 这里将文件信息存入数据库，file_path 存储文件名
       var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files', {
