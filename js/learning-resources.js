@@ -142,7 +142,8 @@ function _buildResourceCard(r) {
   var coverHtml;
   if (r.cover_image) {
     coverHtml = '<div style="width:100%;height:140px;overflow:hidden;border-radius:12px 12px 0 0">' +
-      '<img src="' + esc(r.cover_image) + '" alt="' + esc(r.title) + '" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.parentElement.innerHTML=\'<div style=\\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:' + typeInfo.color.replace(/'/g, "\\'") + '\\'>' + svgIcon(typeInfo.icon, 32) + '</div>\'"/>' +
+      '<img src="' + esc(r.cover_image) + '" alt="' + esc(r.title) + '" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"/>' +
+      '<div style="width:100%;height:100%;display:none;align-items:center;justify-content:center;background:' + typeInfo.color + ';border-radius:12px 12px 0 0">' + svgIcon(typeInfo.icon, 32) + '</div>' +
       '</div>';
   } else {
     coverHtml = '<div style="width:100%;height:100px;display:flex;align-items:center;justify-content:center;background:' + typeInfo.color + ';border-radius:12px 12px 0 0">' +

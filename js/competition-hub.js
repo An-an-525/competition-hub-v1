@@ -179,7 +179,7 @@ async function renderCompHub(container){
   var categories=['全部'];comps.forEach(function(c){if(categories.indexOf(c.category)<0)categories.push(c.category)});
   var statuses=['全部','open','upcoming','closed','ended'];
   var statusLabels={'全部':'全部','open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
-  var html+='<div style="margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="_hubPage=1;applyHubFilters()" style=\'flex:1\'/><button class="btn-secondary btn-sm" onclick="refreshCompData()" title="刷新数据" style="flex-shrink:0;padding:8px 14px">&#x21bb; 刷新</button></div>';
+  var html='<div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="_hubPage=1;applyHubFilters()" style="flex:1"/><button class="btn-secondary btn-sm" onclick="refreshCompData()" title="刷新数据" style="flex-shrink:0;padding:8px 14px">&#x21bb; 刷新</button></div>';
   html+='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">分类</div><div class="club-filter-bar" id="hubCatFilter">';
   categories.forEach(function(c,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'cat\',\''+esc(c)+'\')">'+esc(c)+'</button>'});
   html+='</div></div><div style="margin-bottom:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">状态</div><div class="club-filter-bar" id="hubStatusFilter">';
