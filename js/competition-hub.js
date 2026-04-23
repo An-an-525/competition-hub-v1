@@ -46,6 +46,14 @@ async function _fetchCompetitionsFromServer(){
     var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=*&order=created_at.desc',{headers:HUB_GET_HEADERS});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
+    // Filter to CSUST competitions only
+    if(data && data.length > 0){
+      data = data.filter(function(c) {
+        var src = (c.source_url || '') + (c.official_url || '');
+        var text = (c.name || '') + (c.description || '');
+        return src.indexOf('csust.edu.cn') !== -1 || text.indexOf('长沙理工') !== -1;
+      });
+    }
     if(data&&data.length>0){
       _cachedCompetitions=data;
       _cacheTimestamp=Date.now();
@@ -125,14 +133,23 @@ async function renderFeaturedCompetitions(){
     var html='';
     featured.forEach(function(c){
       var levelClass=getLevelClass(c.level);
-      var levelLabel=c.level||'校级';
+      var levelLabel=getLevelDisplay(c.level)||c.level||'校级';
+      var regEnd=c.registration_end||c.reg_end||'';
+      var descShort=(c.description||'').substring(0,50);
+      if((c.description||'').length>50)descShort+='...';
+      var sourceUrl=c.source_url||c.official_url||'';
       html+='<div class="featured-comp-card" onclick="navigate(\'competition\')">';
       html+='<div class="featured-comp-header '+levelClass+'">';
       html+='<div class="featured-comp-name">'+esc(c.name)+'</div>';
       html+='</div>';
       html+='<div class="featured-comp-body">';
-      html+='<div class="featured-comp-level">'+esc(levelLabel)+'</div>';
-      if(c.organizer)html+='<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">'+esc(c.organizer)+'</div>';
+      html+='<div style="display:flex;gap:4px;align-items:center;margin-bottom:6px;flex-wrap:wrap">';
+      html+='<span class="tag-pill" style="font-size:11px">'+esc(levelLabel)+'</span>';
+      html+=getStatusBadge(c.status);
+      html+='</div>';
+      if(regEnd)html+='<div style="font-size:12px;color:#e74c3c;margin-bottom:4px">截止：'+esc(formatDate(regEnd))+'</div>';
+      if(descShort)html+='<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(descShort)+'</div>';
+      if(sourceUrl&&sourceUrl.indexOf('csust.edu.cn')!==-1)html+='<div style="font-size:11px;color:var(--accent);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> csust.edu.cn</div>';
       html+='<button class="featured-comp-btn" onclick="event.stopPropagation();showHubCompDetail('+c.competition_id+')">查看详情 &#8250;</button>';
       html+='</div></div>';
     });
@@ -190,12 +207,18 @@ async function renderCompHub(container){
   var categories=['全部'];comps.forEach(function(c){if(c.category&&categories.indexOf(c.category)<0)categories.push(c.category)});
   var statuses=['全部','open','upcoming','closed','ended'];
   var statusLabels={'全部':'全部','open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
+  // Extract unique colleges from competition data
+  var CSUST_COLLEGES=['全部','土木与环境工程学院','经济与管理学院','设计艺术学院','材料科学与工程学院','机械与运载工程学院','卓越工程师学院','航空工程学院','人工智能学院','计算机与人工智能学院','数学与统计学院','文学与新闻传播学院','法学院','交通学院','电气与信息工程学院','水利与海洋工程学院','能源与动力工程学院','化学与食品工程学院','物理与电子科学学院','外国语学院','马克思主义学院','建筑学院','体育学院','汽车与机械工程学院','国际工学院','国际学院'];
   var html='<div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="_hubPage=1;applyHubFilters()" style="flex:1"/><button class="btn-secondary btn-sm" onclick="refreshCompData()" title="刷新数据" style="flex-shrink:0;padding:8px 14px">&#x21bb; 刷新</button></div>';
   html+='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">分类</div><div class="club-filter-bar" id="hubCatFilter">';
   categories.forEach(function(c,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'cat\',\''+esc(c)+'\')">'+esc(c)+'</button>'});
-  html+='</div></div><div style="margin-bottom:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">状态</div><div class="club-filter-bar" id="hubStatusFilter">';
+  html+='</div></div><div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">状态</div><div class="club-filter-bar" id="hubStatusFilter">';
   statuses.forEach(function(s,i){html+='<button class="club-filter-btn'+(i===0?' active':'')+'" onclick="filterHubBy(\'status\',\''+s+'\')">'+esc(statusLabels[s])+'</button>'});
   html+='</div></div>';
+  // College/Department filter
+  html+='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">承办学院</div><div style="position:relative"><select id="hubCollegeFilter" onchange="applyHubFilters()" style="width:100%;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel-bg);color:var(--text-primary);font-size:13px;appearance:auto">';
+  CSUST_COLLEGES.forEach(function(col,i){html+='<option value="'+esc(col)+'"'+(i===0?' selected':'')+'>'+esc(col)+'</option>'});
+  html+='</select></div></div>';
   // 排序下拉 + 已选条件
   html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">';
   html+='<select id="hubSortSelect" onchange="applyHubFilters()" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel-bg);color:var(--text-primary);font-size:13px">';
@@ -214,7 +237,7 @@ async function renderCompHub(container){
     var catIconSvg=getCategoryIconSvg(c.category);
     var isFeatured=idx===0;
     var regEnd=c.registration_end||c.reg_end||'';
-    html+='<div class="comp-hub-card hub-card'+(isFeatured?' hub-card-featured':'')+'" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" data-reg-end="'+esc(regEnd)+'" onclick="showHubCompDetail('+c.competition_id+')">';
+    html+='<div class="comp-hub-card hub-card'+(isFeatured?' hub-card-featured':'')+'" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" data-reg-end="'+esc(regEnd)+'" data-desc="'+esc((c.description||'')+''+(c.organizer||'')+''+(c.csust_status||''))+'" onclick="showHubCompDetail('+c.competition_id+')">';
     html+='<div class="comp-card-gradient '+levelClass+'"></div>';
     html+='<div class="comp-card-category-icon '+catClass+'">'+catIconSvg+'</div>';
     html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h4 style="flex:1">'+esc(c.name)+'</h4><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">'+getFavoriteButtonHtml(String(c.competition_id))+getReminderButtonHtml(String(c.competition_id), c.name, regEnd)+'</div>'+getStatusBadge(c.status)+'</div>';
@@ -253,6 +276,8 @@ function applyHubFilters(){
   var status=activeStatus?activeStatus.textContent:'全部';
   var statusMap={'全部':'','报名中':'open','即将开放':'upcoming','已关闭':'closed','已结束':'ended'};
   var statusVal=statusMap[status]||'';
+  var collegeSelect=document.getElementById('hubCollegeFilter');
+  var collegeVal=collegeSelect?collegeSelect.value:'全部';
   var q=document.getElementById('hubSearchInput')?document.getElementById('hubSearchInput').value.toLowerCase():'';
   var visibleCount=0;
   var sortSelect=document.getElementById('hubSortSelect');
@@ -263,10 +288,12 @@ function applyHubFilters(){
     var name=card.getAttribute('data-name')||'';
     var cardCat=card.getAttribute('data-category')||'';
     var cardStatus=card.getAttribute('data-status')||'';
+    var cardDesc=(card.getAttribute('data-desc')||'').toLowerCase();
     var matchCat=(cat==='全部'||cardCat===cat);
     var matchStatus=(!statusVal||cardStatus===statusVal);
+    var matchCollege=(collegeVal==='全部'||cardDesc.indexOf(collegeVal.toLowerCase())!==-1);
     var matchQ=(!q||name.indexOf(q)>=0);
-    if(matchCat&&matchStatus&&matchQ){
+    if(matchCat&&matchStatus&&matchCollege&&matchQ){
       card.style.display='';
       visibleCards.push(card);
       visibleCount++;
@@ -356,6 +383,9 @@ function updateHubActiveFilters(cat,statusVal,q){
     var sm={'open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
     tags.push('状态:'+(sm[statusVal]||statusVal));
   }
+  var collegeSelect=document.getElementById('hubCollegeFilter');
+  var collegeVal=collegeSelect?collegeSelect.value:'全部';
+  if(collegeVal&&collegeVal!=='全部')tags.push('学院:'+collegeVal);
   if(q)tags.push('搜索:'+q);
   if(tags.length>0){
     el.textContent='已选: '+tags.join(' / ');
@@ -372,6 +402,7 @@ function clearHubFilters(){
   document.querySelectorAll('#hubStatusFilter .club-filter-btn').forEach(function(b,i){b.classList.toggle('active',i===0)});
   var si=document.getElementById('hubSearchInput');if(si)si.value='';
   var ss=document.getElementById('hubSortSelect');if(ss)ss.value='default';
+  var cf=document.getElementById('hubCollegeFilter');if(cf)cf.value='全部';
   applyHubFilters();
 }
 
@@ -384,6 +415,11 @@ async function showHubCompDetail(compId){
   var regStart=c.registration_start||c.reg_start||'';
   var html='<div style="max-height:70vh;overflow-y:auto;padding-right:8px">';
   html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px"><h3 style="font-size:18px;color:var(--text-primary);flex:1">'+esc(c.name)+'</h3>'+getStatusBadge(c.status)+'</div>';
+  // Prominent "查看官方通知" button
+  var primarySourceUrl=c.source_url||c.official_url||'';
+  if(primarySourceUrl){
+    html+='<a href="'+safeUrl(primarySourceUrl)+'" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;text-decoration:none;font-size:14px;font-weight:600;margin-bottom:12px;box-shadow:0 2px 8px rgba(26,115,232,0.3)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> 查看官方通知 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>';
+  }
   html+='<div style="display:flex;gap:8px;margin:8px 0">'+getFavoriteButtonHtml(String(compId))+getReminderButtonHtml(String(compId), c.name, regEnd)+'</div>';
   html+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px">';
   if(c.level)html+='<span class="tag-pill">'+esc(getLevelDisplay(c.level))+'</span>';
@@ -403,10 +439,13 @@ async function showHubCompDetail(compId){
   html+='<div class="info-row"><div class="info-label">已报名</div><div class="info-value" style="color:var(--accent)">'+regCount+'人</div></div>';
   if(c.contact_teacher)html+='<div class="info-row"><div class="info-label">联系方式</div><div class="info-value">'+esc(c.contact_teacher)+'</div></div>';
   if(c.qq_group)html+='<div class="info-row"><div class="info-label">QQ群</div><div class="info-value">'+esc(c.qq_group)+'</div></div>';
-  if(c.requirements)html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">参赛要求</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.requirements)+'</p></div>';
-  if(c.description)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.description)+'</p></div>';
-  if(c.awards)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">\u{1F3C6} 奖项设置</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.awards)+'</p></div>';
-  if(c.notes)html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(241,196,15,0.06);border:1px solid rgba(241,196,15,0.2)"><h4 style="font-size:14px;color:#f39c12;margin-bottom:8px">\u{1F4DD} 备注</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.notes)+'</p></div>';
+  if(c.registration_notes)html+='<div style="margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.2)"><h4 style="font-size:13px;color:#06b6d4;margin-bottom:6px">报名须知</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.7">'+esc(c.registration_notes)+'</p></div>';
+  if(c.requirements)html+='<div style="margin-top:16px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">参赛要求</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap">'+esc(c.requirements)+'</p></div>';
+  if(c.description)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">竞赛介绍</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap">'+esc(c.description)+'</p></div>';
+  if(c.awards)html+='<div style="margin-top:12px"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">奖项设置</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap">'+esc(c.awards)+'</p></div>';
+  if(c.notes)html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(241,196,15,0.06);border:1px solid rgba(241,196,15,0.2)"><h4 style="font-size:14px;color:#f39c12;margin-bottom:8px">备注</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.notes)+'</p></div>';
+  // CSUST-specific status
+  if(c.csust_status)html+='<div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.2)"><h4 style="font-size:14px;color:#2ecc71;margin-bottom:8px">长沙理工参赛情况</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.8">'+esc(c.csust_status)+'</p></div>';
   // 官方来源链接
   var sourceLinks = [];
   if(c.source_url)sourceLinks.push({title:c.source_name||'信息来源',url:c.source_url});
@@ -420,12 +459,15 @@ async function showHubCompDetail(compId){
     }
   }
   if(sourceLinks.length>0){
-    html+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-subtle)"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">\u{1F310} 官方链接</h4>';
+    html+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-subtle)"><h4 style="font-size:14px;color:var(--text-primary);margin-bottom:8px">官方链接</h4>';
     sourceLinks.forEach(function(link){
-      html+='<div style="margin-bottom:6px"><a href="'+safeUrl(link.url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(link.title)+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
+      var isCsust=link.url&&link.url.indexOf('csust.edu.cn')!==-1;
+      html+='<div style="margin-bottom:6px"><a href="'+safeUrl(link.url)+'" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px">'+esc(link.title)+(isCsust?' <span style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(46,204,113,0.12);color:#2ecc71">校内</span>':'')+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
     });
     html+='</div>';
   }
+  // Share hint
+  html+='<div style="margin-top:12px;padding:8px 12px;border-radius:8px;background:var(--bg-secondary);font-size:12px;color:var(--text-muted);text-align:center">提示：可复制链接分享给同学 &middot; 长按地址栏可复制当前页面URL</div>';
   html+='<div style="margin-top:20px">';
   if(c.status==='open'){
     if(!user){html+='<button class="btn-primary" onclick="closeHubDetailModal();navigate(\'auth\')">登录后报名</button>'}

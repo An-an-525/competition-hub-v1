@@ -40,6 +40,13 @@ async function renderLearningResources() {
     _lrAllResources = [];
   }
 
+  // If no data from server, use local CSUST resources
+  if(!_lrAllResources || _lrAllResources.length === 0) {
+    if(typeof CSUST_LEARNING_RESOURCES !== 'undefined' && CSUST_LEARNING_RESOURCES.length > 0) {
+      _lrAllResources = CSUST_LEARNING_RESOURCES;
+    }
+  }
+
   // 空状态
   if (!_lrAllResources || _lrAllResources.length === 0) {
     container.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-muted)">' +
@@ -212,6 +219,18 @@ async function showResourceDetail(resourceId) {
 
     _renderResourceDetailModal(resource, related);
   } catch (e) {
+    // Fallback: look up from local CSUST_LEARNING_RESOURCES
+    if(typeof CSUST_LEARNING_RESOURCES !== 'undefined' && CSUST_LEARNING_RESOURCES.length > 0) {
+      var localResource = CSUST_LEARNING_RESOURCES.find(function(r) { return r.id === resourceId; });
+      if(localResource) {
+        // Find related from local data
+        var localRelated = CSUST_LEARNING_RESOURCES.filter(function(r) {
+          return r.id !== resourceId && r.category === localResource.category && r.is_active;
+        }).slice(0, 3);
+        _renderResourceDetailModal(localResource, localRelated);
+        return;
+      }
+    }
     showCopyToast('加载失败，请重试', 'error');
   }
 }
