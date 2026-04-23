@@ -14,6 +14,7 @@ if(typeof HUB_HEADERS === 'undefined') var HUB_HEADERS = {
 
 // AI 对话数据库操作
 var _aiConvId = null;
+var _currentAIController = null;
 
 async function aiGetOrCreateConversation() {
   if (_aiConvId) return _aiConvId;
@@ -22,7 +23,7 @@ async function aiGetOrCreateConversation() {
   if (!userId) return null;
   try {
     var thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
-    var resp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations?user_id=eq.' + userId + '&created_at=gte.' + thirtyMinAgo + '&select=conversation_id,created_at&order=created_at.desc&limit=1', { headers: HUB_HEADERS });
+    var resp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations?user_id=eq.' + userId + '&created_at=gte.' + thirtyMinAgo + '&select=conversation_id,created_at&order=created_at.desc&limit=1', { headers: HUB_GET_HEADERS });
     if (resp.ok) {
       var convs = await resp.json();
       if (convs && convs.length > 0) { _aiConvId = convs[0].conversation_id; return _aiConvId; }
@@ -55,12 +56,12 @@ async function aiLoadHistoryFromDB() {
   var userId = user ? (user.user_id || user.id) : null;
   if (!userId) return null;
   try {
-    var convResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations?user_id=eq.' + userId + '&select=conversation_id,title&order=created_at.desc&limit=1', { headers: HUB_HEADERS });
+    var convResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_conversations?user_id=eq.' + userId + '&select=conversation_id,title&order=created_at.desc&limit=1', { headers: HUB_GET_HEADERS });
     if (!convResp.ok) return null;
     var convs = await convResp.json();
     if (!convs || convs.length === 0) return null;
     _aiConvId = convs[0].conversation_id;
-    var msgResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_messages?conversation_id=eq.' + _aiConvId + '&select=role,content,is_deep_thinking,created_at&order=created_at.asc&limit=100', { headers: HUB_HEADERS });
+    var msgResp = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/ai_messages?conversation_id=eq.' + _aiConvId + '&select=role,content,is_deep_thinking,created_at&order=created_at.asc&limit=100', { headers: HUB_GET_HEADERS });
     if (!msgResp.ok) return null;
     var msgs = await msgResp.json();
     if (!msgs || msgs.length === 0) return null;
@@ -93,7 +94,7 @@ function addChatMessage(role,content,save,scrollToBottom){if(scrollToBottom===un
 
 function addTypingIndicator(){var container=document.getElementById('aiChatContainer');var wrapper=document.createElement('div');wrapper.id='aiTypingIndicator';wrapper.style.cssText='display:flex;align-items:flex-start;gap:10px;align-self:flex-start';wrapper.innerHTML='<div class="msg-avatar">AI</div><div class="ai-typing-indicator"><span></span><span></span><span></span></div>';container.appendChild(wrapper);container.scrollTop=container.scrollHeight}
 function removeTypingIndicator(){var indicator=document.getElementById('aiTypingIndicator');if(indicator)indicator.remove()}
-function quickAsk(question){document.getElementById('aiChatInput').value=question;sendAIChat()}
+function quickAsk(question){if(_currentAIController){_currentAIController.abort();_currentAIController=null}document.getElementById('aiChatInput').value=question;sendAIChat()}
 
 // 流式消息辅助函数 - 支持思考过程折叠显示
 function addStreamingMessage(){var container=document.getElementById('aiChatContainer');var emptyState=document.getElementById('aiEmpty');emptyState.style.display='none';container.style.display='flex';var msg=document.createElement('div');msg.className='msg msg-ai';msg.id='streamingMsg';var time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});msg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;min-width:0"><div class="thinking-section" id="thinkingSection" style="display:none"><div class="thinking-toggle" onclick="toggleThinkingSection()"><span class="thinking-icon">&#128173;</span><span class="thinking-label">思考过程</span><svg class="thinking-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="thinking-content" id="thinkingContent"></div></div><div class="streaming-content"></div><div class="msg-time">'+time+'</div></div></div>';container.appendChild(msg);container.scrollTop=container.scrollHeight;return msg}
@@ -114,9 +115,15 @@ function loadChatHistory(){var container=document.getElementById('aiChatContaine
 aiLoadHistoryFromDB().then(function(dbMessages){if(dbMessages&&dbMessages.length>0&&!_loadChatHistoryRunning){_loadChatHistoryRunning=true;setLS('ai_messages_'+_uid,dbMessages);loadChatHistory();_loadChatHistoryRunning=false;}}).catch(function(){});var messages=getLS('ai_messages_'+_uid,[]);if(!messages||messages.length===0)return;var savedScrollTop=container.scrollTop;var savedScrollHeight=container.scrollHeight;container.innerHTML='';for(var i=0;i<messages.length;i++){var m=messages[i];if(!m.role||!m.content)continue;var msg=document.createElement('div');msg.className='msg '+(m.role==='assistant'?'msg-ai':'msg-user');var msgTime=m.time?new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var formatted=esc(m.content).replace(/\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^(\d+)\.\s/gm,'<span style="display:inline-block;margin-left:1.2em;text-indent:-1.2em">$1. </span>').replace(/^- (.+)$/gm,'<span style="display:block;padding-left:1em;position:relative">• $1</span>');if(m.role==='assistant'){var thinkingHtml='';if(m.thinking){thinkingHtml='<div class="thinking-section" id="thinkingSection" style="display:none"><div class="thinking-toggle" onclick="toggleThinkingSection()"><span class="thinking-icon">&#128173;</span><span class="thinking-label">思考过程</span><svg class="thinking-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="thinking-content" id="thinkingContent">'+esc(m.thinking)+'</div></div>'}msg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;min-width:0"><div>'+formatted+'</div>'+thinkingHtml+'<div class="msg-time">'+msgTime+'</div></div></div>'}else{msg.innerHTML='<div>'+formatted+'</div><div class="msg-time" style="text-align:right">'+msgTime+'</div>'}container.appendChild(msg)}container.scrollTop=savedScrollTop+(container.scrollHeight-savedScrollHeight);updateAIView()}
 
 // MiniMax M2.7 SSE 流式请求（通过 Supabase Edge Function 代理，API 密钥不暴露在前端）
-async function sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode) {
+async function sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode, externalSignal) {
   var controller = new AbortController();
   var timeoutId = setTimeout(function(){ controller.abort(); }, 120000); // 120s timeout for deep thinking support
+
+  // Link external signal (from _currentAIController) to our controller
+  if (externalSignal) {
+    if (externalSignal.aborted) { controller.abort(); }
+    else { externalSignal.addEventListener('abort', function() { controller.abort(); }); }
+  }
 
   try {
     var response = await fetch(HUB_URL + '/functions/v1/competition-api/api/ai-chat', {
@@ -217,6 +224,10 @@ async function sendAIChat(){
   if(input.value.length>2000){showCopyToast('输入内容不能超过2000字','warning');return}
   if(document.getElementById('aiTypingIndicator')||document.getElementById('streamingMsg'))return;
 
+  // Abort any previous SSE stream
+  if(_currentAIController){_currentAIController.abort();_currentAIController=null}
+  _currentAIController=new AbortController();
+
   var question=input.value.trim();
   input.value='';
   input.style.height='auto';
@@ -255,6 +266,7 @@ async function sendAIChat(){
 
   function onDone(){
     removeTypingIndicator();
+    _currentAIController=null;
     var msgEl=document.getElementById('streamingMsg');
     if(msgEl){
       finishStreamingMessage(msgEl,question);
@@ -264,6 +276,7 @@ async function sendAIChat(){
 
   function onError(errorType){
     removeTypingIndicator();
+    _currentAIController=null;
     var streamingMsg=document.getElementById('streamingMsg');
     if(streamingMsg)streamingMsg.remove();
 
@@ -294,7 +307,7 @@ async function sendAIChat(){
   }
 
   // 调用 MiniMax API
-  await sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode);
+  await sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode, _currentAIController.signal);
 }
 
 function clearAIChat(){document.getElementById('aiChatContainer').innerHTML='';var _cu=getCurrentUser();var _cuid=_cu?_cu.id:'guest';setLS('ai_messages_'+_cuid,[]);_aiConvId=null;updateAIView();showCopyToast('对话已清空')}

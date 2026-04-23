@@ -240,6 +240,7 @@
 
     // 关闭弹窗
     function closeModal() {
+      document.removeEventListener('keydown', onKeydown);
       modal.style.transform = 'translateY(20px) scale(0.96)';
       overlay.style.opacity = '0';
       setTimeout(function () {

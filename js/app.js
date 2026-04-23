@@ -61,10 +61,10 @@ window.addEventListener('online', function(){hideOfflineBanner();});
 _origNavigate = navigate;
 navigate = function(page, tab) {
   /* Sync hash so browser back/forward and direct URLs work */
-  if (page && page !== 'home') {
-    history.replaceState(null, '', '#/' + page);
-  } else {
-    history.replaceState(null, '', window.location.pathname);
+  var targetHash = (page && page !== 'home') ? '#/' + page : window.location.pathname;
+  var currentHash = window.location.hash || window.location.pathname;
+  if (currentHash !== targetHash) {
+    history.pushState({ page: page, tab: tab }, '', targetHash);
   }
   updateMobileNav(page);
   /* SEO: 动态 Title 和 Description */
@@ -89,6 +89,15 @@ navigate = function(page, tab) {
   }
   _origNavigate(page, tab);
 };
+
+/* --- Handle browser back/forward buttons --- */
+window.addEventListener('popstate', function(e) {
+  if (e.state && e.state.page) {
+    _origNavigate(e.state.page, e.state.tab);
+  } else {
+    handleHashRoute();
+  }
+});
 
 /* --- Override renderCompAll to use Hub data --- */
 _origRenderCompAll = renderCompAll;

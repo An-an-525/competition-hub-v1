@@ -8,7 +8,7 @@ async function loadNotifications(){
   if(!isLoggedIn())return;
   var user=getCurrentUser();
   try{
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/notifications?user_id=eq.'+user.id+'&order=created_at.desc&limit=20',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/notifications?user_id=eq.'+user.id+'&order=created_at.desc&limit=20',{headers:HUB_GET_HEADERS});
     if(!res.ok)return;
     var notifs=await res.json();
     renderNotifList(notifs);

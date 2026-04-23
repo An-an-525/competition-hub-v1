@@ -29,7 +29,7 @@ async function fetchAdminScope() {
   try {
     var res = await fetch(
       HUB_URL + '/functions/v1/competition-api/rest/v1/user_roles?user_id=eq.' + user.id + '&is_active=eq.true&select=*,roles(role_name,permissions),competitions(competition_id,name)',
-      { headers: HUB_HEADERS }
+      { headers: HUB_GET_HEADERS }
     );
     if (!res.ok) {
       adminScope.role = null; // 查询失败时不授予任何权限
@@ -127,7 +127,7 @@ function renderAdminApplicationsTab() {
 
   var html = '';
   // 统计卡片
-  html += '<div id="adminStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px"></div>';
+  html += '<div id="adminStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:24px"></div>';
 
   // 筛选栏
   html += '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">';
@@ -199,7 +199,7 @@ async function loadAdminStats() {
 
   // 并行请求所有状态计数
   var promises = statuses.map(function(status) {
-    return fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?status=eq.' + status + '&select=id', { headers: HUB_HEADERS })
+    return fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?status=eq.' + status + '&select=id', { headers: HUB_GET_HEADERS })
       .then(function(res) { return res.ok ? res.json() : []; })
       .then(function(data) { return { status: status, count: data.length }; })
       .catch(function() { return { status: status, count: 0 }; });
@@ -237,7 +237,7 @@ async function loadAdminApplications() {
     // college_admin 通过 profiles 的 college 字段过滤
     // 先查询该院学生 ID 列表，再过滤报名
     try {
-      var profileRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/profiles?college=eq.' + encodeURIComponent(adminScope.college) + '&select=user_id', { headers: HUB_HEADERS });
+      var profileRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/profiles?college=eq.' + encodeURIComponent(adminScope.college) + '&select=user_id', { headers: HUB_GET_HEADERS });
       if (profileRes.ok) {
         var profiles = await profileRes.json();
         var userIds = profiles.map(function(p) { return 'applicant_user_id.eq.' + p.user_id; });
@@ -254,7 +254,7 @@ async function loadAdminApplications() {
     }
   }
 
-  var res = await fetch(url, { headers: HUB_HEADERS });
+  var res = await fetch(url, { headers: HUB_GET_HEADERS });
   if (!res.ok) { el.innerHTML = '<p style="color:#e74c3c">加载失败</p>'; return; }
   var apps = await res.json();
 
@@ -291,18 +291,19 @@ async function loadAdminApplications() {
 
 async function showAdminAppDetail(applicationId) {
   // 获取报名
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId + '&select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)', { headers: HUB_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId + '&select=*,competitions(name,level,category),profiles!applications_applicant_user_id_fkey(name,student_id,college)', { headers: HUB_GET_HEADERS });
+  if (!res.ok) { showCopyToast('加载失败', 'error'); return; }
   var apps = await res.json();
   var app = apps[0];
   if (!app) return;
 
   // 获取审核记录
-  var revRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_reviews?application_id=eq.' + applicationId + '&select=*,profiles!application_reviews_reviewer_user_id_fkey(name)&order=created_at.desc', { headers: HUB_HEADERS });
-  var reviews = await revRes.json();
+  var revRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_reviews?application_id=eq.' + applicationId + '&select=*,profiles!application_reviews_reviewer_user_id_fkey(name)&order=created_at.desc', { headers: HUB_GET_HEADERS });
+  if (!revRes.ok) { var reviews = []; } else { var reviews = await revRes.json(); }
 
   // 获取材料
-  var filesRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files?application_id=eq.' + applicationId + '&status=eq.uploaded&order=uploaded_at.desc', { headers: HUB_HEADERS });
-  var files = await filesRes.json();
+  var filesRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files?application_id=eq.' + applicationId + '&status=eq.uploaded&order=uploaded_at.desc', { headers: HUB_GET_HEADERS });
+  if (!filesRes.ok) { var files = []; } else { var files = await filesRes.json(); }
 
   var comp = app.competitions || {};
   var profile = app.profiles || {};
@@ -428,7 +429,7 @@ async function renderAdminEnterprises() {
 
   contentEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted)">加载企业列表...</div>';
 
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?select=*&order=created_at.desc', { headers: HUB_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?select=*&order=created_at.desc', { headers: HUB_GET_HEADERS });
   if (!res.ok) {
     contentEl.innerHTML = '<div style="text-align:center;padding:40px;color:#e74c3c">加载企业列表失败</div>';
     return;
@@ -504,7 +505,7 @@ async function showEnterpriseForm(enterpriseId) {
   var ent = {};
 
   if (isEdit) {
-    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId + '&select=*', { headers: HUB_HEADERS });
+    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId + '&select=*', { headers: HUB_GET_HEADERS });
     if (res.ok) {
       var data = await res.json();
       ent = data[0] || {};
@@ -635,22 +636,17 @@ async function saveEnterprise(enterpriseId) {
  */
 async function deleteEnterprise(enterpriseId) {
   showConfirm('确定要删除该企业吗？此操作不可撤销。', async function() {
-    // proceed with deletion
-  }, function() {
-    return; // cancelled
+    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId, {
+      method: 'DELETE',
+      headers: HUB_HEADERS
+    });
+    if (res.ok) {
+      showCopyToast('企业已删除', 'success');
+      renderAdminEnterprises();
+    } else {
+      showCopyToast('删除失败', 'error');
+    }
   });
-
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/enterprises?id=eq.' + enterpriseId, {
-    method: 'DELETE',
-    headers: HUB_HEADERS
-  });
-
-  if (res.ok) {
-    showCopyToast('企业已删除', 'success');
-    renderAdminEnterprises();
-  } else {
-    showCopyToast('删除失败', 'error');
-  }
 }
 
 /* ========== 学习资源管理 ========== */
@@ -693,7 +689,7 @@ async function renderAdminDashboard() {
 
   // 尝试从 competition_admin_dashboard 视图获取统计数据
   try {
-    var dashRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competition_admin_dashboard?select=*', { headers: HUB_HEADERS });
+    var dashRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competition_admin_dashboard?select=*', { headers: HUB_GET_HEADERS });
     if (dashRes.ok) {
       var dashData = await dashRes.json();
 
@@ -721,7 +717,7 @@ async function renderAdminDashboard() {
       }
 
       // 顶部统计卡片
-      html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px">';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:24px">';
       html += '<div class="card" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--text-primary)">' + totalComps + '</div><div style="font-size:12px;color:var(--text-muted)">竞赛总数</div></div>';
       html += '<div class="card" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--text-primary)">' + totalApps + '</div><div style="font-size:12px;color:var(--text-muted)">报名总数</div></div>';
       html += '<div class="card" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:#2ecc71">' + totalApproved + '</div><div style="font-size:12px;color:var(--text-muted)">已通过</div></div>';
@@ -775,15 +771,15 @@ async function buildFallbackDashboard() {
   html += '<div style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-primary)">全局概览</div>';
 
   // 获取基本统计
-  var compRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competitions?select=id', { headers: HUB_HEADERS });
+  var compRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competitions?select=id', { headers: HUB_GET_HEADERS });
   var compCount = compRes.ok ? (await compRes.json()).length : 0;
 
-  var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?select=id,status', { headers: HUB_HEADERS });
+  var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?select=id,status', { headers: HUB_GET_HEADERS });
   var apps = appRes.ok ? await appRes.json() : [];
   var pendingCount = apps.filter(function(a) { return a.status === 'submitted' || a.status === 'under_review'; }).length;
   var approvedCount = apps.filter(function(a) { return a.status === 'approved'; }).length;
 
-  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">';
   html += '<div style="text-align:center;padding:12px;background:var(--bg-secondary);border-radius:8px"><div style="font-size:20px;font-weight:800;color:var(--text-primary)">' + compCount + '</div><div style="font-size:11px;color:var(--text-muted)">竞赛总数</div></div>';
   html += '<div style="text-align:center;padding:12px;background:var(--bg-secondary);border-radius:8px"><div style="font-size:20px;font-weight:800;color:var(--text-primary)">' + apps.length + '</div><div style="font-size:11px;color:var(--text-muted)">报名总数</div></div>';
   html += '<div style="text-align:center;padding:12px;background:var(--bg-secondary);border-radius:8px"><div style="font-size:20px;font-weight:800;color:#2ecc71">' + approvedCount + '</div><div style="font-size:11px;color:var(--text-muted)">已通过</div></div>';

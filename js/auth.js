@@ -54,7 +54,7 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='登录中...';
   try{
     var hash=await hashPassword(pwd);
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/profiles?student_id=eq.'+encodeURIComponent(sid),{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/profiles?student_id=eq.'+encodeURIComponent(sid),{headers:HUB_GET_HEADERS});
     if(!res.ok){errEl.textContent='登录失败，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
     var data=await res.json();
     if(data.length===0){errEl.textContent='该学号未注册';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
@@ -106,7 +106,7 @@ function doLogout(){
     _cachedCompetitions = null;
     _cachedRegCounts = {};
     _aiConvId = null;
-    adminScope = { role: null, colleges: [], competitions: [] };
+    adminScope = { role: null, competitionIds: [], college: null, rawRoles: [] };
     try {
       localStorage.removeItem('hub_competitions');
       localStorage.removeItem('app_favorites_' + (_savedUser ? _savedUser.id : ''));

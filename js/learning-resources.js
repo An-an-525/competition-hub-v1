@@ -31,7 +31,7 @@ async function renderLearningResources() {
   try {
     var res = await fetchWithTimeout(
       HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?is_active=eq.true&order=sort_order.desc,created_at.desc&select=*',
-      { headers: HUB_HEADERS }
+      { headers: HUB_GET_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
     _lrAllResources = await res.json();
@@ -186,7 +186,7 @@ async function showResourceDetail(resourceId) {
   try {
     var res = await fetchWithTimeout(
       HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId + '&select=*',
-      { headers: HUB_HEADERS }
+      { headers: HUB_GET_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
     var data = await res.json();
@@ -206,7 +206,7 @@ async function showResourceDetail(resourceId) {
     // 获取相关资源（同分类，排除当前，限制3条）
     var relatedRes = await fetchWithTimeout(
       HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?category=eq.' + encodeURIComponent(resource.category || '') + '&is_active=eq.true&id=neq.' + resourceId + '&order=sort_order.desc,created_at.desc&select=id,title,resource_type,category,cover_image&limit=3',
-      { headers: HUB_HEADERS }
+      { headers: HUB_GET_HEADERS }
     );
     var related = relatedRes.ok ? await relatedRes.json() : [];
 
@@ -402,7 +402,7 @@ async function renderCompetitionResources(competitionId) {
   try {
     var res = await fetchWithTimeout(
       HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?competition_id=eq.' + competitionId + '&is_active=eq.true&order=sort_order.desc,created_at.desc&select=id,title,resource_type,category,description,author&view_count',
-      { headers: HUB_HEADERS }
+      { headers: HUB_GET_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
     var resources = await res.json();
@@ -451,7 +451,7 @@ async function renderAdminLearningResources() {
   try {
     var res = await fetchWithTimeout(
       HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?order=sort_order.desc,created_at.desc&select=*',
-      { headers: HUB_HEADERS }
+      { headers: HUB_GET_HEADERS }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
     var resources = await res.json();
@@ -520,7 +520,7 @@ async function showAdminResourceForm(resourceId) {
     try {
       var res = await fetchWithTimeout(
         HUB_URL + '/functions/v1/competition-api/rest/v1/learning_resources?id=eq.' + resourceId + '&select=*',
-        { headers: HUB_HEADERS }
+        { headers: HUB_GET_HEADERS }
       );
       if (res.ok) {
         var data = await res.json();
