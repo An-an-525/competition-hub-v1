@@ -236,3 +236,8 @@ var QUOTES=[
   {text:'书山有路勤为径，学海无涯苦作舟',author:'韩愈'}
 ];
 var app={currentPage:'home',pomodoroMode:'work',pomodoroTime:1500,pomodoroRunning:false,pomodoroTimer:null};
+
+/* Ensure CSUST_DATA.competitions has competition_id for consistency with DB schema */
+if(typeof CSUST_DATA!=='undefined'&&CSUST_DATA.competitions){
+  CSUST_DATA.competitions.forEach(function(c,i){if(!c.competition_id)c.competition_id=1000+i;});
+}

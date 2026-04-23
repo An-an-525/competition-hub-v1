@@ -15,7 +15,7 @@ async function submitRegistration(compName){var name=document.getElementById('re
 async function showRegFormForComp(compId){
   if(!isLoggedIn()){navigate('auth');return}
   var user=getCurrentUser();
-  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});if(!comp)return;
+  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.competition_id===compId});if(!comp)return;
   var html='<div style="max-width:500px;margin:0 auto"><h3 style="margin-bottom:16px">报名：'+esc(comp.name)+'</h3>';
   if(comp.is_team){
     html+='<div style="margin-bottom:16px"><p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">这是一个团队赛（'+esc(comp.team_min||'?')+'-'+esc(comp.team_max||'?')+'人），请选择操作：</p>';
@@ -66,7 +66,7 @@ async function submitHubRegistration(compId,teamId){
 /* --- Team System --- */
 async function showCreateTeamForm(compId){
   var user=getCurrentUser();if(!user)return;
-  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});
+  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.competition_id===compId});
   var html='<div style="max-width:400px"><h3 style="margin-bottom:16px">创建队伍</h3>';
   if(comp)html+='<p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">竞赛：'+esc(comp.name)+'（'+esc(comp.team_min||'?')+'-'+esc(comp.team_max||'?')+'人）</p>';
   html+='<div class="auth-field"><label>队伍名称 *</label><input type="text" id="teamNameInput" placeholder="请输入队伍名称" /></div>';
@@ -79,7 +79,7 @@ async function doCreateTeam(compId){
   var name=document.getElementById('teamNameInput').value.trim();
   var errEl=document.getElementById('createTeamError');
   if(!name){errEl.textContent='请输入队伍名称';errEl.classList.add('show');return}
-  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.id===compId});
+  var comps=await fetchCompetitions();var comp=comps.find(function(x){return x.competition_id===compId});
   try{
     var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/teams',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({competition_id:compId,name:name,captain_id:user.id,max_members:comp?comp.team_max:5,status:'forming'})});
     if(!res.ok){errEl.textContent='创建队伍失败';errEl.classList.add('show');return}
@@ -130,7 +130,7 @@ async function renderMyRegistrations(){
   /* 骨架屏加载占位 - 我的报名 */
   container.innerHTML='<div style="max-width:600px;margin:0 auto"><h2 class="content-page-title"><span class="gold">我的报名</span></h2><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:70%"></div><div class="skeleton skeleton-line" style="width:50%"></div></div></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:65%"></div><div class="skeleton skeleton-line" style="width:55%"></div></div></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-content"><div class="skeleton skeleton-line" style="width:75%"></div><div class="skeleton skeleton-line" style="width:45%"></div></div></div></div>';
   try{
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?user_id=eq.'+user.id+'&select=*,competitions(name,status,level,category,is_team)&order=created_at.desc',{headers:HUB_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?user_id=eq.'+user.id+'&select=*,competitions(name,status,level,is_team)&order=created_at.desc',{headers:HUB_HEADERS});
     if(!res.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
     var regs=await res.json();
     if(regs.length===0){

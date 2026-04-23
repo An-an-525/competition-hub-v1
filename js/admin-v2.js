@@ -227,12 +227,12 @@ async function loadAdminApplications() {
   var typeFilter = document.getElementById('adminFilterType') ? document.getElementById('adminFilterType').value : '';
   var searchName = document.getElementById('adminSearchName') ? document.getElementById('adminSearchName').value.trim() : '';
 
-  var url = HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=*,competitions(name,level,category),users!registrations_user_id_fkey(user_id,email)&order=created_at.desc&limit=50';
+  var url = HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=*,competitions(name,level),users!registrations_user_id_fkey(user_id,email)&order=created_at.desc&limit=50';
 
   // 根据管理员权限范围过滤
   if (adminScope.role === 'competition_admin' && adminScope.competitionIds.length > 0) {
     var compFilter = adminScope.competitionIds.map(function(id) { return 'competition_id.eq.' + id; }).join(',');
-    url = HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=*,competitions(name,level,category),users!registrations_user_id_fkey(user_id,email)&or=(' + compFilter + ')&order=created_at.desc&limit=50';
+    url = HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=*,competitions(name,level),users!registrations_user_id_fkey(user_id,email)&or=(' + compFilter + ')&order=created_at.desc&limit=50';
   } else if (adminScope.role === 'college_admin' && adminScope.college) {
     // college_admin 通过 users 过滤
     try {
@@ -242,7 +242,7 @@ async function loadAdminApplications() {
         var userIds = usersList.map(function(p) { return 'user_id.eq.' + p.user_id; });
         if (userIds.length > 0) {
           var userFilter = userIds.join(',');
-          url = HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=*,competitions(name,level,category),users!registrations_user_id_fkey(user_id,email)&or=(' + userFilter + ')&order=created_at.desc&limit=50';
+          url = HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=*,competitions(name,level),users!registrations_user_id_fkey(user_id,email)&or=(' + userFilter + ')&order=created_at.desc&limit=50';
         } else {
           el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">暂无报名记录</div>';
           return;
@@ -289,7 +289,7 @@ async function loadAdminApplications() {
 
 async function showAdminAppDetail(applicationId) {
   // 获取报名
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?registration_id=eq.' + applicationId + '&select=*,competitions(name,level,category),users!registrations_user_id_fkey(user_id,email)', { headers: HUB_GET_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?registration_id=eq.' + applicationId + '&select=*,competitions(name,level),users!registrations_user_id_fkey(user_id,email)', { headers: HUB_GET_HEADERS });
   if (!res.ok) { showCopyToast('加载失败', 'error'); return; }
   var apps = await res.json();
   var app = apps[0];
@@ -767,7 +767,7 @@ async function buildFallbackDashboard() {
   html += '<div style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-primary)">全局概览</div>';
 
   // 获取基本统计
-  var compRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competitions?select=id', { headers: HUB_GET_HEADERS });
+  var compRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/competitions?select=competition_id', { headers: HUB_GET_HEADERS });
   var compCount = compRes.ok ? (await compRes.json()).length : 0;
 
   var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?select=registration_id,status', { headers: HUB_GET_HEADERS });

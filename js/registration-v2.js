@@ -611,7 +611,7 @@ async function renderMyApplications() {
   var user = getCurrentUser();
   container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">加载中...</div>';
 
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?user_id=eq.' + user.id + '&select=*,competitions(name,level,category)&order=created_at.desc', { headers: HUB_GET_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?user_id=eq.' + user.id + '&select=*,competitions(name,level)&order=created_at.desc', { headers: HUB_GET_HEADERS });
   if (!res.ok) { container.innerHTML = '<p style="text-align:center;color:#e74c3c">加载失败</p>'; return; }
   var apps = await res.json();
 

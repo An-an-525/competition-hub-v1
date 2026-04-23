@@ -4,8 +4,8 @@ async function renderAdmin(){
   if(!isAdmin()){container.innerHTML='<div class="login-required"><h3>无权限</h3><p>仅管理员可访问此页面</p><button class="btn-primary" onclick="navigate(\'home\')">返回首页</button></div>';return}
   container.innerHTML='<div class="loading-overlay"><div class="loading-spinner" style="width:32px;height:32px"></div><p style="margin-top:12px">加载管理数据...</p></div>';
   try{
-    var regsRes=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?select=*,users!registrations_user_id_fkey(user_id,email),competitions(name,level,category)&order=created_at.desc',{headers:HUB_HEADERS});
-    var compsRes=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=id,name',{headers:HUB_HEADERS});
+    var regsRes=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/registrations?select=*,users!registrations_user_id_fkey(user_id,email),competitions(name,level)&order=created_at.desc',{headers:HUB_HEADERS});
+    var compsRes=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=competition_id,name',{headers:HUB_HEADERS});
     if(!regsRes.ok||!compsRes.ok){container.innerHTML='<div class="empty-state"><p>加载失败</p></div>';return}
     var regs=await regsRes.json();
     var comps=await compsRes.json();

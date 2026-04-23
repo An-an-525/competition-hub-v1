@@ -57,7 +57,7 @@ async function _fetchCompetitionsFromServer(){
   // Fallback to local CSUST_DATA
   if(typeof CSUST_DATA!=='undefined'&&CSUST_DATA.competitions&&CSUST_DATA.competitions.length>0){
     _cachedCompetitions=CSUST_DATA.competitions.map(function(c,i){
-      return{id:c.id||(1000+i),name:c.name,level:c.level||'校级',category:c.category||'',organizer:c.organizer||'',description:c.description||c.detail||'',requirements:c.requirements||'',reg_start:null,reg_end:null,comp_date:c.time||'',is_team:c.isTeam||false,team_min:c.teamMin||1,team_max:c.teamMax||5,status:'upcoming',sort_order:100-i};
+      return{competition_id:c.competition_id||(1000+i),name:c.name,level:c.level||'校级',category:c.category||'',organizer:c.organizer||'',description:c.description||c.detail||'',requirements:c.requirements||'',registration_start:c.registration_start||null,registration_end:c.registration_end||null,comp_date:c.time||'',is_team:c.isTeam||false,team_min:c.teamMin||1,team_max:c.teamMax||5,status:'upcoming',sort_order:100-i};
     });
     return _cachedCompetitions;
   }
@@ -133,7 +133,7 @@ async function renderFeaturedCompetitions(){
       html+='<div class="featured-comp-body">';
       html+='<div class="featured-comp-level">'+esc(levelLabel)+'</div>';
       if(c.organizer)html+='<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">'+esc(c.organizer)+'</div>';
-      html+='<button class="featured-comp-btn" onclick="event.stopPropagation();showHubCompDetail('+c.id+')">查看详情 &#8250;</button>';
+      html+='<button class="featured-comp-btn" onclick="event.stopPropagation();showHubCompDetail('+c.competition_id+')">查看详情 &#8250;</button>';
       html+='</div></div>';
     });
     row.innerHTML=html;
@@ -149,6 +149,16 @@ function getLevelClass(level){
   if(l.indexOf('a')>=0||l.indexOf('国家级')>=0||l.indexOf('国际')>=0)return 'level-a';
   if(l.indexOf('b')>=0||l.indexOf('省级')>=0)return 'level-b';
   return 'level-c';
+}
+function getLevelDisplay(level){
+  if(!level)return '校级';
+  var map={'national_a':'国家级A类','national_b':'国家级B类','national_c':'国家级C类','provincial':'省级','school':'校级'};
+  var display=map[level]||map[level.toLowerCase()];
+  if(display)return display;
+  // Fallback for Chinese-style level strings
+  if(level.indexOf('A类')>=0||level.indexOf('国家级')>=0)return level;
+  if(level.indexOf('B+')>=0||level.indexOf('省级')>=0)return level;
+  return level;
 }
 function getCategoryIconClass(category){
   if(!category)return 'cat-default';
@@ -177,7 +187,7 @@ async function renderCompHub(container){
   container.innerHTML=skeletonHtml;
   var comps=await fetchCompetitions();
   var counts=await fetchRegCounts();
-  var categories=['全部'];comps.forEach(function(c){if(categories.indexOf(c.category)<0)categories.push(c.category)});
+  var categories=['全部'];comps.forEach(function(c){if(c.category&&categories.indexOf(c.category)<0)categories.push(c.category)});
   var statuses=['全部','open','upcoming','closed','ended'];
   var statusLabels={'全部':'全部','open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
   var html='<div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" class="form-input" id="hubSearchInput" placeholder="搜索竞赛名称..." oninput="_hubPage=1;applyHubFilters()" style="flex:1"/><button class="btn-secondary btn-sm" onclick="refreshCompData()" title="刷新数据" style="flex-shrink:0;padding:8px 14px">&#x21bb; 刷新</button></div>';
@@ -198,27 +208,29 @@ async function renderCompHub(container){
   html+='</div>';
   html+='<div id="hubCompList" class="knowledge-list"><div id="hubCompCount" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">共 '+comps.length+' 项竞赛</div>';
   comps.forEach(function(c,idx){
-    var regCount=counts[c.id]||0;
+    var regCount=counts[c.competition_id]||0;
     var levelClass=getLevelClass(c.level);
     var catClass=getCategoryIconClass(c.category);
     var catIconSvg=getCategoryIconSvg(c.category);
     var isFeatured=idx===0;
-    html+='<div class="comp-hub-card hub-card'+(isFeatured?' hub-card-featured':'')+'" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" data-reg-end="'+esc(c.reg_end||'')+'" onclick="showHubCompDetail('+c.id+')">';
+    var regEnd=c.registration_end||c.reg_end||'';
+    html+='<div class="comp-hub-card hub-card'+(isFeatured?' hub-card-featured':'')+'" data-name="'+esc((c.name||'').toLowerCase())+'" data-category="'+esc(c.category||'')+'" data-status="'+esc(c.status||'')+'" data-level="'+esc(c.level||'')+'" data-reg-end="'+esc(regEnd)+'" onclick="showHubCompDetail('+c.competition_id+')">';
     html+='<div class="comp-card-gradient '+levelClass+'"></div>';
     html+='<div class="comp-card-category-icon '+catClass+'">'+catIconSvg+'</div>';
-    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h4 style="flex:1">'+esc(c.name)+'</h4><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">'+getFavoriteButtonHtml(String(c.id))+getReminderButtonHtml(String(c.id), c.name, c.reg_end || '')+'</div>'+getStatusBadge(c.status)+'</div>';
+    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h4 style="flex:1">'+esc(c.name)+'</h4><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">'+getFavoriteButtonHtml(String(c.competition_id))+getReminderButtonHtml(String(c.competition_id), c.name, regEnd)+'</div>'+getStatusBadge(c.status)+'</div>';
     html+='<div class="comp-hub-meta">';
-    if(c.level)html+='<span class="tag-pill">'+esc(c.level)+'</span>';
+    if(c.level)html+='<span class="tag-pill">'+esc(getLevelDisplay(c.level))+'</span>';
     if(c.category)html+='<span class="tag-pill" style="background:var(--surface-gold-subtle);color:var(--gold)">'+esc(c.category)+'</span>';
     html+='</div>';
     if(c.description)html+='<div class="comp-hub-info" style="margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.description)+'</div>';
     html+='<div class="comp-hub-info">';
     if(c.organizer)html+='<div>主办：'+esc(c.organizer)+'</div>';
     if(c.comp_date)html+='<div>比赛：'+esc(formatDate(c.comp_date))+'</div>';
-    if(c.reg_start)html+='<div>报名：'+esc(formatDate(c.reg_start))+' ~ '+(c.reg_end?esc(formatDate(c.reg_end)):'待定')+'</div>';
+    var regStart=c.registration_start||c.reg_start||'';
+    if(regStart)html+='<div>报名：'+esc(formatDate(regStart))+' ~ '+(regEnd?esc(formatDate(regEnd)):'待定')+'</div>';
     html+='</div>';
     html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div class="reg-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'+regCount+'人已报名</div>';
-    if(c.status==='open')html+='<button class="btn-primary btn-sm" onclick="event.stopPropagation();startApplication('+c.id+')">立即报名</button>';
+    if(c.status==='open')html+='<button class="btn-primary btn-sm" onclick="event.stopPropagation();startApplication('+c.competition_id+')">立即报名</button>';
     html+='</div>';
   });
   html+='</div>';
@@ -365,14 +377,16 @@ function clearHubFilters(){
 
 /* --- Competition Detail Modal --- */
 async function showHubCompDetail(compId){
-  var comps=await fetchCompetitions();var c=comps.find(function(x){return x.id===compId});if(!c)return;
+  var comps=await fetchCompetitions();var c=comps.find(function(x){return x.competition_id===compId});if(!c)return;
   var counts=await fetchRegCounts();var regCount=counts[compId]||0;
   var user=getCurrentUser();
+  var regEnd=c.registration_end||c.reg_end||'';
+  var regStart=c.registration_start||c.reg_start||'';
   var html='<div style="max-height:70vh;overflow-y:auto;padding-right:8px">';
   html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px"><h3 style="font-size:18px;color:var(--text-primary);flex:1">'+esc(c.name)+'</h3>'+getStatusBadge(c.status)+'</div>';
-  html+='<div style="display:flex;gap:8px;margin:8px 0">'+getFavoriteButtonHtml(String(compId))+getReminderButtonHtml(String(compId), c.name, c.reg_end || '')+'</div>';
+  html+='<div style="display:flex;gap:8px;margin:8px 0">'+getFavoriteButtonHtml(String(compId))+getReminderButtonHtml(String(compId), c.name, regEnd)+'</div>';
   html+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px">';
-  if(c.level)html+='<span class="tag-pill">'+esc(c.level)+'</span>';
+  if(c.level)html+='<span class="tag-pill">'+esc(getLevelDisplay(c.level))+'</span>';
   if(c.category)html+='<span class="tag-pill" style="background:var(--surface-gold-subtle);color:var(--gold)">'+esc(c.category)+'</span>';
   if(c.tracks)html+='<span class="tag-pill" style="background:rgba(155,89,182,0.12);color:#9b59b6">'+esc(c.tracks)+'</span>';
   if(c.is_team)html+='<span class="tag-pill" style="background:rgba(52,152,219,0.12);color:#3498db">团队赛 ('+esc(c.team_min||'?')+'-'+esc(c.team_max||'?')+'人)</span>';
@@ -380,7 +394,7 @@ async function showHubCompDetail(compId){
   html+='</div>';
   html+='<div class="info-row"><div class="info-label">主办单位</div><div class="info-value" style="max-width:70%">'+esc(c.organizer_name||c.organizer||'')+'</div></div>';
   if(c.tracks)html+='<div class="info-row"><div class="info-label">赛道/组别</div><div class="info-value" style="max-width:70%">'+esc(c.tracks)+'</div></div>';
-  if(c.reg_start)html+='<div class="info-row"><div class="info-label">报名时间</div><div class="info-value">'+esc(formatDate(c.reg_start))+' ~ '+(c.reg_end?esc(formatDate(c.reg_end)):'待定')+'</div></div>';
+  if(regStart)html+='<div class="info-row"><div class="info-label">报名时间</div><div class="info-value">'+esc(formatDate(regStart))+' ~ '+(regEnd?esc(formatDate(regEnd)):'待定')+'</div></div>';
   else if(c.registration_notes)html+='<div class="info-row"><div class="info-label">报名时间</div><div class="info-value">'+esc(c.registration_notes)+'</div></div>';
   if(c.comp_date)html+='<div class="info-row"><div class="info-label">比赛时间</div><div class="info-value">'+esc(formatDate(c.comp_date))+'</div></div>';
   if(c.deadline_note)html+='<div class="info-row"><div class="info-label">关键截止日</div><div class="info-value" style="color:#e74c3c">'+esc(c.deadline_note)+'</div></div>';
@@ -415,7 +429,7 @@ async function showHubCompDetail(compId){
   html+='<div style="margin-top:20px">';
   if(c.status==='open'){
     if(!user){html+='<button class="btn-primary" onclick="closeHubDetailModal();navigate(\'auth\')">登录后报名</button>'}
-    else{html+='<button class="btn-primary" onclick="closeHubDetailModal();startApplication('+c.id+')">立即报名</button>'}
+    else{html+='<button class="btn-primary" onclick="closeHubDetailModal();startApplication('+c.competition_id+')">立即报名</button>'}
   }else{
     html+='<button class="btn-primary" disabled>当前不可报名</button>';
   }

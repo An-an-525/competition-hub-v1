@@ -232,7 +232,7 @@ function showCompDetail(idx){
   showCompModal(html);
   // 异步渲染学习资源
   if(typeof renderCompetitionResources==='function'){
-    var compId=c.id||String(1000+idx);
+    var compId=c.competition_id||String(1000+idx);
     var resEl=document.getElementById('compResourcesList');
     if(resEl)renderCompetitionResources(compId,resEl);
   }
@@ -242,7 +242,7 @@ function handleCompRegister(idx) {
   if (!c) return;
   // 优先使用 v2 报名系统（Supabase）
   if (typeof startApplication === 'function') {
-    startApplication(c.id || String(1000 + idx));
+    startApplication(c.competition_id || String(1000 + idx));
     return;
   }
   // fallback: 跳转官网
@@ -515,13 +515,13 @@ function showFavoritesList() {
       if (!list) return;
       var inner = '';
       favs.forEach(function(fid) {
-        var comp = comps.find(function(c) { return String(c.id) === String(fid); });
+        var comp = comps.find(function(c) { return String(c.competition_id) === String(fid); });
         if (comp) {
           inner += '<div class="card" style="padding:16px;margin-bottom:10px;cursor:pointer" onclick="navigate(\'competition\');setTimeout(function(){showHubCompDetail(\'' + fid + '\')},200)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">' + esc(comp.name) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">' + esc(comp.level || '') + ' · ' + esc(comp.category || '') + '</div></div><button onclick="event.stopPropagation();toggleFavorite(\'' + fid + '\');showFavoritesList()" style="background:none;border:none;color:#FFC84A;cursor:pointer;font-size:18px" title="取消收藏">&#9733;</button></div></div>';
         } else {
           // 从 CSUST_DATA fallback
           if (typeof CSUST_DATA !== 'undefined' && CSUST_DATA.competitions) {
-            var c2 = CSUST_DATA.competitions.find(function(c) { return String(c.id) === String(fid); });
+            var c2 = CSUST_DATA.competitions.find(function(c) { return String(c.competition_id) === String(fid); });
             if (c2) {
               inner += '<div class="card" style="padding:16px;margin-bottom:10px;cursor:pointer" onclick="navigate(\'competition\');setTimeout(function(){showCompDetail(' + CSUST_DATA.competitions.indexOf(c2) + ')},200)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">' + esc(c2.name) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">' + esc(c2.level || '') + '</div></div><button onclick="event.stopPropagation();toggleFavorite(\'' + fid + '\');showFavoritesList()" style="background:none;border:none;color:#FFC84A;cursor:pointer;font-size:18px" title="取消收藏">&#9733;</button></div></div>';
             }
