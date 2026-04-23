@@ -43,7 +43,7 @@ async function fetchCompetitions(forceRefresh){
 
 async function _fetchCompetitionsFromServer(){
   try{
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=*&order=sort_order.desc,created_at.desc',{headers:HUB_GET_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=*&order=created_at.desc',{headers:HUB_GET_HEADERS});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
     if(data&&data.length>0){

@@ -54,19 +54,19 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='登录中...';
   try{
     var hash=await hashPassword(pwd);
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/profiles?student_id=eq.'+encodeURIComponent(sid),{headers:HUB_GET_HEADERS});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/users?user_id=eq.'+encodeURIComponent(sid),{headers:HUB_GET_HEADERS});
     if(!res.ok){errEl.textContent='登录失败，请重试';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
     var data=await res.json();
-    if(data.length===0){errEl.textContent='该学号未注册';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
+    if(data.length===0){errEl.textContent='该账号未注册';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
     var profile=data[0];
     if(profile.password_hash!==hash){errEl.textContent='密码错误';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
-    setCurrentUser({id:profile.id,studentId:profile.student_id,name:profile.name,college:profile.college,role:profile.role});
-    showCopyToast('登录成功，欢迎 '+profile.name,'success');
+    setCurrentUser({id:profile.user_id,studentId:profile.user_id,name:profile.email||profile.user_id,college:'',role:'student'});
+    showCopyToast('登录成功，欢迎 '+(profile.email||profile.user_id),'success');
     if(typeof checkAndShowOnboarding==='function')setTimeout(checkAndShowOnboarding,800);
     // 调用后端 API 获取 JWT token
     try{var loginRes=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentId:sid,password:pwd})});if(loginRes.ok){var loginData=await loginRes.json();if(loginData.token){setLS('auth_token',loginData.token)}}}catch(e){console.warn('后端登录接口不可用，使用本地模式:',e.message)}
     updateNavAuth();
-    if(profile.role==='admin'){navigate('admin')}else{navigate('home')}
+    navigate('home');
   }catch(e){errEl.textContent='错误：'+e.message;errEl.classList.add('show');btn.disabled=false;btn.textContent='登录'}
 }
 async function doRegister(){
@@ -79,18 +79,18 @@ async function doRegister(){
   var errEl=document.getElementById('authRegError');
   var btn=document.getElementById('authRegBtn');
   errEl.classList.remove('show');
-  if(!sid||!name||!college||!pwd){errEl.textContent='请填写所有必填项';errEl.classList.add('show');return}
+  if(!sid||!name||!pwd){errEl.textContent='请填写所有必填项';errEl.classList.add('show');return}
   if(pwd.length<6){errEl.textContent='密码至少6位';errEl.classList.add('show');return}
   if(pwd!==pwd2){errEl.textContent='两次密码不一致';errEl.classList.add('show');return}
   if(!agree){errEl.textContent='请先同意用户协议和隐私政策';errEl.classList.add('show');return}
   btn.disabled=true;btn.textContent='注册中...';
   try{
     var hash=await hashPassword(pwd);
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/profiles',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({student_id:sid,name:name,college:college,password_hash:hash,role:'student'})});
-    if(!res.ok){var errData={};try{errData=await res.json()}catch(e){}if(errData.message&&errData.message.indexOf('duplicate')>=0){errEl.textContent='该学号已注册，请直接登录'}else{errEl.textContent='注册失败，请重试'}errEl.classList.add('show');btn.disabled=false;btn.textContent='注册';return}
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/users',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({user_id:sid,email:name,password_hash:hash})});
+    if(!res.ok){var errData={};try{errData=await res.json()}catch(e){}if(errData.message&&errData.message.indexOf('duplicate')>=0){errEl.textContent='该账号已注册，请直接登录'}else{errEl.textContent='注册失败，请重试'}errEl.classList.add('show');btn.disabled=false;btn.textContent='注册';return}
     var data=await res.json();
     var profile=data[0];
-    setCurrentUser({id:profile.id,studentId:profile.student_id,name:profile.name,college:profile.college,role:profile.role||'student'});
+    setCurrentUser({id:profile.user_id,studentId:profile.user_id,name:profile.email||profile.user_id,college:'',role:'student'});
     showCopyToast('注册成功，欢迎 '+name,'success');
     if(typeof checkAndShowOnboarding==='function')setTimeout(checkAndShowOnboarding,800);
     // 注册成功后自动获取JWT token（直接调用后端，不依赖输入框）

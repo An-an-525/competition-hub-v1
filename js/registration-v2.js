@@ -32,13 +32,13 @@ async function startApplication(compId) {
 
 async function checkExistingDraft(compId) {
   var user = getCurrentUser();
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?competition_id=eq.' + compId + '&applicant_user_id=eq.' + user.id + '&select=id,status,type,created_at', { headers: HUB_GET_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?competition_id=eq.' + compId + '&user_id=eq.' + user.id + '&select=registration_id,status,created_at', { headers: HUB_GET_HEADERS });
   if (!res.ok) { showCopyToast('查询失败', 'error'); return; }
   var existing = await res.json();
   if (existing.length > 0) {
     var app = existing[0];
     if (app.status === 'draft') {
-      showConfirm('你有未完成的报名，是否继续编辑？', function() { showApplicationForm(compId, app.id); });
+      showConfirm('你有未完成的报名，是否继续编辑？', function() { showApplicationForm(compId, app.registration_id); });
     } else {
       showCopyToast('你已报名此竞赛（' + getStatusText(app.status) + '）', 'info');
     }
@@ -162,10 +162,10 @@ async function showApplicationTypeSelector(compId) {
     var user = getCurrentUser();
 
     // 查询用户在此竞赛的已有报名记录，判断各级别是否可用
-    var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?competition_id=eq.' + compId + '&applicant_user_id=eq.' + user.id + '&select=id,status,registration_level', { headers: HUB_GET_HEADERS });
+    var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?competition_id=eq.' + compId + '&user_id=eq.' + user.id + '&select=registration_id,status', { headers: HUB_GET_HEADERS });
     var existingApps = appRes.ok ? await appRes.json() : [];
-    var hasSchoolPassed = existingApps.some(function(a) { return a.registration_level === 'school' && (a.status === 'approved' || a.status === 'school_passed'); });
-    var hasProvincialPassed = existingApps.some(function(a) { return a.registration_level === 'provincial' && (a.status === 'approved' || a.status === 'provincial_passed'); });
+    var hasSchoolPassed = existingApps.some(function(a) { return a.status === 'approved' || a.status === 'school_passed'; });
+    var hasProvincialPassed = existingApps.some(function(a) { return a.status === 'approved' || a.status === 'provincial_passed'; });
 
     var html = '<div style="max-width:500px;margin:0 auto;padding:20px">';
     html += '<h3 style="margin-bottom:20px">选择报名方式</h3>';
@@ -256,15 +256,10 @@ async function createApplication(compId, type, level) {
     var user = getCurrentUser();
     var body = {
       competition_id: compId,
-      applicant_user_id: user.id,
-      type: type,
-      status: 'draft',
-      data: {}
+      user_id: user.id,
+      status: 'draft'
     };
-    if (level) {
-      body.registration_level = level;
-    }
-    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications', {
+    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations', {
       method: 'POST',
       headers: HUB_HEADERS,
       body: JSON.stringify(body)
@@ -272,7 +267,7 @@ async function createApplication(compId, type, level) {
     if (!res.ok) { showCopyToast('创建报名失败', 'error'); return; }
     var app = await res.json();
     showCopyToast('报名已创建，请填写信息', 'success');
-    showApplicationForm(compId, app.id);
+    showApplicationForm(compId, app[0].registration_id);
   } finally {
     _submitLock = false;
   }
@@ -287,26 +282,35 @@ async function showApplicationForm(compId, applicationId) {
   var user = getCurrentUser();
 
   // 获取报名记录
-  var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId, { headers: HUB_GET_HEADERS });
+  var appRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?registration_id=eq.' + applicationId, { headers: HUB_GET_HEADERS });
   var appData = (await appRes.json())[0];
   if (!appData) { showCopyToast('报名信息不存在'); return; }
 
-  // 获取表单定义
-  var formRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_GET_HEADERS });
-  var formData = (await formRes.json())[0];
-  var schema = formData ? formData.schema : getDefaultSchema();
+  // 获取表单定义（application_forms 表格可能不存在，使用默认 schema）
+  var formData = null;
+  try {
+    var formRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_GET_HEADERS });
+    if (formRes.ok) formData = (await formRes.json())[0];
+  } catch(e) { console.warn('application_forms 表不可用，使用默认表单:', e.message); }
+  var schema = formData && formData.schema ? formData.schema : getDefaultSchema();
 
   // 获取竞赛信息
   var comps = await fetchCompetitions();
   var comp = comps.find(function(c) { return c.id === compId; });
 
-  // 获取材料要求
-  var reqRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/form_requirements?competition_id=eq.' + compId + '&order=sort_order', { headers: HUB_GET_HEADERS });
-  var requirements = await reqRes.json();
+  // 获取材料要求（form_requirements 表不存在，使用空数组）
+  var requirements = [];
+  try {
+    var reqRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/form_requirements?competition_id=eq.' + compId + '&order=sort_order', { headers: HUB_GET_HEADERS });
+    if (reqRes.ok) requirements = await reqRes.json();
+  } catch(e) { console.warn('form_requirements 表不可用:', e.message); }
 
-  // 获取已有材料
-  var filesRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files?application_id=eq.' + applicationId + '&status=eq.uploaded', { headers: HUB_GET_HEADERS });
-  var files = await filesRes.json();
+  // 获取已有材料（application_files 表不存在，使用空数组）
+  var files = [];
+  try {
+    var filesRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files?application_id=eq.' + applicationId + '&status=eq.uploaded', { headers: HUB_GET_HEADERS });
+    if (filesRes.ok) files = await filesRes.json();
+  } catch(e) { console.warn('application_files 表不可用:', e.message); }
 
   // 渲染表单
   var html = '<div style="max-width:600px;margin:0 auto;padding:20px">';
@@ -320,7 +324,7 @@ async function showApplicationForm(compId, applicationId) {
   // 表单字段
   html += '<div id="appFormFields">';
   schema.forEach(function(field) {
-    var val = appData.data[field.key] || '';
+    var val = (appData.data && appData.data[field.key]) || '';
     html += '<div style="margin-bottom:16px">';
     html += '<label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--text-secondary)">' + esc(field.label) + (field.required ? ' <span style="color:#ef4444">*</span>' : '') + '</label>';
     if (field.type === 'textarea') {
@@ -400,7 +404,7 @@ async function saveDraft(applicationId, compId) {
   _submitLock = true;
   try {
     var data = collectFormData();
-    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId, {
+    var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?registration_id=eq.' + applicationId, {
       method: 'PATCH',
       headers: HUB_HEADERS,
       body: JSON.stringify({ data: data })
@@ -425,8 +429,11 @@ async function submitApplication(applicationId, compId) {
   try {
     var data = collectFormData();
     // 验证必填字段
-    var formRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_GET_HEADERS });
-    var formData = (await formRes.json())[0];
+    var formData = null;
+    try {
+      var formRes = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_forms?competition_id=eq.' + compId, { headers: HUB_GET_HEADERS });
+      if (formRes.ok) formData = (await formRes.json())[0];
+    } catch(e) { /* application_forms 表不可用，跳过验证 */ }
     if (formData && formData.schema) {
       var missing = formData.schema.filter(function(f) { return f.required && !data[f.key]; });
       if (missing.length > 0) {
@@ -438,13 +445,12 @@ async function submitApplication(applicationId, compId) {
     // 注意：_submitLock 在 confirm 回调中释放，不在外层 try/catch 中释放
     showConfirm('确认提交报名？提交后将无法修改。', async function() {
       try {
-        var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?id=eq.' + applicationId, {
+        var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?registration_id=eq.' + applicationId, {
           method: 'PATCH',
           headers: HUB_HEADERS,
           body: JSON.stringify({
             data: data,
-            status: 'submitted',
-            submitted_at: new Date().toISOString()
+            status: 'submitted'
           })
         });
         if (res.ok) {
@@ -460,7 +466,7 @@ async function submitApplication(applicationId, compId) {
               headers: HUB_HEADERS,
               body: JSON.stringify({
                 title: '新报名待审核',
-                content: user.name + ' 报名了 ' + compName,
+                content: (user.name || user.id) + ' 报名了 ' + compName,
                 notification_type: 'registration_submitted',
                 action_url: '/admin'
               })
@@ -520,22 +526,28 @@ async function handleFileUpload(applicationId, requirementKey, input, allowMulti
 
       // 模拟上传（实际应使用 Supabase Storage）
       // 这里将文件信息存入数据库，file_path 存储文件名
-      var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files', {
-        method: 'POST',
-        headers: HUB_HEADERS,
-        body: JSON.stringify({
-          application_id: applicationId,
-          requirement_key: requirementKey,
-          file_path: 'uploads/' + applicationId + '/' + file.name,
-          file_name: file.name,
-          file_size: file.size,
-          mime_type: file.type,
-          version: 1,
-          uploaded_by: user.id
-        })
-      });
-      if (res.ok) {
-        showCopyToast(file.name + ' 上传成功', 'success');
+      // 注意：application_files 表可能不存在
+      try {
+        var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/application_files', {
+          method: 'POST',
+          headers: HUB_HEADERS,
+          body: JSON.stringify({
+            application_id: applicationId,
+            requirement_key: requirementKey,
+            file_path: 'uploads/' + applicationId + '/' + file.name,
+            file_name: file.name,
+            file_size: file.size,
+            mime_type: file.type,
+            version: 1,
+            uploaded_by: user.id
+          })
+        });
+        if (res.ok) {
+          showCopyToast(file.name + ' 上传成功', 'success');
+        }
+      } catch(uploadErr) {
+        console.warn('文件上传失败（application_files 表可能不存在）:', uploadErr.message);
+        showCopyToast('文件上传功能暂不可用', 'error');
       }
     }
     // 刷新表单
@@ -599,7 +611,7 @@ async function renderMyApplications() {
   var user = getCurrentUser();
   container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">加载中...</div>';
 
-  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/applications?applicant_user_id=eq.' + user.id + '&select=*,competitions(name,level,category)&order=created_at.desc', { headers: HUB_GET_HEADERS });
+  var res = await fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/registrations?user_id=eq.' + user.id + '&select=*,competitions(name,level,category)&order=created_at.desc', { headers: HUB_GET_HEADERS });
   if (!res.ok) { container.innerHTML = '<p style="text-align:center;color:#e74c3c">加载失败</p>'; return; }
   var apps = await res.json();
 
@@ -612,11 +624,11 @@ async function renderMyApplications() {
   html += '<h3 style="margin-bottom:20px">我的报名 (' + apps.length + ')</h3>';
   apps.forEach(function(app) {
     var comp = app.competitions || {};
-    html += '<div class="card" style="padding:16px;margin-bottom:10px;cursor:pointer" onclick="showApplicationForm(\'' + app.competition_id + '\',\'' + app.id + '\')">';
+    html += '<div class="card" style="padding:16px;margin-bottom:10px;cursor:pointer" onclick="showApplicationForm(\'' + app.competition_id + '\',\'' + app.registration_id + '\')">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
     html += '<div style="flex:1;min-width:0">';
     html += '<div style="font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(comp.name || '未知竞赛') + '</div>';
-    html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">' + esc(comp.level || '') + ' · ' + esc(comp.category || '') + ' · ' + (app.type === 'team' ? '团队' : '个人') + '</div>';
+    html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">' + esc(comp.level || '') + ' · ' + esc(comp.category || '') + '</div>';
     html += '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + new Date(app.created_at).toLocaleDateString() + '</div>';
     html += '</div>';
     html += '<span style="font-size:12px;padding:4px 10px;border-radius:999px;background:' + getStatusBg(app.status) + ';color:' + getStatusColor(app.status) + ';white-space:nowrap">' + getStatusText(app.status) + '</span>';

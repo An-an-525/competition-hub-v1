@@ -280,7 +280,7 @@
     // 更新 Supabase 用户资料
     var user = getCurrentUser();
     if (user && user.id) {
-      fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/profiles?id=eq.' + user.id, {
+      fetch(HUB_URL + '/functions/v1/competition-api/rest/v1/users?user_id=eq.' + user.id, {
         method: 'PATCH',
         headers: HUB_HEADERS,
         body: JSON.stringify({ has_seen_guide: true })
