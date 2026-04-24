@@ -1,7 +1,7 @@
-/* AI Chat - Powered by Puter.js (DeepSeek/GPT) */
+/* AI Chat - Powered by SiliconFlow (DeepSeek V3/R1) */
 
-// AI 模型配置
-var AI_MODEL = 'deepseek-chat'; // 使用 DeepSeek 模型
+// AI 模型配置（通过 SiliconFlow API 调用）
+var AI_MODEL = 'deepseek-ai/DeepSeek-V3';
 
 // Supabase 配置（与 competition-hub.js 共享，条件声明避免重复）
 if(typeof HUB_URL === 'undefined') var HUB_URL = 'https://fdbbcibmqaogsbasoqly.supabase.co';
@@ -77,14 +77,14 @@ async function aiLoadHistoryFromDB() {
 var AI_API_BASE = API_BASE || '';
 
 // 系统提示词
-var AI_SYSTEM_PROMPT = '你是"竞赛助手"AI，专门服务长沙理工大学的学生。你的核心能力：\n\n1. 竞赛查询：根据学生的问题，从知识库中查找相关竞赛信息\n2. 报名指导：指导学生完成竞赛报名流程\n3. 竞赛推荐：根据学生需求推荐合适的竞赛\n4. 校园信息：回答关于长沙理工大学的问题\n\n## 严格规则\n- 所有回答必须基于事实，不得编造信息\n- 如果不确定，明确说"我不确定，建议查看官网确认"\n- 引用信息时标注来源\n- 使用简洁清晰的中文回答\n- 竞赛分类：A类（国家级顶级）、B+类、B-类、C类\n- 长沙理工大学2026年支持的A类竞赛：\n  1. 中国国际大学生创新大赛（原"互联网+"）\n  2. "挑战杯"中国大学生创业计划竞赛\n  3. "挑战杯"全国大学生课外学术科技作品竞赛';
+var AI_SYSTEM_PROMPT = '你是长沙理工大学学科竞赛信息平台的AI助手，服务长沙理工大学的学生。\n\n## 你的能力\n1. 竞赛查询与推荐：帮助学生了解各类学科竞赛\n2. 报名指导：指导竞赛报名流程和备赛策略\n3. 校园信息：回答关于长沙理工大学的问题\n4. 通用问答：帮助学生解答学习、编程、数学等各类问题\n\n## 重要规则\n- 用户问什么就答什么，不要强行把所有问题都往竞赛方向引导\n- 如果用户问编程、数学、英语等通用问题，直接正常回答\n- 如果用户问竞赛相关问题，结合长沙理工大学的实际情况回答\n- 使用简洁清晰的中文回答\n- 如果不确定，明确说"我不确定"\n\n## 长沙理工大学A类竞赛\n1. 中国国际大学生创新大赛（原"互联网+"）\n2. "挑战杯"中国大学生创业计划竞赛\n3. "挑战杯"全国大学生课外学术科技作品竞赛\n4. ACM-ICPC国际大学生程序设计竞赛\n5. 全国大学生数学建模竞赛';
 
 // 深度模式状态
 function isDeepMode(){return getLS('ai_deep_mode',false)}
 function toggleDeepMode(){var current=isDeepMode();setLS('ai_deep_mode',!current);var toggle=document.getElementById('deepModeToggle');if(toggle)toggle.classList.toggle('active',!current);var label=document.getElementById('deepModeLabel');if(label)label.textContent=!current?'深度思考已开启':'深度思考';showCopyToast(!current?'深度思考模式已开启，回答更全面':'已切换为普通模式','success')}
 
 function updateAIView(){var container=document.getElementById('aiChatContainer');var emptyState=document.getElementById('aiEmpty');var hasMessages=container&&container.children.length>0;if(hasMessages){emptyState.style.display='none';container.style.display='flex'}else{emptyState.style.display='flex';container.style.display='none'}// 更新 AI 页面登录状态 - MiniMax 直连模式始终为在线
-var statusEl=document.getElementById('aiLoginStatus');if(statusEl){statusEl.innerHTML='<span style="color:#10b981">● 在线</span> · DeepSeek AI';statusEl.dataset.mode='online'}// 初始化深度模式开关状态
+var statusEl=document.getElementById('aiLoginStatus');if(statusEl){statusEl.innerHTML='<span style="color:#10b981">● 在线</span> · DeepSeek V3';statusEl.dataset.mode='online'}// 初始化深度模式开关状态
 var deepToggle=document.getElementById('deepModeToggle');if(deepToggle)deepToggle.classList.toggle('active',isDeepMode());var deepLabel=document.getElementById('deepModeLabel');if(deepLabel)deepLabel.textContent=isDeepMode()?'深度思考已开启':'深度思考'}
 
 // AI 上游不可用时，将状态从"在线模式"降级为"本地模式（AI暂不可用）"
@@ -114,64 +114,88 @@ var _loadChatHistoryRunning = false;
 function loadChatHistory(){var container=document.getElementById('aiChatContainer');if(!container)return;var _u=getCurrentUser();var _uid=_u?_u.id:'guest';// 尝试从数据库加载（异步，不阻塞渲染）
 aiLoadHistoryFromDB().then(function(dbMessages){if(dbMessages&&dbMessages.length>0&&!_loadChatHistoryRunning){_loadChatHistoryRunning=true;setLS('ai_messages_'+_uid,dbMessages);loadChatHistory();_loadChatHistoryRunning=false;}}).catch(function(){});var messages=getLS('ai_messages_'+_uid,[]);if(!messages||messages.length===0)return;var savedScrollTop=container.scrollTop;var savedScrollHeight=container.scrollHeight;container.innerHTML='';for(var i=0;i<messages.length;i++){var m=messages[i];if(!m.role||!m.content)continue;var msg=document.createElement('div');msg.className='msg '+(m.role==='assistant'?'msg-ai':'msg-user');var msgTime=m.time?new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});var formatted=esc(m.content).replace(/\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^(\d+)\.\s/gm,'<span style="display:inline-block;margin-left:1.2em;text-indent:-1.2em">$1. </span>').replace(/^- (.+)$/gm,'<span style="display:block;padding-left:1em;position:relative">• $1</span>');if(m.role==='assistant'){var thinkingHtml='';if(m.thinking){thinkingHtml='<div class="thinking-section" id="thinkingSection" style="display:none"><div class="thinking-toggle" onclick="toggleThinkingSection()"><span class="thinking-icon">&#128173;</span><span class="thinking-label">思考过程</span><svg class="thinking-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="thinking-content" id="thinkingContent">'+esc(m.thinking)+'</div></div>'}msg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;min-width:0"><div>'+formatted+'</div>'+thinkingHtml+'<div class="msg-time">'+msgTime+'</div></div></div>'}else{msg.innerHTML='<div>'+formatted+'</div><div class="msg-time" style="text-align:right">'+msgTime+'</div>'}container.appendChild(msg)}container.scrollTop=savedScrollTop+(container.scrollHeight-savedScrollHeight);updateAIView()}
 
-// 本地知识库模式（不依赖外部API，完全本地运行）
+var SILICONFLOW_API_KEY = 'sk-jeeqfynhfqokdxeqzfaytvelwaleclsmpqnazmojpejyouqw';
+var SILICONFLOW_API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
+
 async function sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode, externalSignal) {
   try {
-    // 检查 puter.js 是否加载
-    if (typeof puter === 'undefined' || !puter.ai) {
-      onError('network_error');
+    if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
+
+    var model = deepMode ? 'deepseek-ai/DeepSeek-R1' : 'deepseek-ai/DeepSeek-V3';
+
+    var controller = new AbortController();
+    if (externalSignal) {
+      externalSignal.addEventListener('abort', function() { controller.abort(); });
+    }
+
+    var timeoutId = setTimeout(function() { controller.abort(); }, 60000);
+
+    var response = await fetch(SILICONFLOW_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SILICONFLOW_API_KEY
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        stream: true,
+        max_tokens: 2048,
+        temperature: 0.7
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      if (response.status === 401) { onError('auth_error'); return; }
+      if (response.status === 429) { onError('rate_limit'); return; }
+      onError('http_error');
       return;
     }
 
-    // 检查是否被取消
-    if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
+    var reader = response.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
 
-    // 构建消息（puter.ai.chat 支持消息数组）
-    var chatMessages = messages.map(function(m) {
-      return { role: m.role, content: m.content };
-    });
+    while (true) {
+      var result = await reader.read();
+      if (result.done) break;
+      if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
 
-    // 选择模型
-    var model = AI_MODEL;
-    if (deepMode) {
-      model = 'deepseek-reasoner'; // 深度思考用推理模型
-    }
+      buffer += decoder.decode(result.value, { stream: true });
+      var lines = buffer.split('\n');
+      buffer = lines.pop() || '';
 
-    // 调用 Puter.js AI API（流式）
-    var response = await puter.ai.chat(chatMessages, {
-      model: model,
-      stream: true
-    });
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line || !line.startsWith('data:')) continue;
+        var data = line.substring(5).trim();
+        if (data === '[DONE]') continue;
 
-    // 处理流式响应
-    var fullText = '';
-    if (response && typeof response[Symbol.asyncIterator] === 'function') {
-      for await (var part of response) {
-        if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
-        var text = part?.text || part?.message?.content || '';
-        if (part?.reasoning) {
-          onThinking(part.reasoning);
-        } else if (text) {
-          fullText += text;
-          onChunk(text);
-        }
+        try {
+          var parsed = JSON.parse(data);
+          var delta = parsed.choices && parsed.choices[0] && parsed.choices[0].delta;
+          if (!delta) continue;
+
+          // DeepSeek-R1 has reasoning_content for thinking
+          if (delta.reasoning_content) {
+            onThinking(delta.reasoning_content);
+          }
+          if (delta.content) {
+            onChunk(delta.content);
+          }
+        } catch (e) { /* skip malformed JSON */ }
       }
-    } else {
-      // 非流式响应
-      var text = response || '';
-      if (typeof text === 'object') text = text.message?.content || text.toString();
-      fullText = text;
-      onChunk(text);
     }
 
     onDone();
   } catch (e) {
-    console.error('AI API error:', e);
-    if (e.message && e.message.indexOf('rate') >= 0) {
-      onError('rate_limit');
-    } else if (e.message && e.message.indexOf('auth') >= 0) {
-      onError('auth_error');
+    if (e.name === 'AbortError') {
+      onError('timeout');
     } else {
+      console.error('AI API error:', e);
       onError('network_error');
     }
   }
