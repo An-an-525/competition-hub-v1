@@ -78,7 +78,7 @@ var PAGE_TITLES={home:'首页',academic:'学业助手',campus:'校园生活',adm
 /* 更新移动端底部标签栏和返回导航栏 */
 function updateMobileNav(page){
   /* 底部标签栏激活状态 */
-  var tabMap={home:'home',competition:'competition',toolbox:'toolbox',profile:'profile'};
+  var tabMap={home:'home',competition:'competition',ai:'ai',toolbox:'toolbox',profile:'profile'};
   var activeTab=tabMap[page]||'';
   document.querySelectorAll('.bottom-tab-item').forEach(function(item){
     item.classList.toggle('active',item.getAttribute('data-tab')===activeTab);
