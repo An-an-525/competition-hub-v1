@@ -31,7 +31,7 @@
 
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=20260426" />
+  <link rel="stylesheet" href="css/style.css?v=20260427" />
 </head>
 <body>
   <noscript>
@@ -432,17 +432,40 @@
 
     <!-- Toolbox Page -->
     <div id="page-toolbox" class="page">
-      <div class="page-breadcrumb"><button onclick="navigate('home')">首页</button><span class="bc-sep">/</span><span class="bc-current">工具箱</span></div>
-      <div class="content-page">
-        <h2 class="content-page-title"><span class="gold">工具箱</span></h2>
-        <div class="toolbox-grid">
-          <div class="toolbox-card" onclick="switchToolboxTab('gpa')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg></div><div class="toolbox-card-title">GPA计算器</div><div class="toolbox-card-desc">计算你的绩点</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('credits')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div><div class="toolbox-card-title">学分统计</div><div class="toolbox-card-desc">统计已修学分</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('countdown')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toolbox-card-title">倒计时</div><div class="toolbox-card-desc">考试/放假/开学</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('schedule')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="toolbox-card-title">课程表</div><div class="toolbox-card-desc">简易课程安排</div></div>
-          <div class="toolbox-card" onclick="switchToolboxTab('pomodoro')"><div class="toolbox-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3L2 6"/><path d="M22 6l-3-3"/><line x1="6" y1="19" x2="6.01" y2="19"/><line x1="18" y1="19" x2="18.01" y2="19"/></svg></div><div class="toolbox-card-title">番茄钟</div><div class="toolbox-card-desc">专注学习计时</div></div>
+      <div class="page-header">
+        <h2>工具箱</h2>
+      </div>
+      <div class="toolbox-grid">
+        <div class="tool-card" onclick="navigate('ai')">
+          <div class="tool-icon" style="background:rgba(99,102,241,0.1);color:#6366f1">🤖</div>
+          <div class="tool-name">AI 智能问答</div>
+          <div class="tool-desc">竞赛咨询、学习辅导、编程助手</div>
         </div>
-        <div id="toolboxContent"></div>
+        <div class="tool-card" onclick="navigate('competition','all')">
+          <div class="tool-icon" style="background:rgba(251,191,36,0.1);color:#fbbf24">🏆</div>
+          <div class="tool-name">竞赛大全</div>
+          <div class="tool-desc">浏览所有竞赛、筛选报名</div>
+        </div>
+        <div class="tool-card" onclick="navigate('competition','calendar')">
+          <div class="tool-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4">📅</div>
+          <div class="tool-name">竞赛日历</div>
+          <div class="tool-desc">重要截止日期提醒</div>
+        </div>
+        <div class="tool-card" onclick="navigate('resources')">
+          <div class="tool-icon" style="background:rgba(16,185,129,0.1);color:#10b981">📚</div>
+          <div class="tool-name">学习资源</div>
+          <div class="tool-desc">备赛资料、历年真题</div>
+        </div>
+        <div class="tool-card" onclick="window.open('https://www.csust.edu.cn/jwc/','_blank')">
+          <div class="tool-icon" style="background:rgba(239,68,68,0.1);color:#ef4444">🏫</div>
+          <div class="tool-name">教务处</div>
+          <div class="tool-desc">课表、成绩、考试安排</div>
+        </div>
+        <div class="tool-card" onclick="window.open('https://www.csust.edu.cn/lib/','_blank')">
+          <div class="tool-icon" style="background:rgba(168,85,247,0.1);color:#a855f7">📖</div>
+          <div class="tool-name">图书馆</div>
+          <div class="tool-desc">馆藏查询、电子资源</div>
+        </div>
       </div>
     </div>
 
@@ -635,31 +658,31 @@
   </script>
 
   <!-- Module Scripts (load order matters) -->
-  <script src="js/data.js?v=20260426"></script>
-  <script src="js/utils.js?v=20260426"></script>
-  <script src="js/animations.js?v=20260426"></script>
-  <script src="js/modals.js?v=20260426"></script>
-  <script src="js/auth.js?v=20260426"></script>
-  <script src="js/notifications.js?v=20260426"></script>
-  <script src="js/navigation.js?v=20260426"></script>
-  <script src="js/ai-chat.js?v=20260426"></script>
-  <script src="js/search.js?v=20260426"></script>
-  <script src="js/pages-academic.js?v=20260426"></script>
-  <script src="js/pages-campus.js?v=20260426"></script>
-  <script src="js/pages-admission.js?v=20260426"></script>
-  <script src="js/pages-news.js?v=20260426"></script>
-  <script src="js/pages-competition.js?v=20260426"></script>
-  <script src="js/competition-hub.js?v=20260426"></script>
-  <script src="js/registration.js?v=20260426"></script>
-  <script src="js/registration-v2.js?v=20260426"></script>
-  <script src="js/admin.js?v=20260426"></script>
-  <script src="js/admin-v2.js?v=20260426"></script>
-  <script src="js/toolbox.js?v=20260426"></script>
-  <script src="js/calendar.js?v=20260426"></script>
-  <script src="js/effects.js?v=20260426"></script>
-  <script src="js/app.js?v=20260426"></script>
-  <script src="js/onboarding.js?v=20260426"></script>
-  <script src="js/learning-resources.js?v=20260426"></script>
+  <script src="js/data.js?v=20260427"></script>
+  <script src="js/utils.js?v=20260427"></script>
+  <script src="js/animations.js?v=20260427"></script>
+  <script src="js/modals.js?v=20260427"></script>
+  <script src="js/auth.js?v=20260427"></script>
+  <script src="js/notifications.js?v=20260427"></script>
+  <script src="js/navigation.js?v=20260427"></script>
+  <script src="js/ai-chat.js?v=20260427"></script>
+  <script src="js/search.js?v=20260427"></script>
+  <script src="js/pages-academic.js?v=20260427"></script>
+  <script src="js/pages-campus.js?v=20260427"></script>
+  <script src="js/pages-admission.js?v=20260427"></script>
+  <script src="js/pages-news.js?v=20260427"></script>
+  <script src="js/pages-competition.js?v=20260427"></script>
+  <script src="js/competition-hub.js?v=20260427"></script>
+  <script src="js/registration.js?v=20260427"></script>
+  <script src="js/registration-v2.js?v=20260427"></script>
+  <script src="js/admin.js?v=20260427"></script>
+  <script src="js/admin-v2.js?v=20260427"></script>
+  <script src="js/toolbox.js?v=20260427"></script>
+  <script src="js/calendar.js?v=20260427"></script>
+  <script src="js/effects.js?v=20260427"></script>
+  <script src="js/app.js?v=20260427"></script>
+  <script src="js/onboarding.js?v=20260427"></script>
+  <script src="js/learning-resources.js?v=20260427"></script>
   <script>
   // 防御性定义：确保AI核心函数始终可用
   if(typeof quickAsk==='undefined'){

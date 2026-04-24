@@ -400,7 +400,12 @@ function clearHubFilters(){
 
 /* --- Competition Detail Modal --- */
 async function showHubCompDetail(compId){
-  var comps=await fetchCompetitions();var c=comps.find(function(x){return x.competition_id===compId});if(!c)return;
+  try{
+    var comps=await fetchCompetitions();
+    if(!comps||!comps.length){showCopyToast('数据加载失败，请稍后重试','warning');return}
+    compId=Number(compId);
+    var c=comps.find(function(x){return Number(x.competition_id)===compId});
+    if(!c){showCopyToast('未找到该竞赛信息','warning');return}
   var counts=await fetchRegCounts();var regCount=counts[compId]||0;
   var user=getCurrentUser();
   var regEnd=c.registration_end||c.reg_end||'';
@@ -469,6 +474,7 @@ async function showHubCompDetail(compId){
   }
   html+='</div></div>';
   showCompModal(html);
+  }catch(e){console.error('showHubCompDetail error:',e);showCopyToast('加载详情失败，请稍后重试','error')}
 }
 function closeHubDetailModal(){
   var overlay=document.querySelector('div[style*="z-index:1000"]');
