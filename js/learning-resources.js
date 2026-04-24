@@ -40,10 +40,11 @@ async function renderLearningResources() {
     _lrAllResources = [];
   }
 
-  // If no data from server, use local CSUST resources
-  if(!_lrAllResources || _lrAllResources.length === 0) {
-    if(typeof CSUST_LEARNING_RESOURCES !== 'undefined' && CSUST_LEARNING_RESOURCES.length > 0) {
+  // After API call completes, if no resources found, try local data
+  if (!_lrAllResources || _lrAllResources.length === 0) {
+    if (typeof CSUST_LEARNING_RESOURCES !== 'undefined' && CSUST_LEARNING_RESOURCES && CSUST_LEARNING_RESOURCES.length > 0) {
       _lrAllResources = CSUST_LEARNING_RESOURCES;
+      console.log('使用本地学习资源数据:', _lrAllResources.length, '条');
     }
   }
 
