@@ -1,7 +1,7 @@
-/* Extracted from app.js - Upgraded to MiniMax M2.7 SSE Streaming */
+/* AI Chat - Powered by Puter.js (DeepSeek/GPT) */
 
-// MiniMax API 配置（API 密钥由服务端 Edge Function 管理，不暴露在前端）
-var MINIMAX_MODEL = 'MiniMax-M2.7';
+// AI 模型配置
+var AI_MODEL = 'deepseek-chat'; // 使用 DeepSeek 模型
 
 // Supabase 配置（与 competition-hub.js 共享，条件声明避免重复）
 if(typeof HUB_URL === 'undefined') var HUB_URL = 'https://fdbbcibmqaogsbasoqly.supabase.co';
@@ -84,7 +84,7 @@ function isDeepMode(){return getLS('ai_deep_mode',false)}
 function toggleDeepMode(){var current=isDeepMode();setLS('ai_deep_mode',!current);var toggle=document.getElementById('deepModeToggle');if(toggle)toggle.classList.toggle('active',!current);var label=document.getElementById('deepModeLabel');if(label)label.textContent=!current?'深度思考已开启':'深度思考';showCopyToast(!current?'深度思考模式已开启，回答更全面':'已切换为普通模式','success')}
 
 function updateAIView(){var container=document.getElementById('aiChatContainer');var emptyState=document.getElementById('aiEmpty');var hasMessages=container&&container.children.length>0;if(hasMessages){emptyState.style.display='none';container.style.display='flex'}else{emptyState.style.display='flex';container.style.display='none'}// 更新 AI 页面登录状态 - MiniMax 直连模式始终为在线
-var statusEl=document.getElementById('aiLoginStatus');if(statusEl){statusEl.innerHTML='<span style="color:#10b981">● 本地模式</span> · 知识库问答';statusEl.dataset.mode='online'}// 初始化深度模式开关状态
+var statusEl=document.getElementById('aiLoginStatus');if(statusEl){statusEl.innerHTML='<span style="color:#10b981">● 在线</span> · DeepSeek AI';statusEl.dataset.mode='online'}// 初始化深度模式开关状态
 var deepToggle=document.getElementById('deepModeToggle');if(deepToggle)deepToggle.classList.toggle('active',isDeepMode());var deepLabel=document.getElementById('deepModeLabel');if(deepLabel)deepLabel.textContent=isDeepMode()?'深度思考已开启':'深度思考'}
 
 // AI 上游不可用时，将状态从"在线模式"降级为"本地模式（AI暂不可用）"
@@ -117,41 +117,63 @@ aiLoadHistoryFromDB().then(function(dbMessages){if(dbMessages&&dbMessages.length
 // 本地知识库模式（不依赖外部API，完全本地运行）
 async function sendToMiniMax(messages, onChunk, onThinking, onDone, onError, deepMode, externalSignal) {
   try {
-    // Extract the last user message
-    var lastMsg = '';
-    for (var i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].role === 'user') {
-        lastMsg = messages[i].content;
-        break;
-      }
+    // 检查 puter.js 是否加载
+    if (typeof puter === 'undefined' || !puter.ai) {
+      onError('network_error');
+      return;
     }
 
-    // Simulate thinking phase
+    // 检查是否被取消
+    if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
+
+    // 构建消息（puter.ai.chat 支持消息数组）
+    var chatMessages = messages.map(function(m) {
+      return { role: m.role, content: m.content };
+    });
+
+    // 选择模型
+    var model = AI_MODEL;
     if (deepMode) {
-      var thinkingText = '正在分析问题...\n正在检索知识库...\n正在组织回答...';
-      var chars = thinkingText.split('');
-      for (var t = 0; t < chars.length; t++) {
-        if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
-        onThinking(chars[t]);
-        await new Promise(function(r) { setTimeout(r, 30); });
-      }
-      await new Promise(function(r) { setTimeout(r, 500); });
+      model = 'deepseek-reasoner'; // 深度思考用推理模型
     }
 
-    // Get response from local knowledge base
-    var response = searchKnowledgeBase(lastMsg);
+    // 调用 Puter.js AI API（流式）
+    var response = await puter.ai.chat(chatMessages, {
+      model: model,
+      stream: true
+    });
 
-    // Simulate streaming (typewriter effect)
-    var responseChars = response.split('');
-    for (var j = 0; j < responseChars.length; j++) {
-      if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
-      onChunk(responseChars[j]);
-      await new Promise(function(r) { setTimeout(r, 15); });
+    // 处理流式响应
+    var fullText = '';
+    if (response && typeof response[Symbol.asyncIterator] === 'function') {
+      for await (var part of response) {
+        if (externalSignal && externalSignal.aborted) { onError('timeout'); return; }
+        var text = part?.text || part?.message?.content || '';
+        if (part?.reasoning) {
+          onThinking(part.reasoning);
+        } else if (text) {
+          fullText += text;
+          onChunk(text);
+        }
+      }
+    } else {
+      // 非流式响应
+      var text = response || '';
+      if (typeof text === 'object') text = text.message?.content || text.toString();
+      fullText = text;
+      onChunk(text);
     }
 
     onDone();
   } catch (e) {
-    onError('network_error');
+    console.error('AI API error:', e);
+    if (e.message && e.message.indexOf('rate') >= 0) {
+      onError('rate_limit');
+    } else if (e.message && e.message.indexOf('auth') >= 0) {
+      onError('auth_error');
+    } else {
+      onError('network_error');
+    }
   }
 }
 
