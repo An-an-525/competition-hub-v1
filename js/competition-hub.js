@@ -46,14 +46,6 @@ async function _fetchCompetitionsFromServer(){
     var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/competitions?select=*&order=created_at.desc',{headers:HUB_GET_HEADERS});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
-    // Filter to CSUST competitions only
-    if(data && data.length > 0){
-      data = data.filter(function(c) {
-        var src = (c.source_url || '') + (c.official_url || '');
-        var text = (c.name || '') + (c.description || '');
-        return src.indexOf('csust.edu.cn') !== -1 || text.indexOf('长沙理工') !== -1;
-      });
-    }
     if(data&&data.length>0){
       _cachedCompetitions=data;
       _cacheTimestamp=Date.now();
