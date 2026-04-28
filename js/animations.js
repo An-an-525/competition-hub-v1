@@ -20,37 +20,26 @@ function initScrollProgress() {
    Claude Aesthetic: GSAP Animations (SIMPLIFIED for performance)
    ============================================ */
 function initGSAPAnimations() {
-  // Claude 风格：不使用入场动画
   if (typeof gsap === 'undefined') return;
-  return;
   try {
-    if (typeof gsap === 'undefined') return;
-
     // Set initial states
     gsap.set('.top-nav', { y: -100, opacity: 0 });
+    gsap.set('.daily-quote', { y: 20, opacity: 0 });
     gsap.set('.hero-title', { y: 60, opacity: 0 });
     gsap.set('.hero-subtitle', { y: 30, opacity: 0 });
     gsap.set('.home-search', { y: 30, opacity: 0 });
-    gsap.set('.daily-quote', { y: 30, opacity: 0 });
+    gsap.set('.stats-row .stat-card', { y: 30, opacity: 0 });
     gsap.set('.featured-row .featured-item', { y: 40, opacity: 0 });
     gsap.set('.service-list .service-item', { y: 30, opacity: 0 });
 
     // Nav slides down
     gsap.to('.top-nav', { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' });
 
-    // Hero title - split text effect
-    var heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-      var text = heroTitle.textContent;
-      heroTitle.innerHTML = '';
-      text.split('').forEach(function(char) {
-        var span = document.createElement('span');
-        span.className = 'char';
-        span.textContent = char === ' ' ? '\u00A0' : char;
-        heroTitle.appendChild(span);
-      });
-      gsap.from('.hero-title .char', { y: 30, opacity: 0, duration: 0.5, stagger: 0.02, ease: 'power3.out', delay: 0.2 });
-    }
+    // Daily quote - Claude 风格淡入
+    gsap.to('.daily-quote', { y: 0, opacity: 1, duration: 0.8, delay: 0.15, ease: 'power3.out' });
+
+    // Hero title
+    gsap.to('.hero-title', { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power3.out' });
 
     // Subtitle
     gsap.to('.hero-subtitle', { y: 0, opacity: 1, duration: 0.8, delay: 0.5, ease: 'power3.out' });
@@ -58,14 +47,14 @@ function initGSAPAnimations() {
     // Home search
     gsap.to('.home-search', { y: 0, opacity: 1, duration: 0.8, delay: 0.6, ease: 'power3.out' });
 
+    // Stats cards
+    gsap.to('.stats-row .stat-card', { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, delay: 0.7, ease: 'power3.out' });
+
     // Featured row
-    gsap.to('.featured-row .featured-item', { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, delay: 0.7, ease: 'power3.out' });
+    gsap.to('.featured-row .featured-item', { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, delay: 0.9, ease: 'power3.out' });
 
     // Service list items
-    gsap.to('.service-list .service-item', { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, delay: 0.9, ease: 'power3.out' });
-
-    // Daily quote
-    gsap.to('.daily-quote', { y: 0, opacity: 1, duration: 0.8, delay: 0.8, ease: 'power3.out' });
+    gsap.to('.service-list .service-item', { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, delay: 1.0, ease: 'power3.out' });
 
   } catch(e) { console.warn('GSAP init failed:', e); }
 }

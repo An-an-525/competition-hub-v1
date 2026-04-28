@@ -617,11 +617,11 @@ h3 { font-weight: 700; }
     .home-search .search-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:none;background:var(--primary, #1F2328);color:#FFFFFF;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease;font-weight:600}
     .home-search .search-btn:hover{filter:brightness(1.05)}
     .home-search .search-btn:active{transform:translateY(-50%) scale(0.95);filter:brightness(0.96)}
-    .daily-quote{text-align:center;padding:0;margin-top:24px;font-size:18px;color:var(--text-secondary);font-weight:400;line-height:1.7;letter-spacing:0}
-    .daily-quote .quote-text{font-size:18px;line-height:1.7;color:var(--text-secondary);font-weight:400;max-width:100%;letter-spacing:0}
-    .daily-quote .quote-author{font-size:13px;color:var(--text-muted);margin-top:8px}
-    .quote-card{background:var(--surface-glass);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:24px 28px;position:relative;display:flex;gap:16px;align-items:flex-start;max-width:600px;margin:0 auto}
-    .quote-bar{width:3px;min-height:20px;border-radius:2px;background:var(--accent-gradient);flex-shrink:0;align-self:stretch}
+    .daily-quote{text-align:center;padding:0;margin-top:0;font-size:16px;color:var(--text-secondary);font-weight:400;line-height:1.8;letter-spacing:0.02em}
+    .daily-quote .quote-text{font-size:16px;line-height:1.8;color:var(--text-secondary);font-weight:400;max-width:100%;letter-spacing:0.02em;font-family:'Noto Serif SC','Source Han Serif SC','STSong','Songti SC','SimSun',Georgia,'Times New Roman',serif;font-style:italic}
+    .daily-quote .quote-author{font-size:12px;color:var(--text-muted);margin-top:6px;font-family:'Noto Serif SC','Source Han Serif SC','STSong','Songti SC','SimSun',Georgia,'Times New Roman',serif;letter-spacing:0.05em}
+    .quote-card{background:var(--surface-glass);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:18px 24px;position:relative;display:flex;gap:14px;align-items:flex-start;max-width:600px;margin:0 auto}
+    .quote-bar{width:2px;min-height:20px;border-radius:2px;background:var(--accent-gradient);flex-shrink:0;align-self:stretch;opacity:0.6}
     .quote-body{flex:1;min-width:0}
     .quote-refresh{margin-top:0;background:none;border:none;color:var(--text-muted);padding:0;font-size:14px;cursor:pointer;transition:all .25s ease;position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center}
     .quote-refresh:hover{color:var(--accent);border-color:var(--border-gold);background:var(--bg-hover)}
@@ -1418,13 +1418,13 @@ h3 { font-weight: 700; }
 
 .featured-comp-header {
   padding: 16px;
-  color: #fff;
+  color: var(--text-primary);
   position: relative;
 }
 
-.featured-comp-header.level-a { background: rgba(17,17,17,0.04); border-left: 3px solid rgba(17,17,17,0.3); }
-.featured-comp-header.level-b { background: rgba(17,17,17,0.04); border-left: 3px solid rgba(17,17,17,0.2); }
-.featured-comp-header.level-c { background: rgba(17,17,17,0.04); border-left: 3px solid rgba(17,17,17,0.15); }
+.featured-comp-header.level-a { background: rgba(220,38,38,0.08); border-left: 3px solid rgba(220,38,38,0.6); }
+.featured-comp-header.level-b { background: rgba(245,158,11,0.08); border-left: 3px solid rgba(245,158,11,0.5); }
+.featured-comp-header.level-c { background: rgba(59,130,246,0.06); border-left: 3px solid rgba(59,130,246,0.4); }
 
 .featured-comp-name {
   font-family: var(--font-title);

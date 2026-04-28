@@ -60,11 +60,11 @@ async function doLogin(){
     if(data.length===0){errEl.textContent='该账号未注册';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
     var profile=data[0];
     if(profile.password_hash!==hash){errEl.textContent='密码错误';errEl.classList.add('show');btn.disabled=false;btn.textContent='登录';return}
-    setCurrentUser({id:profile.user_id,studentId:profile.user_id,name:profile.email||profile.user_id,college:'',role:'student'});
+    setCurrentUser({id:profile.user_id,studentId:profile.user_id,name:profile.email||profile.user_id,college:profile.college||'',role:'student'});
     showCopyToast('登录成功，欢迎 '+(profile.email||profile.user_id),'success');
     if(typeof checkAndShowOnboarding==='function')setTimeout(checkAndShowOnboarding,800);
     // 调用后端 API 获取 JWT token
-    try{var loginRes=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentId:sid,password:pwd})});if(loginRes.ok){var loginData=await loginRes.json();if(loginData.token){setLS('auth_token',loginData.token)}}}catch(e){console.warn('后端登录接口不可用，使用本地模式:',e.message)}
+    try{var loginRes=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentId:sid,password:pwd})});if(loginRes.ok){var loginData=await loginRes.json();if(loginData.token){setLS('auth_token',loginData.token)}}}catch(e){/* 后端不可用时使用本地模式，不影响登录 */}
     updateNavAuth();
     navigate('home');
   }catch(e){errEl.textContent='错误：'+e.message;errEl.classList.add('show');btn.disabled=false;btn.textContent='登录'}
@@ -86,15 +86,15 @@ async function doRegister(){
   btn.disabled=true;btn.textContent='注册中...';
   try{
     var hash=await hashPassword(pwd);
-    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/users',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({user_id:sid,email:name,password_hash:hash})});
+    var res=await fetch(HUB_URL+'/functions/v1/competition-api/rest/v1/users',{method:'POST',headers:HUB_HEADERS,body:JSON.stringify({user_id:sid,email:name,college:college||'',password_hash:hash})});
     if(!res.ok){var errData={};try{errData=await res.json()}catch(e){}if(errData.message&&errData.message.indexOf('duplicate')>=0){errEl.textContent='该账号已注册，请直接登录'}else{errEl.textContent='注册失败，请重试'}errEl.classList.add('show');btn.disabled=false;btn.textContent='注册';return}
     var data=await res.json();
     var profile=data[0];
-    setCurrentUser({id:profile.user_id,studentId:profile.user_id,name:profile.email||profile.user_id,college:'',role:'student'});
+    setCurrentUser({id:profile.user_id,studentId:profile.user_id,name:profile.email||profile.user_id,college:college||'',role:'student'});
     showCopyToast('注册成功，欢迎 '+name,'success');
     if(typeof checkAndShowOnboarding==='function')setTimeout(checkAndShowOnboarding,800);
     // 注册成功后自动获取JWT token（直接调用后端，不依赖输入框）
-    try{var loginRes=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentId:sid,password:pwd})});if(loginRes.ok){var loginData=await loginRes.json();if(loginData.token){setLS('auth_token',loginData.token)}}}catch(e){console.warn('后端登录接口不可用:',e.message)}
+    try{var loginRes=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentId:sid,password:pwd})});if(loginRes.ok){var loginData=await loginRes.json();if(loginData.token){setLS('auth_token',loginData.token)}}}catch(e){/* 后端不可用时使用本地模式 */}
     updateNavAuth();navigate('home');
   }catch(e){errEl.textContent='错误：'+e.message;errEl.classList.add('show');btn.disabled=false;btn.textContent='注册'}
 }

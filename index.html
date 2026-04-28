@@ -31,7 +31,11 @@
 
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=20260427" />
+  <link rel="stylesheet" href="css/style.css?v=20260428" />
+  <!-- Claude 风格衬线字体（名言引用） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet">
 
   <!-- AI 功能通过 MiniMax API 实现（OpenAI 兼容格式），见 js/ai-chat.js -->
 </head>
@@ -169,6 +173,18 @@
       <div class="hero-deco hero-deco-dots"></div>
       <div class="hero-deco hero-deco-ring"></div>
 
+      <!-- Daily Quote - Claude 风格名言，置于标题上方 -->
+      <div class="daily-quote" style="margin-bottom:20px;margin-top:0">
+        <div class="quote-card" id="quoteCard">
+          <div class="quote-bar"></div>
+          <div class="quote-body">
+            <div class="quote-text" id="quoteText"></div>
+            <div class="quote-author" id="quoteAuthor"></div>
+          </div>
+          <button class="quote-refresh" onclick="event.stopPropagation();refreshQuote()" aria-label="换一条">&#8635;</button>
+        </div>
+      </div>
+
       <div class="home-welcome">
         <h1 class="hero-title">学科竞赛信息平台</h1>
         <p class="hero-subtitle">学科竞赛查询与报名平台</p>
@@ -204,17 +220,6 @@
         <div class="stat-card">
           <div class="stat-number">17</div>
           <div class="stat-label">学习资源</div>
-        </div>
-      </div>
-
-      <div class="daily-quote">
-        <div class="quote-card" id="quoteCard">
-          <div class="quote-bar"></div>
-          <div class="quote-body">
-            <div class="quote-text" id="quoteText"></div>
-            <div class="quote-author" id="quoteAuthor"></div>
-          </div>
-          <button class="quote-refresh" onclick="event.stopPropagation();refreshQuote()" aria-label="换一条">&#8635;</button>
         </div>
       </div>
 
@@ -453,7 +458,7 @@
           <div class="tool-name">竞赛日历</div>
           <div class="tool-desc">重要截止日期提醒</div>
         </div>
-        <div class="tool-card" onclick="navigate('resources')">
+        <div class="tool-card" onclick="navigate('learning')">
           <div class="tool-icon" style="background:rgba(16,185,129,0.1);color:#10b981">📚</div>
           <div class="tool-name">学习资源</div>
           <div class="tool-desc">备赛资料、历年真题</div>
