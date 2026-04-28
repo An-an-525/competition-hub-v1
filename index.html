@@ -32,6 +32,8 @@
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="css/style.css?v=20260427" />
+
+  <!-- AI 功能通过 MiniMax API 实现（OpenAI 兼容格式），见 js/ai-chat.js -->
 </head>
 <body>
   <noscript>
@@ -467,6 +469,7 @@
           <div class="tool-desc">馆藏查询、电子资源</div>
         </div>
       </div>
+      <div id="toolboxContent"></div>
     </div>
 
     <!-- Profile Page -->
@@ -665,7 +668,7 @@
   <script src="js/auth.js?v=20260427"></script>
   <script src="js/notifications.js?v=20260427"></script>
   <script src="js/navigation.js?v=20260427"></script>
-  <script src="js/ai-chat.js?v=20260427"></script>
+  <script src="js/ai-chat.js?v=20260428"></script>
   <script src="js/search.js?v=20260427"></script>
   <script src="js/pages-academic.js?v=20260427"></script>
   <script src="js/pages-campus.js?v=20260427"></script>
@@ -698,51 +701,35 @@
       var v=inp.value.trim();
       if(!v)return;
       inp.value='';
-      // 如果ai-chat.js已加载，使用它的完整逻辑
-      if(typeof _sendAIChatImpl==='function'){_sendAIChatImpl();return}
-      // 否则使用简单本地回复
-      var chatArea=document.getElementById('aiChatMessages')||document.querySelector('.ai-chat-messages');
-      if(!chatArea){
-        var page=document.getElementById('aiPage');
-        if(page){
-          chatArea=document.createElement('div');
-          chatArea.className='ai-chat-messages';
-          chatArea.id='aiChatMessages';
-          page.insertBefore(chatArea,page.firstChild.nextSibling);
-        }
-      }
-      if(!chatArea)return;
-      var empty=document.getElementById('aiEmpty');
-      if(empty)empty.style.display='none';
-      var userDiv=document.createElement('div');
-      userDiv.className='ai-message ai-user-message';
-      userDiv.innerHTML='<div class="ai-message-content">'+v.replace(/</g,'&lt;')+'</div>';
-      chatArea.appendChild(userDiv);
-      var botDiv=document.createElement('div');
-      botDiv.className='ai-message ai-bot-message';
-      botDiv.innerHTML='<div class="ai-message-content">正在查询知识库...</div>';
-      chatArea.appendChild(botDiv);
-      chatArea.scrollTop=chatArea.scrollHeight;
-      setTimeout(function(){
-        var answers={
-          '土木':'土木与环境工程学院相关竞赛：\n1. 全国大学生结构设计竞赛 - 土木领域最高水平赛事\n2. 全国大学生测绘学科创新创业智能大赛\n3. BIM技术应用竞赛\n4. 全国大学生工程力学竞赛\n5. 混凝土材料设计大赛\n\n备赛建议：注重力学基础、CAD/BIM技能、团队协作',
-          'A类':'长沙理工大学A类竞赛包括：\n1. 中国国际大学生创新大赛（互联网+）\n2. "挑战杯"全国大学生课外学术科技作品竞赛\n3. "挑战杯"中国大学生创业计划竞赛\n4. ACM-ICPC国际大学生程序设计竞赛\n5. 全国大学生数学建模竞赛\n\n这些竞赛入选全国普通高校大学生竞赛排行榜，获奖可获保研加分。',
-          '报名':'竞赛报名流程：\n1. 关注教务处竞赛通知\n2. 按通知要求在规定时间内提交报名材料\n3. 部分竞赛需要通过学院推荐\n4. 校内选拔赛后择优推荐参加省赛/国赛\n\n建议：提前组队（通常3-5人），了解竞赛规则',
-          '保研':'竞赛获奖与保研加分政策：\nA类竞赛国家级一等奖可获得较高保研加分\n具体加分标准以学校当年文件为准\n建议咨询教务处或学院学工办',
-          '数学建模':'全国大学生数学建模竞赛备赛指南：\n1. 组队：3人/队，建议数学+计算机+专业各一人\n2. 学习内容：线性代数、概率统计、优化理论、MATLAB/Python\n3. 历年真题练习：国赛官网有历年赛题\n4. 校内选拔：每年4月报名，4-5月校赛\n\n我校在该赛事中多次获得省级以上奖项',
-          '挑战杯':'"挑战杯"竞赛分为两个系列：\n\n大挑（课外学术科技作品）：\n- 自然科学类学术论文\n- 哲学社会科学类调查报告\n- 科技发明制作类\n\n小挑（创业计划竞赛）：\n- 创业计划书撰写\n- 项目路演展示\n\n建议：提前半年准备，寻找指导老师'
-        };
-        var resp='感谢您的提问！以下是相关信息：\n\n';
-        var found=false;
-        for(var key in answers){
-          if(v.indexOf(key)>=0){resp+=answers[key];found=true;break}
-        }
-        if(!found){
-          resp+='关于"'+v+'"的问题，建议您：\n1. 查看竞赛大全页面了解所有竞赛\n2. 关注教务处竞赛通知\n3. 咨询学院教务办\n\n如有其他问题，欢迎继续提问！';
-        }
-        botDiv.querySelector('.ai-message-content').textContent=resp;
-        chatArea.scrollTop=chatArea.scrollHeight;
-      },800);
+      var container=document.getElementById('aiChatContainer');
+      var emptyState=document.getElementById('aiEmpty');
+      if(emptyState)emptyState.style.display='none';
+      if(container)container.style.display='flex';
+      var userMsg=document.createElement('div');
+      userMsg.className='msg msg-user';
+      userMsg.innerHTML='<div>'+v.replace(/</g,'&lt;').replace(/\n/g,'<br/>')+'</div>';
+      if(container)container.appendChild(userMsg);
+      var botMsg=document.createElement('div');
+      botMsg.className='msg msg-ai';
+      botMsg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1"><div class="ai-typing-indicator"><span></span><span></span><span></span></div></div></div>';
+      if(container)container.appendChild(botMsg);
+      if(container)container.scrollTop=container.scrollHeight;
+      // 使用 MiniMax API 直接调用
+      var msgs=[{role:'system',content:'你是长沙理工大学学科竞赛信息平台的AI助手，使用简洁清晰的中文回答。'},{role:'user',content:v}];
+      fetch('https://api.minimax.io/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer sk-cp-sHnWpvPMygZhEJloWKBPQ49qOLA8FiMJIjoyWDegRumFLl4RRJvqOqMirvnkuq_gk6LmyRZcwzrTORsajL7_VlAVEpMhkiqfQxKOTvgRce6_53sy2aNZeB0'},
+        body:JSON.stringify({model:'MiniMax-M2.5',messages:msgs})
+      }).then(function(r){return r.json()}).then(function(resp){
+        var text='';
+        if(resp&&resp.choices&&resp.choices[0]&&resp.choices[0].message){text=resp.choices[0].message.content||''}
+        else{text='AI未返回有效回答'}
+        botMsg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1">'+text.replace(/</g,'&lt;').replace(/\n/g,'<br/>')+'</div></div>';
+        if(container)container.scrollTop=container.scrollHeight;
+      }).catch(function(err){
+        console.error('[AI Fallback] MiniMax API调用失败:',err);
+        botMsg.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px"><div class="msg-avatar">AI</div><div style="flex:1;color:#f59e0b">AI服务暂时不可用，请稍后重试</div></div>';
+      });
     }
   }
   </script>
