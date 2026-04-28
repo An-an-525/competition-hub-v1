@@ -238,8 +238,8 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
           </div>
           <div class="mission-text">
-            <h3>校赛通知</h3>
-            <p>教务处最新竞赛通知 · 一键查看</p>
+            <h3>竞赛大全</h3>
+            <p>浏览全部竞赛 · 按类别筛选</p>
           </div>
           <div class="mission-arrow">&#8250;</div>
         </div>
@@ -248,8 +248,8 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </div>
           <div class="mission-text">
-            <h3>报名入口</h3>
-            <p>在线报名 · 赛事管理</p>
+            <h3>竞赛日历</h3>
+            <p>重要截止日期 · 赛程安排</p>
           </div>
           <div class="mission-arrow">&#8250;</div>
         </div>
@@ -497,10 +497,6 @@
             <div class="auth-field pwd-field"><label for="authLoginPassword">密码 *</label><input type="password" id="authLoginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()" aria-label="密码" /><button class="pwd-toggle" type="button" onclick="togglePwdVisibility('authLoginPassword',this)" aria-label="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <div class="auth-error" id="authLoginError"></div>
             <button class="btn-primary auth-submit" onclick="doLogin()" id="authLoginBtn">登录</button>
-            <div style="margin-top:12px;text-align:center">
-              <button class="btn-secondary" style="width:100%;padding:10px;font-size:13px" onclick="demoLoginSafe()">体验账号一键登录</button>
-              <p style="font-size:11px;color:var(--text-muted);margin-top:6px">学号 admin / 密码 admin123</p>
-            </div>
           </div>
           <div id="authRegisterForm" class="auth-form">
             <div class="auth-field"><label for="authRegStudentId">学号 *</label><input type="text" id="authRegStudentId" placeholder="请输入学号" inputmode="numeric" pattern="[0-9]*" aria-label="学号" /></div>
@@ -613,10 +609,11 @@
           <p class="legal-update">最后更新日期：2026年4月</p>
         </div>
         <div class="legal-section" id="privacySection">
-          <h4>一、信息收集</h4><p>本工具为纯前端应用，所有数据均在您的浏览器本地处理，我们不会收集、存储或传输您的任何个人信息。</p>
-          <h4>二、信息安全</h4><p>您的聊天记录和用户信息通过浏览器本地存储（localStorage）保存在您的设备上。您可以随时清除浏览器数据来删除所有本地存储的信息。</p>
-          <h4>三、联系我们</h4><p>如有疑问，请联系：请通过各校官方渠道咨询</p>
-          <p class="legal-update">最后更新日期：2026年4月</p>
+          <h4>一、信息收集</h4><p>本平台为信息展示与查询工具，竞赛数据来源于公开信息整理。用户注册信息（学号、姓名、学院）通过加密存储在云端数据库中，仅用于身份验证和报名记录关联。</p>
+          <h4>二、信息安全</h4><p>用户密码经 SHA-256 哈希加密后存储，平台不存储明文密码。您的聊天记录默认保存在浏览器本地存储中，清除浏览器数据即可删除。报名记录保存在云端数据库中，仅您本人和管理员可查看。</p>
+          <h4>三、免责声明</h4><p>本平台提供的竞赛信息仅供参考，具体报名事宜请以学校教务处和各竞赛官网公告为准。本平台不对因信息偏差导致的任何损失承担责任。</p>
+          <h4>四、联系我们</h4><p>如有疑问，请联系学校教务处或各竞赛主办方官方渠道。</p>
+          <p class="legal-update">最后更新日期：2025年4月</p>
         </div>
       </div>
     </div>

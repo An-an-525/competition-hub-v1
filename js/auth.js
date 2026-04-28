@@ -1,6 +1,15 @@
 /* Extracted from app.js */
 
 /* --- Auth System --- */
+
+// Supabase 配置（auth.js 先于 competition-hub.js 加载，需自行声明）
+if(typeof HUB_URL === 'undefined') var HUB_URL = 'https://fdbbcibmqaogsbasoqly.supabase.co';
+if(typeof HUB_GET_HEADERS === 'undefined') var HUB_GET_HEADERS = {
+  'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmJjaWJtcWFvZ3NiYXNvcWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MTc1NzUsImV4cCI6MjA5MjE5MzU3NX0.6vudhdijK3Dcy7aoM1qvGWbIJzE8aUVfTK7CdyrO3SM',
+  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmJjaWJtcWFvZ3NiYXNvcWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2MTc1NzUsImV4cCI6MjA5MjE5MzU3NX0.6vudhdijK3Dcy7aoM1qvGWbIJzE8aUVfTK7CdyrO3SM'
+};
+if(typeof HUB_HEADERS === 'undefined') var HUB_HEADERS = Object.assign({}, HUB_GET_HEADERS, {'Content-Type': 'application/json', 'Prefer': 'return=representation'});
+
 function switchAuthTab(tab){
   document.querySelectorAll('.auth-tab').forEach(function(t,i){t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1))});
   document.getElementById('authLoginForm').classList.toggle('active',tab==='login');
