@@ -235,6 +235,7 @@ async function renderCompHub(container){
     html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h4 style="flex:1">'+esc(c.name)+'</h4><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">'+getFavoriteButtonHtml(String(c.competition_id))+getReminderButtonHtml(String(c.competition_id), c.name, regEnd)+'</div>'+getStatusBadge(c.status)+'</div>';
     html+='<div class="comp-hub-meta">';
     if(c.level)html+='<span class="tag-pill">'+esc(getLevelDisplay(c.level))+'</span>';
+    if(c.csust_status){var csustColors={'A类':'#e74c3c','A+类':'#c0392b','B+类':'#e67e22','B类':'#f39c12','B-类':'#f1c40f','C级':'#95a5a6'};var csustColor=csustColors[c.csust_status]||'#95a5a6';html+='<span class="tag-pill" style="background:'+csustColor+'22;color:'+csustColor+';border:1px solid '+csustColor+'44">'+esc(c.csust_status)+'</span>';}
     if(c.category)html+='<span class="tag-pill" style="background:var(--surface-gold-subtle);color:var(--gold)">'+esc(c.category)+'</span>';
     html+='</div>';
     if(c.description)html+='<div class="comp-hub-info" style="margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.description)+'</div>';
@@ -256,6 +257,8 @@ async function renderCompHub(container){
   applyHubFilters();
 }
 function filterHubBy(type,val){
+  var statusLabels={'全部':'全部','open':'报名中','upcoming':'即将开放','closed':'已关闭','ended':'已结束'};
+  if(type==='status' && statusLabels[val]) val = statusLabels[val];
   var filterId=type==='cat'?'hubCatFilter':'hubStatusFilter';
   document.querySelectorAll('#'+filterId+' .club-filter-btn').forEach(function(b){b.classList.toggle('active',b.textContent===val)});
   _hubPage = 1;

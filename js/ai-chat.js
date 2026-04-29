@@ -1,7 +1,7 @@
 /* AI Chat - Powered by MiniMax API (OpenAI 兼容格式，无需用户授权) */
 
 // AI 模型配置 - MiniMax
-var AI_API_URL = 'https://api.minimax.io/v1/chat/completions';
+var AI_API_URL = 'https://corsproxy.io/?' + encodeURIComponent('https://api.minimax.io/v1/chat/completions');
 var AI_API_KEY = 'sk-cp-sHnWpvPMygZhEJloWKBPQ49qOLA8FiMJIjoyWDegRumFLl4RRJvqOqMirvnkuq_gk6LmyRZcwzrTORsajL7_VlAVEpMhkiqfQxKOTvgRce6_53sy2aNZeB0';
 var AI_MODEL = 'MiniMax-M2.5';       // MiniMax 最新模型
 var AI_MODEL_DEEP = 'MiniMax-M2.5';  // 深度模式也用 M2.5（MiniMax 无独立推理模型）

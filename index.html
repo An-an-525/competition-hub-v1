@@ -214,8 +214,8 @@
           <div class="stat-label">大赛类别</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">26</div>
-          <div class="stat-label">承办学院</div>
+          <div class="stat-number">25</div>
+          <div class="stat-label">学院</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">17</div>
@@ -670,7 +670,7 @@
   <script src="js/auth.js?v=20260427"></script>
   <script src="js/notifications.js?v=20260427"></script>
   <script src="js/navigation.js?v=20260427"></script>
-  <script src="js/ai-chat.js?v=20260428"></script>
+  <script src="js/ai-chat.js?v=20260429"></script>
   <script src="js/search.js?v=20260427"></script>
   <script src="js/pages-academic.js?v=20260427"></script>
   <script src="js/pages-campus.js?v=20260427"></script>
@@ -718,7 +718,7 @@
       if(container)container.scrollTop=container.scrollHeight;
       // 使用 MiniMax API 直接调用
       var msgs=[{role:'system',content:'你是长沙理工大学学科竞赛信息平台的AI助手，使用简洁清晰的中文回答。'},{role:'user',content:v}];
-      fetch('https://api.minimax.io/v1/chat/completions',{
+      fetch('https://corsproxy.io/?'+encodeURIComponent('https://api.minimax.io/v1/chat/completions'),{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer sk-cp-sHnWpvPMygZhEJloWKBPQ49qOLA8FiMJIjoyWDegRumFLl4RRJvqOqMirvnkuq_gk6LmyRZcwzrTORsajL7_VlAVEpMhkiqfQxKOTvgRce6_53sy2aNZeB0'},
         body:JSON.stringify({model:'MiniMax-M2.5',messages:msgs})
